@@ -103,9 +103,82 @@ class UploadAndProcessScreenState extends State<UploadAndProcessScreen> {
 
     // PDFのアップロードとテキスト抽出のロジックをここに実装
 
+    // ダミーの暗記カードリスト
+    List<Flashcard> flashcards = [
+      Flashcard(question: "質問1", answer: "答え1"),
+      Flashcard(question: "質問2", answer: "答え2"),
+      // ... 他の暗記カード
+    ];
+
     setState(() {
       _progressValue = 1.0;
       _isUploading = false;
     });
+    // ResultScreenへの遷移
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ResultScreen(flashcards: flashcards),
+      ),
+    );
   }
+}
+
+class ResultScreen extends StatefulWidget {
+  final List<Flashcard> flashcards;
+
+  const ResultScreen({super.key, required this.flashcards});
+
+  @override
+  ResultScreenState createState() => ResultScreenState();
+}
+
+class ResultScreenState extends State<ResultScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('暗記カードの結果'),
+      ),
+      body: ListView.builder(
+        itemCount: widget.flashcards.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(widget.flashcards[index].question),
+            onTap: () {
+              // タップしたときの詳細表示ロジック
+              _showDetail(widget.flashcards[index]);
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  void _showDetail(Flashcard flashcard) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(flashcard.question),
+          content: Text(flashcard.answer),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('閉じる'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class Flashcard {
+  final String question;
+  final String answer;
+
+  Flashcard({required this.question, required this.answer});
 }
