@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,7 +17,7 @@ class MyApp extends StatelessWidget {
 }
 
 class StartScreen extends StatefulWidget {
-  const StartScreen({super.key});
+  const StartScreen({Key? key}) : super(key: key);
   @override
   StartScreenState createState() => StartScreenState();
 }
