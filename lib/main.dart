@@ -9,20 +9,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flash PDF Card',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.grey,
       ),
       home: const StartScreen(),
     );
   }
 }
 
-class StartScreen extends StatefulWidget {
+class StartScreen extends StatelessWidget {
   const StartScreen({Key? key}) : super(key: key);
-  @override
-  StartScreenState createState() => StartScreenState();
-}
 
-class StartScreenState extends State<StartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
