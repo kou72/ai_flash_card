@@ -17,8 +17,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class StartScreen extends StatelessWidget {
+class StartScreen extends StatefulWidget {
   const StartScreen({Key? key}) : super(key: key);
+  @override
+  StartScreenState createState() => StartScreenState();
+}
+
+class StartScreenState extends State<StartScreen> {
+  String? _pickedFileName = '';
 
   Future<void> _pickPDF() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -28,7 +34,9 @@ class StartScreen extends StatelessWidget {
 
     if (result != null) {
       PlatformFile file = result.files.first;
-      print(file.name); // PDFファイルの名前を表示
+      setState(() {
+        _pickedFileName = file.name;
+      });
       // ここでファイルをアップロードするロジックを実装する
     } else {
       // ユーザーがファイル選択をキャンセルした場合の処理
@@ -51,8 +59,14 @@ class StartScreen extends StatelessWidget {
             const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: _pickPDF,
-              // onPressed: () => {},
               child: const Text('PDFをアップロード'),
+            ),
+            const SizedBox(height: 20.0),
+            Text('選択されたファイル: $_pickedFileName'),
+            const SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () => {},
+              child: const Text('暗記カードを作成'),
             ),
           ],
         ),
@@ -60,6 +74,7 @@ class StartScreen extends StatelessWidget {
     );
   }
 }
+
 
 // class UploadAndProcessScreen extends StatefulWidget {
 //   const UploadAndProcessScreen({Key? key}) : super(key: key);
