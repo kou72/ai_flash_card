@@ -25,6 +25,7 @@ class StartScreen extends StatefulWidget {
 
 class StartScreenState extends State<StartScreen> {
   String? _pickedFileName = '';
+  bool _isLoading = false;
 
   Future<void> _pickPDF() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -41,6 +42,18 @@ class StartScreenState extends State<StartScreen> {
     } else {
       // ユーザーがファイル選択をキャンセルした場合の処理
     }
+  }
+
+  Future<void> _createFlashcards() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    await Future.delayed(const Duration(seconds: 3));
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -64,16 +77,19 @@ class StartScreenState extends State<StartScreen> {
             const SizedBox(height: 20.0),
             Text('選択されたファイル: $_pickedFileName'),
             const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () => {},
-              child: const Text('暗記カードを作成'),
-            ),
+            _isLoading
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: _createFlashcards,
+                    child: const Text('暗記カードを作成'),
+                  ),
           ],
         ),
       ),
     );
   }
 }
+
 
 
 // class UploadAndProcessScreen extends StatefulWidget {
