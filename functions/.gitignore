@@ -10,3 +10,7 @@ node_modules/
 
 # Lock files
 package-lock.json
+
+# env file
+.env
+```
