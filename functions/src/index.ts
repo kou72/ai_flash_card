@@ -46,7 +46,8 @@ export const documentTextDetection = onRequest(async (request, response) => {
   const client = new vision.ImageAnnotatorClient();
 
   const bucketName = "flash-pdf-card.appspot.com";
-  const fileName = "test.pdf";
+  // const fileName = "test.pdf";
+  const fileName = "l2pt.pdf";
   const gcsSourceUri = `gs://${bucketName}/${fileName}`;
 
   const baseFileName = fileName.replace(".pdf", "");
@@ -82,10 +83,4 @@ export const documentTextDetection = onRequest(async (request, response) => {
 
   const texts = await getFileContents(DestinationFolder);
   response.send(texts);
-
-  const bucket = storage.bucket();
-  const [files] = await bucket.getFiles();
-  logger.info("Files:" + files[0].name, {structuredData: true});
-
-  response.send("Document Text Detection");
 });
