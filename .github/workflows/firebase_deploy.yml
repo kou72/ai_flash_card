@@ -26,8 +26,7 @@ jobs:
         run: flutter build web
 
       - name: Install Firebase Functions Dependencies
-        run: npm install
-        working-directory: functions
+        run: npm install --prefix ./functions
 
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
