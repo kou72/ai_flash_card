@@ -3,7 +3,7 @@ import * as logger from "firebase-functions/logger";
 import vision from "@google-cloud/vision";
 import axios from "axios";
 
-import * as functions from "firebase-functions";
+// import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 admin.initializeApp();
 
@@ -64,7 +64,7 @@ const requestChatGPT = async (input: string) => {
       {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${functions.config().openai.apikey}`,
+          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
         },
       }
     );
