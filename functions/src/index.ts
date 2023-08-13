@@ -8,6 +8,7 @@ import * as admin from "firebase-admin";
 admin.initializeApp();
 
 const storage = admin.storage();
+const bucket = storage.bucket();
 
 // 実行時間のyyyyMMddhhmmssを取得
 const getDate = () => {
@@ -23,7 +24,6 @@ const getDate = () => {
 };
 
 const getFileContents = async (DestinationFolder: string) => {
-  const bucket = storage.bucket();
   const [files] = await bucket.getFiles({prefix: DestinationFolder});
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -129,7 +129,7 @@ export const documentTextDetection = onRequest(async (request, response) => {
 
   const texts = await getFileContents(DestinationFolder);
   const res = await requestChatGPT(texts);
-  logger.warn(process.env.OPENAI_API_KEY, {structuredData: true});
+  await bucket.deleteFiles({prefix: DestinationFolder});
   response.send(res);
 });
 
