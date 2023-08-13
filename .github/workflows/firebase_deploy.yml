@@ -29,10 +29,12 @@ jobs:
         run: npm install
         working-directory: functions
 
+      - name: Set Firebase Functions Environment Variables
+        run: firebase functions:secrets:set OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
           args: deploy --only hosting,functions
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

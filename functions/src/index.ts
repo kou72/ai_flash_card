@@ -3,7 +3,7 @@ import * as logger from "firebase-functions/logger";
 import vision from "@google-cloud/vision";
 import axios from "axios";
 
-// import * as functions from "firebase-functions";
+import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 admin.initializeApp();
 
@@ -64,12 +64,11 @@ const requestChatGPT = async (input: string) => {
       {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+          "Authorization": `Bearer ${functions.config().OPENAI_API_KEY}`,
         },
       }
     );
 
-    logger.info("openai response", {structuredData: true});
     const res = response.data.choices[0].message.content;
     return res;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
