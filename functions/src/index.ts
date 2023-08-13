@@ -69,6 +69,7 @@ const requestChatGPT = async (input: string) => {
       }
     );
 
+    logger.info("openai response" + response, {structuredData: true});
     const res = response.data.choices[0].message.content;
     return res;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
