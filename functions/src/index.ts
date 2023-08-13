@@ -64,7 +64,7 @@ const requestChatGPT = async (input: string) => {
       {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${functions.config().OPENAI_API_KEY}`,
+          "Authorization": `Bearer ${functions.config().openai.apikey}`,
         },
       }
     );
