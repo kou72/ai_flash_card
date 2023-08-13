@@ -129,6 +129,7 @@ export const documentTextDetection = onRequest(async (request, response) => {
 
   const texts = await getFileContents(DestinationFolder);
   const res = await requestChatGPT(texts);
+  logger.warn(process.env.OPENAI_API_KEY, {structuredData: true});
   response.send(res);
 });
 
