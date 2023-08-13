@@ -69,15 +69,17 @@ const requestChatGPT = async (input: string) => {
       }
     );
 
-    logger.info("openai response" + response, {structuredData: true});
+    logger.info("openai response", {structuredData: true});
     const res = response.data.choices[0].message.content;
     return res;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.message) {
       console.error(error.message);
+      logger.error(error.message, {structuredData: true});
     } else if (error.response.data) {
       console.error(error.response.data.error.message);
+      logger.error(error.response.data.error.message, {structuredData: true});
     }
   }
 };
