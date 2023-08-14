@@ -1,7 +1,7 @@
 // import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-// import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
 // import 'package:http_parser/http_parser.dart';
 
 class StartScreen extends StatefulWidget {
@@ -29,6 +29,12 @@ class StartScreenState extends State<StartScreen> {
 
   Future<void> _testreq() async {
     print("testreq");
+
+    final url = Uri.https('documenttextdetection-vhoidcprtq-uc.a.run.app', '');
+    final response = await http.get(url);
+
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
   }
 
   Future<void> _createFlashcards() async {
@@ -86,7 +92,8 @@ class StartScreenState extends State<StartScreen> {
       return const CircularProgressIndicator();
     } else {
       return ElevatedButton(
-        onPressed: _createFlashcards,
+        // onPressed: _createFlashcards,
+        onPressed: _testreq,
         child: const Text('暗記カードを作成'),
       );
     }
