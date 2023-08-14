@@ -1,19 +1,42 @@
 import {onRequest} from "firebase-functions/v2/https";
+import * as logger from "firebase-functions/logger";
+
 import vision from "@google-cloud/vision";
 
 import {getDate} from "./utils";
-import {getFileContents} from "./gcp";
 import {requestChatGPT} from "./openai";
 
 // import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+
 admin.initializeApp();
 
 const storage = admin.storage();
 const bucket = storage.bucket();
+type Bucket = ReturnType<typeof storage.bucket>;
+
+const getFileContents = async (bucket: Bucket, DestinationFolder: string) => {
+  try {
+    const [files] = await bucket.getFiles({prefix: DestinationFolder});
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [texts] = files.map(async (file: any) => {
+      const json = bucket.file(file.name);
+      const contents = await json.download();
+      const jsonString = contents.toString();
+      const jsonData = JSON.parse(jsonString);
+      return jsonData.responses[0].fullTextAnnotation.text;
+    });
+
+    return texts;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    logger.error(error.message, {structuredData: true});
+  }
+};
 
 export const helloWorld = onRequest((request, response) => {
-  // res.set("Access-Control-Allow-Origin", "*");
+  response.set("Access-Control-Allow-Origin", "*");
   response.send("Hello from Firebase!");
 });
 
