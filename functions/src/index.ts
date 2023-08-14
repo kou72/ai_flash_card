@@ -82,5 +82,6 @@ export const documentTextDetection = onRequest(async (request, response) => {
   const texts = await getFileContents(bucket, DestinationFolder);
   const res = await requestChatGPT(texts);
   // await bucket.deleteFiles({prefix: DestinationFolder}); // ファイルを削除する場合
+  response.set("Access-Control-Allow-Origin", "*");
   response.send(res);
 });
