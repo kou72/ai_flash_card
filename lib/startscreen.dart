@@ -20,15 +20,11 @@ class StartScreenState extends State<StartScreen> {
       allowedExtensions: ['pdf'],
     );
 
-    if (result != null) {
-      PlatformFile file = result.files.first;
-      setState(() {
-        _pickedFileName = file.name;
-      });
-      // ここでファイルをアップロードするロジックを実装する
-    } else {
-      // ユーザーがファイル選択をキャンセルした場合の処理
-    }
+    if (result == null) return;
+    PlatformFile file = result.files.first;
+    setState(() {
+      _pickedFileName = file.name;
+    });
   }
 
   Future<void> _createFlashcards() async {
