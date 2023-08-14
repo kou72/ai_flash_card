@@ -1,4 +1,3 @@
-import * as cors from "cors";
 import {onRequest} from "firebase-functions/v2/https";
 import vision from "@google-cloud/vision";
 
@@ -13,11 +12,9 @@ admin.initializeApp();
 const storage = admin.storage();
 const bucket = storage.bucket();
 
-export const helloworld = onRequest((req, res) => {
-  res.set("Access-Control-Allow-Origin", "*");
-  res.send({
-    data: "foo",
-  });
+export const helloWorld = onRequest((request, response) => {
+  // res.set("Access-Control-Allow-Origin", "*");
+  response.send("Hello from Firebase!");
 });
 
 export const documentTextDetection = onRequest(async (request, response) => {
