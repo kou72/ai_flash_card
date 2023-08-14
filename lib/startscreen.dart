@@ -27,6 +27,10 @@ class StartScreenState extends State<StartScreen> {
     });
   }
 
+  Future<void> _testreq() async {
+    print("testreq");
+  }
+
   Future<void> _createFlashcards() async {
     setState(() {
       _isLoading = true;
@@ -52,30 +56,40 @@ class StartScreenState extends State<StartScreen> {
         title: const Text('Flash PDF Card'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'PDFの内容を読み取り暗記カードを作成します',
-            ),
-            const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: _pickPDF,
-              child: const Text('PDFをアップロード'),
-            ),
-            const SizedBox(height: 20.0),
-            Text('選択されたファイル: $_pickedFileName'),
-            const SizedBox(height: 20.0),
-            _isLoading
-                ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _createFlashcards,
-                    child: const Text('暗記カードを作成'),
-                  ),
-          ],
-        ),
+        child: _objects(),
       ),
     );
+  }
+
+  Widget _objects() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        const Text(
+          'PDFの内容を読み取り暗記カードを作成します',
+        ),
+        const SizedBox(height: 20.0),
+        ElevatedButton(
+          onPressed: _pickPDF,
+          child: const Text('PDFを選択'),
+        ),
+        const SizedBox(height: 20.0),
+        Text('選択されたファイル: $_pickedFileName'),
+        const SizedBox(height: 20.0),
+        _createFlashcardsButton(),
+      ],
+    );
+  }
+
+  Widget _createFlashcardsButton() {
+    if (_isLoading == true) {
+      return const CircularProgressIndicator();
+    } else {
+      return ElevatedButton(
+        onPressed: _createFlashcards,
+        child: const Text('暗記カードを作成'),
+      );
+    }
   }
 }
 
