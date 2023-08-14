@@ -1,8 +1,9 @@
+import * as cors from "cors";
 import {onRequest} from "firebase-functions/v2/https";
 import vision from "@google-cloud/vision";
+
 import {getDate} from "./utils";
 import {getFileContents} from "./gcp";
-
 import {requestChatGPT} from "./openai";
 
 // import * as functions from "firebase-functions";
@@ -11,6 +12,13 @@ admin.initializeApp();
 
 const storage = admin.storage();
 const bucket = storage.bucket();
+
+export const helloworld = onRequest((req, res) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.send({
+    data: "foo",
+  });
+});
 
 export const documentTextDetection = onRequest(async (request, response) => {
   const client = new vision.ImageAnnotatorClient();
