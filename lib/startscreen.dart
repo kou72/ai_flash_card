@@ -1,8 +1,8 @@
-// import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
-// import 'package:http_parser/http_parser.dart';
+import 'package:http_parser/http_parser.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({Key? key}) : super(key: key);
@@ -12,6 +12,8 @@ class StartScreen extends StatefulWidget {
 
 class StartScreenState extends State<StartScreen> {
   String? _pickedFileName = '';
+  // int? _pickedFileSize;
+  Uint8List? _pickedFileBytes;
   bool _isLoading = false;
 
   Future<void> _pickPDF() async {
@@ -24,17 +26,31 @@ class StartScreenState extends State<StartScreen> {
     PlatformFile file = result.files.first;
     setState(() {
       _pickedFileName = file.name;
+      // _pickedFileSize = file.size;
+      _pickedFileBytes = file.bytes;
     });
   }
 
   Future<void> _testreq() async {
     print("testreq");
 
-    final url = Uri.https('documenttextdetection-vhoidcprtq-uc.a.run.app', '');
-    final response = await http.get(url);
+    // final url = Uri.https('documenttextdetection-vhoidcprtq-uc.a.run.app', '');
+    final url = Uri.https('helloworld-vhoidcprtq-uc.a.run.app', '');
 
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    final req = http.MultipartRequest('POST', url);
+
+    req.files.add(
+      http.MultipartFile.fromBytes(
+        'file',
+        _pickedFileBytes!,
+        filename: _pickedFileName!,
+        contentType: MediaType('application', 'pdf'),
+      ),
+    );
+
+    req.send().then((response) {
+      if (response.statusCode == 200) print("Uploaded!");
+    });
   }
 
   Future<void> _createFlashcards() async {
