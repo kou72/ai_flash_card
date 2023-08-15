@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
+// import 'package:http_parser/http_parser.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({Key? key}) : super(key: key);
@@ -44,7 +44,6 @@ class StartScreenState extends State<StartScreen> {
         'file',
         _pickedFileBytes!,
         filename: _pickedFileName!,
-        contentType: MediaType('application', 'pdf'),
       ),
     );
 

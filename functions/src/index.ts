@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as os from "os";
-import * as path from "path";
-import * as fs from "fs";
+// import * as os from "os";
+// import * as path from "path";
+// import * as fs from "fs";
 import {onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 import vision from "@google-cloud/vision";
@@ -37,49 +37,31 @@ const getFileContents = async (bucket: Bucket, DestinationFolder: string) => {
   }
 };
 
-export const helloWorld = onRequest({cors: true}, (req, res) => {
-  if (req.method !== "POST") {
-    res.status(405).end();
-    return;
-  }
-
-  const bb = busboy({headers: req.headers});
-  const tmpdir = os.tmpdir();
-  let filename: string;
-  let filepath: string;
-
-  bb.on("file", (name, file, info) => {
-    filename = info.filename;
-    filepath = path.join(tmpdir, filename);
-    file.pipe(fs.createWriteStream(filepath));
-  });
-
-  bb.on("finish", async () => {
-    logger.info("finish");
-    try {
-      logger.info("filepath: " + filepath);
-      const date = getDate();
-      const DestinationFolder = "upload";
-      bucket.upload(filepath, {
-        destination: `${DestinationFolder}/${date}-${filename}`,
-        metadata: {
-          contentType: "application/pdf",
-        },
-      });
-      res.status(200).send("File processed.");
-    } catch (error) {
-      console.error("Error processing file:", error);
-      res.status(500).send(error);
+export const helloWorld = onRequest(
+  {timeoutSeconds: 300, cors: true},
+  (req, res) => {
+    if (req.method !== "POST") {
+      res.status(405).end();
+      return;
     }
-  });
 
-  bb.end(req.rawBody);
-});
+    const bb = busboy({headers: req.headers});
+    bb.on("file", (name, file, info) => {
+      const date = getDate();
+      const destFolder = "upload";
+      const distPath = bucket.file(`${destFolder}/${date}-${info.filename}`);
+      file.pipe(distPath.createWriteStream()).on("finish", () => {
+        res.status(200).send("File processed.");
+      });
+    });
+    bb.end(req.rawBody);
+  }
+);
 
 export const documentTextDetection = onRequest(
   {
     timeoutSeconds: 300,
-    cors: false,
+    cors: true,
   },
   async (req, res) => {
     // CORS
