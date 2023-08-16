@@ -1,12 +1,18 @@
-// 実行時間のyyyyMMddhhmmssを取得
+import {logger} from "firebase-functions/v1";
+
+// 実行時間のyyyyMMddhhmmssを日本時間で取得
 export const getDate = () => {
-  const date = new Date();
-  const formattedDate = `${date.getFullYear()}${String(
-    date.getMonth() + 1
-  ).padStart(2, "0")}${String(date.getDate()).padStart(2, "0")}${String(
-    date.getHours()
-  ).padStart(2, "0")}${String(date.getMinutes()).padStart(2, "0")}${String(
-    date.getSeconds()
+  const JST_OFFSET = 9 * 60 * 60 * 1000; // 9時間をミリ秒で表現
+  const date = new Date(Date.now() + JST_OFFSET);
+  logger.info("date: " + date);
+
+  const formattedDate = `${date.getUTCFullYear()}${String(
+    date.getUTCMonth() + 1
+  ).padStart(2, "0")}${String(date.getUTCDate()).padStart(2, "0")}${String(
+    date.getUTCHours()
+  ).padStart(2, "0")}${String(date.getUTCMinutes()).padStart(2, "0")}${String(
+    date.getUTCSeconds()
   ).padStart(2, "0")}`;
+
   return formattedDate;
 };

@@ -46,11 +46,11 @@ export const helloWorld = onRequest(
     }
 
     const bb = busboy({headers: req.headers});
-    bb.on("file", (name, file, info) => {
+    bb.on("file", (name, stream, info) => {
       const date = getDate();
       const destFolder = "upload";
       const distPath = bucket.file(`${destFolder}/${date}-${info.filename}`);
-      file.pipe(distPath.createWriteStream()).on("finish", () => {
+      stream.pipe(distPath.createWriteStream()).on("finish", () => {
         res.status(200).send("File processed.");
       });
     });
