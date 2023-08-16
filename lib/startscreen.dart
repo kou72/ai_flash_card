@@ -31,45 +31,31 @@ class StartScreenState extends State<StartScreen> {
     });
   }
 
-  Future<void> _testreq() async {
-    print("testreq");
-
-    // final url = Uri.https('documenttextdetection-vhoidcprtq-uc.a.run.app', '');
-    // final url = Uri.https('helloworld-vhoidcprtq-uc.a.run.app');
+  Future<void> _createFlashcards() async {
+    setState(() => _isLoading = true);
     final url =
-        Uri.http('127.0.0.1:5001', '/flash-pdf-card/us-central1/helloWorld');
-
+        Uri.https('generateflashcardquestions-vhoidcprtq-uc.a.run.app', '');
     final req = http.MultipartRequest('POST', url);
-
     req.files.add(
       http.MultipartFile.fromBytes(
         'file',
         _pickedFileBytes!,
-        filename: _pickedFileName!,
+        filename: _pickedFileName,
       ),
     );
 
     final streamedResponse = await req.send();
     final response = await http.Response.fromStream(streamedResponse);
     print(response.body);
-  }
-
-  Future<void> _createFlashcards() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    await Future.delayed(const Duration(seconds: 3));
-
     setState(() {
       _isLoading = false;
     });
 
-    if (!mounted) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const ResultScreen()),
-    );
+    // if (!mounted) return;
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => const ResultScreen()),
+    // );
   }
 
   @override
@@ -98,29 +84,8 @@ class StartScreenState extends State<StartScreen> {
         const SizedBox(height: 12.0),
         _pdfPickContainer(),
         _createFlashcardsContainer(),
-        // const SizedBox(height: 20.0),
-        // ElevatedButton(
-        //   onPressed: _pickPDF,
-        //   child: const Text('PDFを選択'),
-        // ),
-        // const SizedBox(height: 20.0),
-        // Text('選択されたファイル: $_pickedFileName'),
-        // const SizedBox(height: 20.0),
-        // _createFlashcardsButton(),
       ],
     );
-  }
-
-  Widget _createFlashcardsButton() {
-    if (_isLoading == true) {
-      return const CircularProgressIndicator();
-    } else {
-      return ElevatedButton(
-        // onPressed: _createFlashcards,
-        onPressed: _testreq,
-        child: const Text('暗記カードを作成'),
-      );
-    }
   }
 
   Widget _pdfPickContainer() {
