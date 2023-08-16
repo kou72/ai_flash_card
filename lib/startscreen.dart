@@ -81,30 +81,54 @@ class StartScreenState extends State<StartScreen> {
             fontSize: 16.0,
           ),
         ),
-        const SizedBox(height: 12.0),
+        const SizedBox(height: 20.0),
         _pdfPickContainer(),
+        const SizedBox(height: 16.0),
         _createFlashcardsContainer(),
       ],
     );
   }
 
   Widget _pdfPickContainer() {
-    return GestureDetector(
-      onTap: _pickPDF,
-      child: Container(
-        margin: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(
-            color: Colors.blueGrey,
-            width: 2.0,
+    Color containerColor = Colors.white;
+
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        return Material(
+          color: Colors.transparent, // 透明なMaterial
+          child: InkWell(
+            onTap: () {
+              _pickPDF();
+              setState(() {
+                containerColor = Colors.grey[200]!;
+              });
+            },
+            onHover: (isHovering) {
+              setState(() {
+                if (isHovering) {
+                  containerColor = Colors.grey[200]!;
+                } else {
+                  containerColor = Colors.white;
+                }
+              });
+            },
+            borderRadius: BorderRadius.circular(24.0), // InkWellの角丸
+            child: Container(
+              decoration: BoxDecoration(
+                color: containerColor,
+                border: Border.all(
+                  color: Colors.blueGrey,
+                  width: 2.0,
+                ),
+                borderRadius: BorderRadius.circular(24.0),
+              ),
+              width: 200,
+              height: 200,
+              child: _pdfIconSwitcher(),
+            ),
           ),
-          borderRadius: BorderRadius.circular(24.0),
-        ),
-        width: 200,
-        height: 200,
-        child: _pdfIconSwitcher(),
-      ),
+        );
+      },
     );
   }
 
@@ -162,7 +186,6 @@ class StartScreenState extends State<StartScreen> {
     return GestureDetector(
       onTap: _createFlashcards,
       child: Container(
-        margin: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(
