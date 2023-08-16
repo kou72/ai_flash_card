@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({Key? key}) : super(key: key);
@@ -70,11 +71,11 @@ class StartScreenState extends State<StartScreen> {
       _isLoading = false;
     });
 
-    // if (!mounted) return;
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => const ResultScreen()),
-    // );
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ResultScreen()),
+    );
   }
 
   @override
@@ -100,11 +101,26 @@ class StartScreenState extends State<StartScreen> {
             fontSize: 16.0,
           ),
         ),
+        _samplePDF(),
         const SizedBox(height: 20.0),
         _pdfPickContainer(),
         const SizedBox(height: 16.0),
         _createFlashcardsContainer(),
       ],
+    );
+  }
+
+  Widget _samplePDF() {
+    return InkWell(
+      onTap: () => launchUrl(Uri.parse(
+          'https://cio.go.jp/sites/default/files/uploads/documents/1020_api_tecnical_guidebook.pdf')),
+      child: const Text(
+        'サンプルのダウンロード',
+        style: TextStyle(
+          color: Colors.blue,
+          decoration: TextDecoration.underline,
+        ),
+      ),
     );
   }
 
