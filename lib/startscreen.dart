@@ -11,7 +11,7 @@ class StartScreen extends StatefulWidget {
 }
 
 class StartScreenState extends State<StartScreen> {
-  String? _pickedFileName = '';
+  String _pickedFileName = '';
   // int? _pickedFileSize;
   Uint8List? _pickedFileBytes;
   bool _isLoading = false;
@@ -91,6 +91,7 @@ class StartScreenState extends State<StartScreen> {
         const Text(
           'PDFの内容を読み取り暗記カードを作成します',
         ),
+        _pdfUploadContainer(),
         const SizedBox(height: 20.0),
         ElevatedButton(
           onPressed: _pickPDF,
@@ -114,6 +115,76 @@ class StartScreenState extends State<StartScreen> {
         child: const Text('暗記カードを作成'),
       );
     }
+  }
+
+  Widget _pdfUploadContainer() {
+    return GestureDetector(
+      onTap: _pickPDF,
+      child: Container(
+        margin: const EdgeInsets.all(20.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+            color: Colors.blueGrey,
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(24.0),
+        ),
+        width: 200,
+        height: 200,
+        child: _pdfIconSwitcher(),
+      ),
+    );
+  }
+
+  Widget _pdfIconSwitcher() {
+    if (_pickedFileName == '') {
+      return Center(child: _pdfPickerIcon());
+    } else {
+      return Center(child: _pdfPickedIcon());
+    }
+  }
+
+  Widget _pdfPickerIcon() {
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Icon(
+          Icons.upload_file,
+          color: Colors.blueGrey,
+          size: 64.0,
+        ),
+        SizedBox(height: 8.0),
+        Text(
+          'PDFを選択',
+          style: TextStyle(
+            color: Colors.blueGrey,
+            fontSize: 16.0,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _pdfPickedIcon() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        const Icon(
+          Icons.check_circle,
+          color: Colors.blueGrey,
+          size: 64.0,
+        ),
+        const SizedBox(height: 8.0),
+        Text(
+          _pickedFileName,
+          style: const TextStyle(
+            color: Colors.blueGrey,
+            fontSize: 16.0,
+          ),
+        ),
+      ],
+    );
   }
 }
 
