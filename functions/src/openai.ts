@@ -2,7 +2,7 @@ import axios from "axios";
 import * as logger from "firebase-functions/logger";
 import {system, userEx1, assistantEx1, userEx2, assistantEx2} from "./prompt";
 
-export const requestChatGPT = async (input: string) => {
+export const generateQuestionsFromChatGPT = async (input: string) => {
   const URL = "https://api.openai.com/v1/chat/completions";
   const model = "gpt-4";
   const temperature = 0;

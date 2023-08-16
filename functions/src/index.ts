@@ -2,26 +2,74 @@
 // import * as os from "os";
 // import * as path from "path";
 // import * as fs from "fs";
-import {onRequest} from "firebase-functions/v2/https";
+import {onRequest, Request} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 import vision from "@google-cloud/vision";
 import * as admin from "firebase-admin";
 import * as busboy from "busboy";
 import {getDate} from "./utils";
-import {requestChatGPT} from "./openai";
+import {generateQuestionsFromChatGPT} from "./openai";
 
 admin.initializeApp();
 
 const storage = admin.storage();
 const bucket = storage.bucket();
 const bucketName = "flash-pdf-card.appspot.com";
-type Bucket = ReturnType<typeof storage.bucket>;
 
-const getFileContents = async (bucket: Bucket, DestinationFolder: string) => {
+const fileUpload = (req: Request, date: string): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const bb = busboy({headers: req.headers});
+    bb.on("file", (name, stream, info) => {
+      const folder = "upload";
+      const filePath = `${folder}/${date}-${info.filename}`;
+      const bucketPath = bucket.file(filePath);
+      stream.pipe(bucketPath.createWriteStream()).on("finish", () => {
+        resolve(filePath);
+      });
+    });
+
+    bb.on("error", (err) => {
+      logger.error("Busboy error:", err);
+      reject(new Error("File upload failed."));
+    });
+
+    bb.end(req.rawBody);
+  });
+
+const convertPdfToTextJson = async (sourcePath: string, destFolder: string) => {
+  const client = new vision.ImageAnnotatorClient();
+  const gcsSourceUri = `gs://${bucketName}/${sourcePath}`;
+  const gcsDestinationUri = `gs://${bucketName}/${destFolder}`;
+
+  const inputConfig = {
+    mimeType: "application/pdf",
+    gcsSource: {
+      uri: gcsSourceUri,
+    },
+  };
+  const outputConfig = {
+    gcsDestination: {
+      uri: gcsDestinationUri,
+    },
+  };
+  const features = [{type: "DOCUMENT_TEXT_DETECTION"}];
+  const config = {
+    requests: [
+      {
+        inputConfig: inputConfig,
+        outputConfig: outputConfig,
+        features: features,
+      },
+    ],
+  };
+
+  const [operation] = await client.asyncBatchAnnotateFiles(config as any);
+  await operation.promise();
+};
+
+const extractTextFromJson = async (DestinationFolder: string) => {
   try {
     const [files] = await bucket.getFiles({prefix: DestinationFolder});
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [texts] = files.map(async (file: any) => {
       const json = bucket.file(file.name);
       const contents = await json.download();
@@ -31,7 +79,6 @@ const getFileContents = async (bucket: Bucket, DestinationFolder: string) => {
     });
 
     return texts;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     logger.error(error.message, {structuredData: true});
   }
@@ -45,29 +92,16 @@ export const helloWorld = onRequest(
       return;
     }
 
-    const bb = busboy({headers: req.headers});
-    const processFileUpload = new Promise((resolve, reject) => {
-      bb.on("file", (name, stream, info) => {
-        const date = getDate();
-        const folder = "upload";
-        const filePath = `${folder}/${date}-${info.filename}`;
-        const bucketPath = bucket.file(filePath);
-        stream.pipe(bucketPath.createWriteStream()).on("finish", () => {
-          resolve(filePath);
-        });
-      });
-
-      bb.on("error", (err) => {
-        logger.error("Busboy error:", err);
-        reject(new Error("File upload failed."));
-      });
-    });
-
-    bb.end(req.rawBody);
-
     try {
-      const uploadedFilePath = await processFileUpload;
-      res.status(200).send(uploadedFilePath);
+      const date = getDate();
+      const sourcePath = await fileUpload(req, date);
+      // dest用pathをsourcePathから生成（upload/0000-text.pdf → destination/0000-text）
+      const destFolder =
+        "dest/" + sourcePath.split("/")[1].replace(/\.[^/.]+$/, "") + "/";
+      await convertPdfToTextJson(sourcePath, destFolder);
+      const texts = await extractTextFromJson(destFolder);
+      const questions = await generateQuestionsFromChatGPT(texts);
+      res.status(200).send(questions);
     } catch (error: any) {
       res.status(500).send(error.message);
     }
@@ -159,9 +193,9 @@ export const documentTextDetection = onRequest(
     );
     await operation.promise();
 
-    const texts = await getFileContents(bucket, DestinationFolder);
-    const chatGptRes = await requestChatGPT(texts);
+    // const texts = await getFileContents(bucket, DestinationFolder);
+    // const chatGptRes = await requestChatGPT(texts);
     // await bucket.deleteFiles({prefix: DestinationFolder}); // ファイルを削除する場合
-    res.send(chatGptRes);
+    // res.send(chatGptRes);
   }
 );
