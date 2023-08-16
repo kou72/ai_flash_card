@@ -1,10 +1,7 @@
-import {logger} from "firebase-functions/v1";
-
 // 実行時間のyyyyMMddhhmmssを日本時間で取得
 export const getDate = () => {
   const JST_OFFSET = 9 * 60 * 60 * 1000; // 9時間をミリ秒で表現
   const date = new Date(Date.now() + JST_OFFSET);
-  logger.info("date: " + date);
 
   const formattedDate = `${date.getUTCFullYear()}${String(
     date.getUTCMonth() + 1
