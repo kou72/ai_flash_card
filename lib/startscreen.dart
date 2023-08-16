@@ -91,7 +91,7 @@ class StartScreenState extends State<StartScreen> {
         const Text(
           'PDFの内容を読み取り暗記カードを作成します',
         ),
-        _pdfUploadContainer(),
+        _pdfPickContainer(),
         const SizedBox(height: 20.0),
         ElevatedButton(
           onPressed: _pickPDF,
@@ -117,7 +117,7 @@ class StartScreenState extends State<StartScreen> {
     }
   }
 
-  Widget _pdfUploadContainer() {
+  Widget _pdfPickContainer() {
     return GestureDetector(
       onTap: _pickPDF,
       child: Container(
