@@ -46,20 +46,31 @@ export const helloWorld = onRequest(
     }
 
     const bb = busboy({headers: req.headers});
-    bb.on("file", (name, stream, info) => {
-      const date = getDate();
-      const folder = "upload";
-      const path = `${folder}/${date}-${info.filename}`;
-      const bucketPath = bucket.file(path);
-      stream.pipe(bucketPath.createWriteStream()).on("finish", () => {
-        res.status(200).send(path);
+    const processFileUpload = new Promise((resolve, reject) => {
+      bb.on("file", (name, stream, info) => {
+        const date = getDate();
+        const folder = "upload";
+        const filePath = `${folder}/${date}-${info.filename}`;
+        const bucketPath = bucket.file(filePath);
+        stream.pipe(bucketPath.createWriteStream()).on("finish", () => {
+          resolve(filePath);
+        });
+      });
+
+      bb.on("error", (err) => {
+        logger.error("Busboy error:", err);
+        reject(new Error("File upload failed."));
       });
     });
-    bb.on("error", (err) => {
-      logger.error("Busboy error:", err);
-      res.status(500).send("File upload failed.");
-    });
+
     bb.end(req.rawBody);
+
+    try {
+      const uploadedFilePath = await processFileUpload;
+      res.status(200).send(uploadedFilePath);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
   }
 );
 

@@ -1,5 +1,5 @@
 // 実行時間のyyyyMMddhhmmssを日本時間で取得
-export const getDate = () => {
+export const getDate = (): string => {
   const JST_OFFSET = 9 * 60 * 60 * 1000; // 9時間をミリ秒で表現
   const date = new Date(Date.now() + JST_OFFSET);
 
