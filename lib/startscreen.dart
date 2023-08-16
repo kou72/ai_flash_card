@@ -89,18 +89,24 @@ class StartScreenState extends State<StartScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         const Text(
-          'PDFの内容を読み取り暗記カードを作成します',
+          'PDFを読み取り暗記カードを作成します',
+          style: TextStyle(
+            color: Colors.blueGrey,
+            fontSize: 16.0,
+          ),
         ),
+        const SizedBox(height: 12.0),
         _pdfPickContainer(),
-        const SizedBox(height: 20.0),
-        ElevatedButton(
-          onPressed: _pickPDF,
-          child: const Text('PDFを選択'),
-        ),
-        const SizedBox(height: 20.0),
-        Text('選択されたファイル: $_pickedFileName'),
-        const SizedBox(height: 20.0),
-        _createFlashcardsButton(),
+        _createFlashcardsContainer(),
+        // const SizedBox(height: 20.0),
+        // ElevatedButton(
+        //   onPressed: _pickPDF,
+        //   child: const Text('PDFを選択'),
+        // ),
+        // const SizedBox(height: 20.0),
+        // Text('選択されたファイル: $_pickedFileName'),
+        // const SizedBox(height: 20.0),
+        // _createFlashcardsButton(),
       ],
     );
   }
@@ -121,7 +127,7 @@ class StartScreenState extends State<StartScreen> {
     return GestureDetector(
       onTap: _pickPDF,
       child: Container(
-        margin: const EdgeInsets.all(20.0),
+        margin: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(
@@ -156,7 +162,7 @@ class StartScreenState extends State<StartScreen> {
         ),
         SizedBox(height: 8.0),
         Text(
-          'PDFを選択',
+          '1. PDFを選択',
           style: TextStyle(
             color: Colors.blueGrey,
             fontSize: 16.0,
@@ -181,6 +187,83 @@ class StartScreenState extends State<StartScreen> {
           style: const TextStyle(
             color: Colors.blueGrey,
             fontSize: 16.0,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _createFlashcardsContainer() {
+    return GestureDetector(
+      onTap: _createFlashcards,
+      child: Container(
+        margin: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+            color: Colors.blueGrey,
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(24.0),
+        ),
+        width: 200,
+        height: 200,
+        child: _createFlashcardsIconSwitcher(),
+      ),
+    );
+  }
+
+  Widget _createFlashcardsIconSwitcher() {
+    if (_isLoading == false) {
+      return Center(child: _createFlashcardsIcon());
+    } else {
+      return Center(child: _loadingIcon());
+    }
+  }
+
+  Widget _createFlashcardsIcon() {
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Icon(
+          Icons.create,
+          color: Colors.blueGrey,
+          size: 64.0,
+        ),
+        SizedBox(height: 8.0),
+        Text(
+          '2. 暗記カードを作成',
+          style: TextStyle(
+            color: Colors.blueGrey,
+            fontSize: 16.0,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _loadingIcon() {
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        SizedBox(
+          width: 64.0,
+          height: 64.0,
+          child: CircularProgressIndicator(),
+        ),
+        SizedBox(height: 16.0),
+        Text(
+          '暗記カードを作成中',
+          style: TextStyle(
+            color: Colors.blueGrey,
+            fontSize: 16.0,
+          ),
+        ),
+        Text(
+          '※5分程かかる場合があります',
+          style: TextStyle(
+            color: Colors.blueGrey,
+            fontSize: 12.0,
           ),
         ),
       ],
