@@ -39,7 +39,7 @@ const getFileContents = async (bucket: Bucket, DestinationFolder: string) => {
 
 export const helloWorld = onRequest(
   {timeoutSeconds: 300, cors: true},
-  (req, res) => {
+  async (req, res) => {
     if (req.method !== "POST") {
       res.status(405).end();
       return;
@@ -48,11 +48,16 @@ export const helloWorld = onRequest(
     const bb = busboy({headers: req.headers});
     bb.on("file", (name, stream, info) => {
       const date = getDate();
-      const destFolder = "upload";
-      const distPath = bucket.file(`${destFolder}/${date}-${info.filename}`);
-      stream.pipe(distPath.createWriteStream()).on("finish", () => {
-        res.status(200).send("File processed.");
+      const folder = "upload";
+      const path = `${folder}/${date}-${info.filename}`;
+      const bucketPath = bucket.file(path);
+      stream.pipe(bucketPath.createWriteStream()).on("finish", () => {
+        res.status(200).send(path);
       });
+    });
+    bb.on("error", (err) => {
+      logger.error("Busboy error:", err);
+      res.status(500).send("File upload failed.");
     });
     bb.end(req.rawBody);
   }

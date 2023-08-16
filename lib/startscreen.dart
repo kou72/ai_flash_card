@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
-// import 'package:http_parser/http_parser.dart';
+import 'package:http_parser/http_parser.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({Key? key}) : super(key: key);
@@ -35,7 +35,9 @@ class StartScreenState extends State<StartScreen> {
     print("testreq");
 
     // final url = Uri.https('documenttextdetection-vhoidcprtq-uc.a.run.app', '');
-    final url = Uri.https('helloworld-vhoidcprtq-uc.a.run.app', '');
+    // final url = Uri.https('helloworld-vhoidcprtq-uc.a.run.app');
+    final url =
+        Uri.http('127.0.0.1:5001', '/flash-pdf-card/us-central1/helloWorld');
 
     final req = http.MultipartRequest('POST', url);
 
@@ -47,9 +49,9 @@ class StartScreenState extends State<StartScreen> {
       ),
     );
 
-    req.send().then((response) {
-      if (response.statusCode == 200) print("Uploaded!");
-    });
+    final streamedResponse = await req.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    print(response.body);
   }
 
   Future<void> _createFlashcards() async {
