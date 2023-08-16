@@ -74,7 +74,8 @@ class StartScreenState extends State<StartScreen> {
     if (!mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ResultScreen()),
+      MaterialPageRoute(
+          builder: (context) => ResultScreen(resultText: response.body)),
     );
   }
 
@@ -308,7 +309,9 @@ class StartScreenState extends State<StartScreen> {
 }
 
 class ResultScreen extends StatelessWidget {
-  const ResultScreen({Key? key}) : super(key: key);
+  final String resultText;
+  const ResultScreen({Key? key, required this.resultText}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -316,14 +319,10 @@ class ResultScreen extends StatelessWidget {
         title: const Text('暗記カードの結果'),
       ),
       body: ListView(
-        children: const [
+        children: [
           ListTile(
-            title: Text('ダミーの質問1'),
-            subtitle: Text('ダミーの答え1'),
-          ),
-          ListTile(
-            title: Text('ダミーの質問2'),
-            subtitle: Text('ダミーの答え2'),
+            title: Text('質問: ${resultText}'), // 例として、ここでresultTextを表示しています
+            // subtitle: Text('答え: ${resultText}'),
           ),
         ],
       ),
