@@ -11,7 +11,7 @@ class StartScreen extends StatefulWidget {
 
 class StartScreenState extends State<StartScreen> {
   String _pickedFileName = '';
-  // int? _pickedFileSize;
+  final _maxFileSize = 2000;
   Uint8List? _pickedFileBytes;
   bool _isLoading = false;
   Color _pdfPickContainerColor = Colors.white;
@@ -25,14 +25,32 @@ class StartScreenState extends State<StartScreen> {
 
     if (result == null) return;
     PlatformFile file = result.files.first;
+    if (file.size > _maxFileSize * 1024) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('$_maxFileSize KB以下のファイルを選択してください。'),
+            backgroundColor: Colors.blueGrey),
+      );
+      return;
+    }
     setState(() {
       _pickedFileName = file.name;
-      // _pickedFileSize = file.size;
       _pickedFileBytes = file.bytes;
     });
   }
 
   Future<void> _createFlashcards() async {
+    if (_pickedFileName == '') {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('PDFを選択してください。'),
+          backgroundColor: Colors.blueGrey,
+        ),
+      );
+      return;
+    }
     setState(() => _isLoading = true);
     final url =
         Uri.https('generateflashcardquestions-vhoidcprtq-uc.a.run.app', '');
@@ -133,20 +151,27 @@ class StartScreenState extends State<StartScreen> {
   }
 
   Widget _pdfPickerIcon() {
-    return const Column(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Icon(
+        const Icon(
           Icons.upload_file,
           color: Colors.blueGrey,
           size: 64.0,
         ),
-        SizedBox(height: 8.0),
-        Text(
+        const SizedBox(height: 8.0),
+        const Text(
           '1. PDFを選択',
           style: TextStyle(
             color: Colors.blueGrey,
             fontSize: 16.0,
+          ),
+        ),
+        Text(
+          '※$_maxFileSize KBまで',
+          style: const TextStyle(
+            color: Colors.blueGrey,
+            fontSize: 12.0,
           ),
         ),
       ],
