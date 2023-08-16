@@ -15,6 +15,8 @@ class StartScreenState extends State<StartScreen> {
   // int? _pickedFileSize;
   Uint8List? _pickedFileBytes;
   bool _isLoading = false;
+  Color _pdfPickContainerColor = Colors.white;
+  Color _flashcardsContainerColor = Colors.white;
 
   Future<void> _pickPDF() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -90,45 +92,36 @@ class StartScreenState extends State<StartScreen> {
   }
 
   Widget _pdfPickContainer() {
-    Color containerColor = Colors.white;
-
-    return StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
-        return Material(
-          color: Colors.transparent, // 透明なMaterial
-          child: InkWell(
-            onTap: () {
-              _pickPDF();
-              setState(() {
-                containerColor = Colors.grey[200]!;
-              });
-            },
-            onHover: (isHovering) {
-              setState(() {
-                if (isHovering) {
-                  containerColor = Colors.grey[200]!;
-                } else {
-                  containerColor = Colors.white;
-                }
-              });
-            },
-            borderRadius: BorderRadius.circular(24.0), // InkWellの角丸
-            child: Container(
-              decoration: BoxDecoration(
-                color: containerColor,
-                border: Border.all(
-                  color: Colors.blueGrey,
-                  width: 2.0,
-                ),
-                borderRadius: BorderRadius.circular(24.0),
-              ),
-              width: 200,
-              height: 200,
-              child: _pdfIconSwitcher(),
-            ),
-          ),
-        );
+    return InkWell(
+      onTap: () {
+        _pickPDF();
+        setState(() {
+          _pdfPickContainerColor = Colors.grey[200]!;
+        });
       },
+      onHover: (isHovering) {
+        setState(() {
+          if (isHovering) {
+            _pdfPickContainerColor = Colors.grey[200]!;
+          } else {
+            _pdfPickContainerColor = Colors.white;
+          }
+        });
+      },
+      borderRadius: BorderRadius.circular(24.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: _pdfPickContainerColor,
+          border: Border.all(
+            color: Colors.blueGrey,
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(24.0),
+        ),
+        width: 200,
+        height: 200,
+        child: _pdfIconSwitcher(),
+      ),
     );
   }
 
@@ -183,11 +176,26 @@ class StartScreenState extends State<StartScreen> {
   }
 
   Widget _createFlashcardsContainer() {
-    return GestureDetector(
-      onTap: _createFlashcards,
+    return InkWell(
+      onTap: () {
+        _createFlashcards();
+        setState(() {
+          _flashcardsContainerColor = Colors.grey[200]!;
+        });
+      },
+      onHover: (isHovering) {
+        setState(() {
+          if (isHovering) {
+            _flashcardsContainerColor = Colors.grey[200]!;
+          } else {
+            _flashcardsContainerColor = Colors.white;
+          }
+        });
+      },
+      borderRadius: BorderRadius.circular(24.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: _flashcardsContainerColor,
           border: Border.all(
             color: Colors.blueGrey,
             width: 2.0,
