@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:pdfx/pdfx.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class StartScreen extends StatefulWidget {
 
 class StartScreenState extends State<StartScreen> {
   String _pickedFileName = '';
-  final _maxFileSize = 2000;
+  final _maxPageCount = 10;
   Uint8List? _pickedFileBytes;
   bool _isLoading = false;
   Color _pdfPickContainerColor = Colors.white;
@@ -24,13 +25,15 @@ class StartScreenState extends State<StartScreen> {
       allowedExtensions: ['pdf'],
     );
 
-    if (result == null) return;
+    if (result == null || result.files.isEmpty) return;
     PlatformFile file = result.files.first;
-    if (file.size > _maxFileSize * 1024) {
+    PdfDocument docFromData = await PdfDocument.openData(file.bytes!);
+
+    if (docFromData.pagesCount >= _maxPageCount) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('$_maxFileSize KB以下のファイルを選択してください。'),
+            content: Text('$_maxPageCount ページ以下のファイルを選択してください。'),
             backgroundColor: Colors.blueGrey),
       );
       return;
@@ -185,7 +188,7 @@ class StartScreenState extends State<StartScreen> {
           ),
         ),
         Text(
-          '※$_maxFileSize KBまで',
+          '※$_maxPageCount ページ以下',
           style: const TextStyle(
             color: Colors.blueGrey,
             fontSize: 12.0,
