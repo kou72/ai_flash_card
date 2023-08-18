@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pdfx/pdfx.dart';
+import 'package:flash_pdf_card/resultscreen.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({Key? key}) : super(key: key);
@@ -307,28 +308,6 @@ class StartScreenState extends State<StartScreen> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class ResultScreen extends StatelessWidget {
-  final String resultText;
-  const ResultScreen({Key? key, required this.resultText}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('暗記カードの結果'),
-      ),
-      body: ListView(
-        children: [
-          ListTile(
-            title: Text('質問: ${resultText}'), // 例として、ここでresultTextを表示しています
-            // subtitle: Text('答え: ${resultText}'),
-          ),
-        ],
-      ),
     );
   }
 }
