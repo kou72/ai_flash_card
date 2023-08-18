@@ -8,21 +8,9 @@ class ResultScreen extends StatefulWidget {
 
 class ResultScreenState extends State<ResultScreen> {
   final cardsData = [
-    {
-      'question': '質問1',
-      'answer': '答え1',
-      'isFlipped': true,
-    },
-    {
-      'question': '質問2',
-      'answer': '答え2',
-      'isFlipped': true,
-    },
-    {
-      'question': '質問3',
-      'answer': '答え3',
-      'isFlipped': true,
-    },
+    FlashCard(question: '質問1', answer: '答え1', isFlipped: true),
+    FlashCard(question: '質問2', answer: '答え2', isFlipped: true),
+    FlashCard(question: '質問3', answer: '答え3', isFlipped: true),
   ];
 
   @override
@@ -34,31 +22,38 @@ class ResultScreenState extends State<ResultScreen> {
       body: ListView.builder(
         itemCount: cardsData.length,
         itemBuilder: (context, index) {
-          return _flashCard(index, cardsData[index]);
+          return _flashCard(index);
         },
       ),
     );
   }
 
-  Widget _flashCard(int index, Map<String, dynamic> cardData) {
+  Widget _flashCard(int index) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          cardData['isFlipped'] = !cardData['isFlipped'];
+          cardsData[index].isFlipped = !cardsData[index].isFlipped;
         });
       },
       child: Card(
         child: Center(
-          child: cardData['isFlipped']
-              ? Text(cardData['question'])
-              : Text(cardData['answer']),
+          child: cardsData[index].isFlipped
+              ? Text(cardsData[index].question)
+              : Text(cardsData[index].answer),
         ),
       ),
     );
   }
 }
 
+class FlashCard {
+  final String question;
+  final String answer;
+  bool isFlipped;
 
+  FlashCard(
+      {required this.question, required this.answer, this.isFlipped = true});
+}
 
 // class ResultScreen extends StatelessWidget {
 //   final String resultText;
