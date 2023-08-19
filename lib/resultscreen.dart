@@ -8,7 +8,10 @@ class ResultScreen extends StatefulWidget {
 
 class ResultScreenState extends State<ResultScreen> {
   final sampleData = [
-    FlashCardData(question: '質問1', answer: '答え1', isFlipped: true),
+    FlashCardData(
+        question: '質問1長い文字列でカード幅からはみ出るかどうかを検証しようと思うので、長い文章を書いています。',
+        answer: '答え1',
+        isFlipped: true),
     FlashCardData(question: '質問2', answer: '答え2', isFlipped: true),
     FlashCardData(question: '質問3', answer: '答え3', isFlipped: true),
   ];
@@ -35,13 +38,74 @@ class ResultScreenState extends State<ResultScreen> {
           sampleData[index].isFlipped = !sampleData[index].isFlipped;
         });
       },
-      child: Card(
-        child: Center(
-          child: sampleData[index].isFlipped
-              ? Text(sampleData[index].question)
-              : Text(sampleData[index].answer),
+      child: Center(
+        child: SizedBox(
+          width: 300.0,
+          child: Card(
+            margin: const EdgeInsets.all(10.0),
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: _flashCardText(index),
+            ),
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _flashCardText(int index) {
+    if (sampleData[index].isFlipped) {
+      return _questionText(index);
+    } else {
+      return _answerText(index);
+    }
+  }
+
+  Widget _questionText(int index) {
+    return Row(
+      children: [
+        const Text(
+          'Q',
+          style: TextStyle(
+            color: Colors.blueGrey,
+            fontSize: 24.0,
+          ),
+        ),
+        const SizedBox(width: 10.0),
+        Expanded(
+          child: Text(
+            sampleData[index].question,
+            style: const TextStyle(
+              color: Colors.blueGrey,
+              fontSize: 16.0,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _answerText(int index) {
+    return Row(
+      children: [
+        const Text(
+          'A',
+          style: TextStyle(
+            color: Colors.blueGrey,
+            fontSize: 24.0,
+          ),
+        ),
+        const SizedBox(width: 10.0),
+        Expanded(
+          child: Text(
+            sampleData[index].answer,
+            style: const TextStyle(
+              color: Colors.blueGrey,
+              fontSize: 16.0,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -57,25 +121,3 @@ class FlashCardData {
     this.isFlipped = true,
   });
 }
-
-// class ResultScreen extends StatelessWidget {
-//   final String resultText;
-//   const ResultScreen({Key? key, required this.resultText}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('暗記カードの結果'),
-//       ),
-//       body: ListView(
-//         children: [
-//           ListTile(
-//             title: Text('質問: ${resultText}'), // 例として、ここでresultTextを表示しています
-//             // subtitle: Text('答え: ${resultText}'),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
