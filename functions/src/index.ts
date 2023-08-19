@@ -28,8 +28,8 @@ export const generateFlashCardQuestions = onRequest(
       const destFolder =
         "dest/" + sourcePath.split("/")[1].replace(/\.[^/.]+$/, "") + "/";
       await convertPdfToTextJson(sourcePath, destFolder);
-      const texts = await extractTextFromJson(destFolder);
-      const questions = await generateQuestionsFromChatGPT(texts);
+      const text = await extractTextFromJson(destFolder);
+      const questions = await generateQuestionsFromChatGPT(text);
       res.status(200).send(questions);
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -91,20 +91,33 @@ const convertPdfToTextJson = async (sourcePath: string, destFolder: string) => {
 const extractTextFromJson = async (DestinationFolder: string) => {
   try {
     const [files] = await bucket.getFiles({prefix: DestinationFolder});
-    const [texts] = files.map(async (file: any) => {
-      const json = bucket.file(file.name);
-      const contents = await json.download();
-      const jsonString = contents.toString();
-      const jsonData = JSON.parse(jsonString);
-      return jsonData.responses[0].fullTextAnnotation.text;
+    const jsonFile = await Promise.all(
+      files.map(async (file: any) => {
+        const json = bucket.file(file.name);
+        const contents = await json.download();
+        const jsonString = contents.toString();
+        const jsonData = JSON.parse(jsonString);
+        return jsonData;
+      })
+    );
+    const texts: any[] = [];
+    jsonFile.map((data: any) => {
+      data.responses.map(
+        // (res: any) => (text = text + res.fullTextAnnotation.text)
+        (res: any) => texts.push(res.fullTextAnnotation.text)
+      );
     });
 
-    const filePath = `${DestinationFolder}texts.txt`;
-    const bucketPath = bucket.file(filePath);
-    bucketPath.save(await texts);
+    // デバック用の中間ファイルとしてtext.txtを作成
+    texts.map(async (text: any, index: number) => {
+      const filePath = `${DestinationFolder}text${index.toString()}.txt`;
+      const bucketPath = bucket.file(filePath);
+      bucketPath.save(await text);
+    });
 
-    return texts;
+    return texts[0];
   } catch (error: any) {
     logger.error(error.message, {structuredData: true});
+    throw new Error(error.message);
   }
 };
