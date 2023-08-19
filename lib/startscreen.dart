@@ -84,7 +84,7 @@ class StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flash PDF Card'),
+        title: const Text('Flash PDF Card (Demo)'),
       ),
       body: Center(
         child: _objects(),
