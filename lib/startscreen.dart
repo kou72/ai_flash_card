@@ -56,9 +56,7 @@ class StartScreenState extends State<StartScreen> {
     }
     setState(() => _isLoading = true);
     final url =
-        // Uri.https('generateflashcardquestions-vhoidcprtq-uc.a.run.app', '');
-        Uri.http('127.0.0.1:5001',
-            'flash-pdf-card/us-central1/generateFlashCardQuestions');
+        Uri.https('generateflashcardquestions-vhoidcprtq-uc.a.run.app', '');
     final req = http.MultipartRequest('POST', url);
     req.files.add(
       http.MultipartFile.fromBytes(
