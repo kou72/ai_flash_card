@@ -72,17 +72,17 @@ class ResultScreenState extends State<ResultScreen> {
       answerTextPainter.height,
     );
 
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          sampleData[index].isFlipped = !sampleData[index].isFlipped;
-        });
-      },
-      child: Center(
-        child: SizedBox(
-          width: cardWidth,
-          child: Card(
-            margin: const EdgeInsets.all(10.0),
+    return Center(
+      child: SizedBox(
+        width: cardWidth,
+        child: Card(
+          margin: const EdgeInsets.all(10.0),
+          child: InkWell(
+            onTap: () {
+              setState(() {
+                sampleData[index].isFlipped = !sampleData[index].isFlipped;
+              });
+            },
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: ConstrainedBox(
