@@ -68,18 +68,16 @@ class StartScreenState extends State<StartScreen> {
 
     final streamedResponse = await req.send();
     final response = await http.Response.fromStream(streamedResponse);
-    print(response.body);
     setState(() {
       _isLoading = false;
     });
-    print(response.body);
 
     if (!mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(
-          // builder: (context) => ResultScreen(resultText: response.body)),
-          builder: (context) => ResultScreen()),
+          builder: (context) => ResultScreen(resultText: response.body)),
+      // builder: (context) => ResultScreen()),
     );
   }
 

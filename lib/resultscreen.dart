@@ -1,9 +1,19 @@
 import 'dart:math';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 
+List<FlashCardData> createFlashCardDataList(String jsonText) {
+  final parsed = json.decode(jsonText) as List;
+  final flashCardData = parsed
+      .map((item) => FlashCardData(
+          question: item['question'], answer: item['answer'], isFlipped: true))
+      .toList();
+  return flashCardData;
+}
+
 class ResultScreen extends StatefulWidget {
-  const ResultScreen({Key? key}) : super(key: key);
+  final String resultText;
+  const ResultScreen({Key? key, required this.resultText}) : super(key: key);
   @override
   ResultScreenState createState() => ResultScreenState();
 }
@@ -12,42 +22,20 @@ class ResultScreenState extends State<ResultScreen> {
   final cardWidth = 300.0;
   final cardTextStyle = const TextStyle(color: Colors.blueGrey, fontSize: 16.0);
   final iconTextStyle = const TextStyle(color: Colors.blueGrey, fontSize: 24.0);
-
-  final sampleData = [
-    FlashCardData(
-        question: '質問1長い文字列でカード幅からはみ出るかどうかを検証しようと思うので、長い文章を書いています。',
-        answer: '答え1',
-        isFlipped: true),
-    FlashCardData(question: '質問2', answer: '答え2', isFlipped: true),
-    FlashCardData(question: '質問3', answer: '答え3', isFlipped: true),
-    FlashCardData(
-        question: '質問1長い文字列でカード幅からはみ出るかどうかを検証しようと思うので、長い文章を書いています。',
-        answer: '答え1',
-        isFlipped: true),
-    FlashCardData(question: '質問2', answer: '答え2', isFlipped: true),
-    FlashCardData(question: '質問3', answer: '答え3', isFlipped: true),
-    FlashCardData(
-        question: '質問1長い文字列でカード幅からはみ出るかどうかを検証しようと思うので、長い文章を書いています。',
-        answer: '答え1',
-        isFlipped: true),
-    FlashCardData(question: '質問2', answer: '答え2', isFlipped: true),
-    FlashCardData(question: '質問3', answer: '答え3', isFlipped: true),
-    FlashCardData(
-        question: '質問1長い文字列でカード幅からはみ出るかどうかを検証しようと思うので、長い文章を書いています。',
-        answer: '答え1',
-        isFlipped: true),
-    FlashCardData(question: '質問2', answer: '答え2', isFlipped: true),
-    FlashCardData(question: '質問3', answer: '答え3', isFlipped: true),
-  ];
+  List<FlashCardData> flashCardData = [];
 
   @override
+  void initState() {
+    flashCardData = createFlashCardDataList(widget.resultText);
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('暗記カード'),
       ),
       body: ListView.builder(
-        itemCount: sampleData.length,
+        itemCount: flashCardData.length,
         itemBuilder: (context, index) {
           return _flashCard(index);
         },
@@ -58,12 +46,12 @@ class ResultScreenState extends State<ResultScreen> {
   Widget _flashCard(int index) {
     // question と answer のテキストの高さを計算
     final questionTextPainter = TextPainter(
-      text: TextSpan(text: sampleData[index].question, style: cardTextStyle),
+      text: TextSpan(text: flashCardData[index].question, style: cardTextStyle),
       textDirection: TextDirection.ltr,
     )..layout(minWidth: cardWidth, maxWidth: cardWidth);
 
     final answerTextPainter = TextPainter(
-      text: TextSpan(text: sampleData[index].answer, style: cardTextStyle),
+      text: TextSpan(text: flashCardData[index].answer, style: cardTextStyle),
       textDirection: TextDirection.ltr,
     )..layout(minWidth: cardWidth, maxWidth: cardWidth);
 
@@ -80,7 +68,8 @@ class ResultScreenState extends State<ResultScreen> {
           child: InkWell(
             onTap: () {
               setState(() {
-                sampleData[index].isFlipped = !sampleData[index].isFlipped;
+                flashCardData[index].isFlipped =
+                    !flashCardData[index].isFlipped;
               });
             },
             child: Padding(
@@ -100,7 +89,7 @@ class ResultScreenState extends State<ResultScreen> {
   }
 
   Widget _flashCardText(int index) {
-    if (sampleData[index].isFlipped) {
+    if (flashCardData[index].isFlipped) {
       return _questionText(index);
     } else {
       return _answerText(index);
@@ -118,7 +107,7 @@ class ResultScreenState extends State<ResultScreen> {
         const SizedBox(width: 10.0),
         Expanded(
           child: Text(
-            sampleData[index].question,
+            flashCardData[index].question,
             style: cardTextStyle,
           ),
         ),
@@ -137,7 +126,7 @@ class ResultScreenState extends State<ResultScreen> {
         const SizedBox(width: 10.0),
         Expanded(
           child: Text(
-            sampleData[index].answer,
+            flashCardData[index].answer,
             style: cardTextStyle,
           ),
         ),
