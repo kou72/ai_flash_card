@@ -117,7 +117,7 @@ class StartScreenState extends State<StartScreen> {
   Widget _samplePDF() {
     return InkWell(
       onTap: () => launchUrl(Uri.parse(
-          'https://cio.go.jp/sites/default/files/uploads/documents/1020_api_tecnical_guidebook.pdf')),
+          'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/r01/pdf/01point.pdf')),
       child: const Text(
         'サンプルのダウンロード',
         style: TextStyle(
