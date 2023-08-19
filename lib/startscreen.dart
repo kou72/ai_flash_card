@@ -89,7 +89,7 @@ class StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flash PDF Card (Demo)'),
+        title: const Text('PDF→暗記カード アプリ (Demo版)'),
         actions: [
           const Center(child: Text("前の結果")),
           _historyIconButton(),
@@ -120,7 +120,7 @@ class StartScreenState extends State<StartScreen> {
   Widget _objects() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
+      children: [
         const Text(
           'PDFを読み取り暗記カードを作成します',
           style: TextStyle(
@@ -133,6 +133,8 @@ class StartScreenState extends State<StartScreen> {
         _pdfPickContainer(),
         const SizedBox(height: 16.0),
         _createFlashcardsContainer(),
+        const SizedBox(height: 20.0),
+        _feedbackInformation()
       ],
     );
   }
@@ -301,6 +303,39 @@ class StartScreenState extends State<StartScreen> {
             fontSize: 12.0,
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _feedbackInformation() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("もし良ければ ", style: TextStyle(color: Colors.blueGrey)),
+        InkWell(
+          onTap: () =>
+              launchUrl(Uri.parse('https://forms.gle/ZcUfqHR9acAbbbGp7')),
+          child: const Text(
+            'GoogleForm',
+            style: TextStyle(
+              color: Colors.blue,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        ),
+        const Text(" か ", style: TextStyle(color: Colors.blueGrey)),
+        InkWell(
+          onTap: () => launchUrl(Uri.parse('https://twitter.com/kou7273')),
+          child: const Text(
+            'X(Twitter)',
+            style: TextStyle(
+              color: Colors.blue,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        ),
+        const Text(" からフィードバックをお願いします。",
+            style: TextStyle(color: Colors.blueGrey)),
       ],
     );
   }
