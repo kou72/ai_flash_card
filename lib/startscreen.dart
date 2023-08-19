@@ -17,8 +17,6 @@ class StartScreenState extends State<StartScreen> {
   final _maxPageCount = 10;
   Uint8List? _pickedFileBytes;
   bool _isLoading = false;
-  Color _pdfPickContainerColor = Colors.white;
-  Color _flashcardsContainerColor = Colors.white;
 
   Future<void> _pickPDF() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -131,34 +129,20 @@ class StartScreenState extends State<StartScreen> {
   }
 
   Widget _pdfPickContainer() {
-    return InkWell(
-      onTap: () {
-        _pickPDF();
-        setState(() {
-          _pdfPickContainerColor = Colors.grey[200]!;
-        });
-      },
-      onHover: (isHovering) {
-        setState(() {
-          if (isHovering) {
-            _pdfPickContainerColor = Colors.grey[200]!;
-          } else {
-            _pdfPickContainerColor = Colors.white;
-          }
-        });
-      },
-      borderRadius: BorderRadius.circular(24.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: _pdfPickContainerColor,
-          border: Border.all(
-            color: Colors.blueGrey,
-            width: 2.0,
-          ),
-          borderRadius: BorderRadius.circular(24.0),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.blueGrey,
+          width: 2.0,
         ),
-        width: 200,
-        height: 200,
+        borderRadius: BorderRadius.circular(24.0),
+      ),
+      width: 200,
+      height: 200,
+      child: InkWell(
+        onTap: () {
+          _pickPDF();
+        },
         child: _pdfIconSwitcher(),
       ),
     );
@@ -222,34 +206,20 @@ class StartScreenState extends State<StartScreen> {
   }
 
   Widget _createFlashcardsContainer() {
-    return InkWell(
-      onTap: () {
-        _createFlashcards();
-        setState(() {
-          _flashcardsContainerColor = Colors.grey[200]!;
-        });
-      },
-      onHover: (isHovering) {
-        setState(() {
-          if (isHovering) {
-            _flashcardsContainerColor = Colors.grey[200]!;
-          } else {
-            _flashcardsContainerColor = Colors.white;
-          }
-        });
-      },
-      borderRadius: BorderRadius.circular(24.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: _flashcardsContainerColor,
-          border: Border.all(
-            color: Colors.blueGrey,
-            width: 2.0,
-          ),
-          borderRadius: BorderRadius.circular(24.0),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.blueGrey,
+          width: 2.0,
         ),
-        width: 200,
-        height: 200,
+        borderRadius: BorderRadius.circular(24.0),
+      ),
+      width: 200,
+      height: 200,
+      child: InkWell(
+        onTap: () {
+          _createFlashcards();
+        },
         child: _createFlashcardsIconSwitcher(),
       ),
     );
