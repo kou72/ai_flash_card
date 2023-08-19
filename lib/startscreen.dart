@@ -85,6 +85,19 @@ class StartScreenState extends State<StartScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flash PDF Card (Demo)'),
+        actions: [
+          const Center(child: Text("前の結果")),
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ResultScreen(resultText: "[]")),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: _objects(),
