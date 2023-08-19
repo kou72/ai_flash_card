@@ -99,6 +99,10 @@ const extractTextFromJson = async (DestinationFolder: string) => {
       return jsonData.responses[0].fullTextAnnotation.text;
     });
 
+    const filePath = `${DestinationFolder}texts.txt`;
+    const bucketPath = bucket.file(filePath);
+    bucketPath.save(await texts);
+
     return texts;
   } catch (error: any) {
     logger.error(error.message, {structuredData: true});

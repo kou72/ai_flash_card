@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as logger from "firebase-functions/logger";
-import {system, userEx1, assistantEx1, userEx2, assistantEx2} from "./prompt";
+import {system, userEx1, assistantEx1} from "./prompt";
 
 export const generateQuestionsFromChatGPT = async (input: string) => {
   const URL = "https://api.openai.com/v1/chat/completions";
@@ -11,8 +11,6 @@ export const generateQuestionsFromChatGPT = async (input: string) => {
     {role: "system", content: system},
     {role: "user", content: userEx1},
     {role: "assistant", content: assistantEx1},
-    {role: "user", content: userEx2},
-    {role: "assistant", content: assistantEx2},
     {role: "user", content: input},
   ];
 
