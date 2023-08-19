@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class ResultScreen extends StatefulWidget {
@@ -7,7 +9,29 @@ class ResultScreen extends StatefulWidget {
 }
 
 class ResultScreenState extends State<ResultScreen> {
+  final cardWidth = 300.0;
+  final cardTextStyle = const TextStyle(color: Colors.blueGrey, fontSize: 16.0);
+  final iconTextStyle = const TextStyle(color: Colors.blueGrey, fontSize: 24.0);
+
   final sampleData = [
+    FlashCardData(
+        question: '質問1長い文字列でカード幅からはみ出るかどうかを検証しようと思うので、長い文章を書いています。',
+        answer: '答え1',
+        isFlipped: true),
+    FlashCardData(question: '質問2', answer: '答え2', isFlipped: true),
+    FlashCardData(question: '質問3', answer: '答え3', isFlipped: true),
+    FlashCardData(
+        question: '質問1長い文字列でカード幅からはみ出るかどうかを検証しようと思うので、長い文章を書いています。',
+        answer: '答え1',
+        isFlipped: true),
+    FlashCardData(question: '質問2', answer: '答え2', isFlipped: true),
+    FlashCardData(question: '質問3', answer: '答え3', isFlipped: true),
+    FlashCardData(
+        question: '質問1長い文字列でカード幅からはみ出るかどうかを検証しようと思うので、長い文章を書いています。',
+        answer: '答え1',
+        isFlipped: true),
+    FlashCardData(question: '質問2', answer: '答え2', isFlipped: true),
+    FlashCardData(question: '質問3', answer: '答え3', isFlipped: true),
     FlashCardData(
         question: '質問1長い文字列でカード幅からはみ出るかどうかを検証しようと思うので、長い文章を書いています。',
         answer: '答え1',
@@ -32,6 +56,22 @@ class ResultScreenState extends State<ResultScreen> {
   }
 
   Widget _flashCard(int index) {
+    // question と answer のテキストの高さを計算
+    final questionTextPainter = TextPainter(
+      text: TextSpan(text: sampleData[index].question, style: cardTextStyle),
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: cardWidth, maxWidth: cardWidth);
+
+    final answerTextPainter = TextPainter(
+      text: TextSpan(text: sampleData[index].answer, style: cardTextStyle),
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: cardWidth, maxWidth: cardWidth);
+
+    final maxHeight = max(
+      questionTextPainter.height,
+      answerTextPainter.height,
+    );
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -40,12 +80,18 @@ class ResultScreenState extends State<ResultScreen> {
       },
       child: Center(
         child: SizedBox(
-          width: 300.0,
+          width: cardWidth,
           child: Card(
             margin: const EdgeInsets.all(10.0),
             child: Padding(
               padding: const EdgeInsets.all(15.0),
-              child: _flashCardText(index),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: maxHeight,
+                  maxHeight: maxHeight,
+                ),
+                child: _flashCardText(index),
+              ),
             ),
           ),
         ),
@@ -63,22 +109,17 @@ class ResultScreenState extends State<ResultScreen> {
 
   Widget _questionText(int index) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Q',
-          style: TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 24.0,
-          ),
+          style: iconTextStyle,
         ),
         const SizedBox(width: 10.0),
         Expanded(
           child: Text(
             sampleData[index].question,
-            style: const TextStyle(
-              color: Colors.blueGrey,
-              fontSize: 16.0,
-            ),
+            style: cardTextStyle,
           ),
         ),
       ],
@@ -87,22 +128,17 @@ class ResultScreenState extends State<ResultScreen> {
 
   Widget _answerText(int index) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'A',
-          style: TextStyle(
-            color: Colors.blueGrey,
-            fontSize: 24.0,
-          ),
+          style: iconTextStyle,
         ),
         const SizedBox(width: 10.0),
         Expanded(
           child: Text(
             sampleData[index].answer,
-            style: const TextStyle(
-              color: Colors.blueGrey,
-              fontSize: 16.0,
-            ),
+            style: cardTextStyle,
           ),
         ),
       ],
