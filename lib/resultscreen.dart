@@ -7,10 +7,10 @@ class ResultScreen extends StatefulWidget {
 }
 
 class ResultScreenState extends State<ResultScreen> {
-  final cardsData = [
-    FlashCard(question: '質問1', answer: '答え1', isFlipped: true),
-    FlashCard(question: '質問2', answer: '答え2', isFlipped: true),
-    FlashCard(question: '質問3', answer: '答え3', isFlipped: true),
+  final sampleData = [
+    FlashCardData(question: '質問1', answer: '答え1', isFlipped: true),
+    FlashCardData(question: '質問2', answer: '答え2', isFlipped: true),
+    FlashCardData(question: '質問3', answer: '答え3', isFlipped: true),
   ];
 
   @override
@@ -20,7 +20,7 @@ class ResultScreenState extends State<ResultScreen> {
         title: const Text('暗記カード'),
       ),
       body: ListView.builder(
-        itemCount: cardsData.length,
+        itemCount: sampleData.length,
         itemBuilder: (context, index) {
           return _flashCard(index);
         },
@@ -32,27 +32,30 @@ class ResultScreenState extends State<ResultScreen> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          cardsData[index].isFlipped = !cardsData[index].isFlipped;
+          sampleData[index].isFlipped = !sampleData[index].isFlipped;
         });
       },
       child: Card(
         child: Center(
-          child: cardsData[index].isFlipped
-              ? Text(cardsData[index].question)
-              : Text(cardsData[index].answer),
+          child: sampleData[index].isFlipped
+              ? Text(sampleData[index].question)
+              : Text(sampleData[index].answer),
         ),
       ),
     );
   }
 }
 
-class FlashCard {
+class FlashCardData {
   final String question;
   final String answer;
   bool isFlipped;
 
-  FlashCard(
-      {required this.question, required this.answer, this.isFlipped = true});
+  FlashCardData({
+    required this.question,
+    required this.answer,
+    this.isFlipped = true,
+  });
 }
 
 // class ResultScreen extends StatelessWidget {
