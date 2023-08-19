@@ -20,8 +20,10 @@ class ResultScreen extends StatefulWidget {
 
 class ResultScreenState extends State<ResultScreen> {
   final cardWidth = 300.0;
-  final cardTextStyle = const TextStyle(color: Colors.blueGrey, fontSize: 16.0);
-  final iconTextStyle = const TextStyle(color: Colors.blueGrey, fontSize: 24.0);
+  final cardFontSize = 16.0;
+  final cardIconSize = 24.0;
+  final questionColor = Colors.blueGrey;
+  final answerColor = Colors.blueAccent;
   List<FlashCardData> flashCardData = [];
 
   @override
@@ -48,16 +50,22 @@ class ResultScreenState extends State<ResultScreen> {
   Widget _flashCard(int index) {
     // question と answer のテキストの高さを計算
     final questionTextPainter = TextPainter(
-      text: TextSpan(text: flashCardData[index].question, style: cardTextStyle),
+      text: TextSpan(
+        text: flashCardData[index].question,
+        style: TextStyle(fontSize: cardFontSize),
+      ),
       textDirection: TextDirection.ltr,
-    )..layout(minWidth: cardWidth, maxWidth: cardWidth);
+    )..layout(minWidth: cardWidth - 100, maxWidth: cardWidth - 100);
 
     final answerTextPainter = TextPainter(
-      text: TextSpan(text: flashCardData[index].answer, style: cardTextStyle),
+      text: TextSpan(
+        text: flashCardData[index].answer,
+        style: TextStyle(fontSize: cardFontSize),
+      ),
       textDirection: TextDirection.ltr,
-    )..layout(minWidth: cardWidth, maxWidth: cardWidth);
+    )..layout(minWidth: cardWidth - 100, maxWidth: cardWidth - 100);
 
-    final maxHeight = max(
+    final cardHeight = max(
       questionTextPainter.height,
       answerTextPainter.height,
     );
@@ -78,8 +86,8 @@ class ResultScreenState extends State<ResultScreen> {
               padding: const EdgeInsets.all(15.0),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  minHeight: maxHeight,
-                  maxHeight: maxHeight,
+                  minHeight: cardHeight,
+                  maxHeight: cardHeight,
                 ),
                 child: _flashCardText(index),
               ),
@@ -104,13 +112,13 @@ class ResultScreenState extends State<ResultScreen> {
       children: [
         Text(
           'Q',
-          style: iconTextStyle,
+          style: TextStyle(color: questionColor, fontSize: cardIconSize),
         ),
         const SizedBox(width: 10.0),
         Expanded(
           child: Text(
             flashCardData[index].question,
-            style: cardTextStyle,
+            style: TextStyle(color: questionColor, fontSize: cardFontSize),
           ),
         ),
       ],
@@ -123,13 +131,13 @@ class ResultScreenState extends State<ResultScreen> {
       children: [
         Text(
           'A',
-          style: iconTextStyle,
+          style: TextStyle(color: answerColor, fontSize: cardIconSize),
         ),
         const SizedBox(width: 10.0),
         Expanded(
           child: Text(
             flashCardData[index].answer,
-            style: cardTextStyle,
+            style: TextStyle(color: answerColor, fontSize: cardFontSize),
           ),
         ),
       ],

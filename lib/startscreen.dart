@@ -77,7 +77,6 @@ class StartScreenState extends State<StartScreen> {
       context,
       MaterialPageRoute(
           builder: (context) => ResultScreen(resultText: response.body)),
-      // builder: (context) => ResultScreen()),
     );
   }
 
