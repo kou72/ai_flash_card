@@ -28,8 +28,14 @@ export const generateFlashCardQuestions = onRequest(
       const destFolder =
         "dest/" + sourcePath.split("/")[1].replace(/\.[^/.]+$/, "") + "/";
       await convertPdfToTextJson(sourcePath, destFolder);
-      const text = await extractTextFromJson(destFolder);
-      const questions = await generateQuestionsFromChatGPT(text);
+      const textList = await extractTextFromJson(destFolder);
+      const questionsList = await Promise.all(
+        textList.map(async (text) => {
+          const questionsString = await generateQuestionsFromChatGPT(text);
+          return JSON.parse(questionsString);
+        })
+      );
+      const questions = questionsList.reduce((acc, cur) => acc.concat(cur));
       res.status(200).send(questions);
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -100,22 +106,22 @@ const extractTextFromJson = async (DestinationFolder: string) => {
         return jsonData;
       })
     );
-    const texts: any[] = [];
+    const textList: any[] = [];
     jsonFile.map((data: any) => {
       data.responses.map(
         // (res: any) => (text = text + res.fullTextAnnotation.text)
-        (res: any) => texts.push(res.fullTextAnnotation.text)
+        (res: any) => textList.push(res.fullTextAnnotation.text)
       );
     });
 
     // デバック用の中間ファイルとしてtext.txtを作成
-    texts.map(async (text: any, index: number) => {
+    textList.map(async (text: any, index: number) => {
       const filePath = `${DestinationFolder}text${index.toString()}.txt`;
       const bucketPath = bucket.file(filePath);
       bucketPath.save(await text);
     });
 
-    return texts[0];
+    return textList;
   } catch (error: any) {
     logger.error(error.message, {structuredData: true});
     throw new Error(error.message);
