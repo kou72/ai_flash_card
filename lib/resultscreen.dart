@@ -12,8 +12,8 @@ List<FlashCardData> createFlashCardDataList(String jsonText) {
 }
 
 class ResultScreen extends StatefulWidget {
-  final String resultText;
-  const ResultScreen({Key? key, required this.resultText}) : super(key: key);
+  final String questionsData;
+  const ResultScreen({Key? key, required this.questionsData}) : super(key: key);
   @override
   ResultScreenState createState() => ResultScreenState();
 }
@@ -29,7 +29,7 @@ class ResultScreenState extends State<ResultScreen> {
   @override
   void initState() {
     super.initState();
-    flashCardData = createFlashCardDataList(widget.resultText);
+    flashCardData = createFlashCardDataList(widget.questionsData);
   }
 
   @override

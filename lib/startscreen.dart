@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:flash_pdf_card/resultscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({Key? key}) : super(key: key);
@@ -65,9 +66,13 @@ class StartScreenState extends State<StartScreen> {
         filename: _pickedFileName,
       ),
     );
-
     final streamedResponse = await req.send();
     final response = await http.Response.fromStream(streamedResponse);
+
+    // ローカルストレージに保存
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('questionsData', response.body);
+
     setState(() {
       _isLoading = false;
     });
@@ -76,7 +81,7 @@ class StartScreenState extends State<StartScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => ResultScreen(resultText: response.body)),
+          builder: (context) => ResultScreen(questionsData: response.body)),
     );
   }
 
@@ -87,21 +92,28 @@ class StartScreenState extends State<StartScreen> {
         title: const Text('Flash PDF Card (Demo)'),
         actions: [
           const Center(child: Text("前の結果")),
-          IconButton(
-            icon: const Icon(Icons.history),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ResultScreen(resultText: "[]")),
-              );
-            },
-          ),
+          historyIconButton(),
         ],
       ),
       body: Center(
         child: _objects(),
       ),
+    );
+  }
+
+  Widget historyIconButton() {
+    return IconButton(
+      icon: const Icon(Icons.history),
+      onPressed: () async {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        final prefsData = prefs.getString('questionsData') ?? "[]";
+        if (!mounted) return;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ResultScreen(questionsData: prefsData)),
+        );
+      },
     );
   }
 
