@@ -92,7 +92,7 @@ class StartScreenState extends State<StartScreen> {
         title: const Text('Flash PDF Card (Demo)'),
         actions: [
           const Center(child: Text("前の結果")),
-          historyIconButton(),
+          _historyIconButton(),
         ],
       ),
       body: Center(
@@ -101,7 +101,7 @@ class StartScreenState extends State<StartScreen> {
     );
   }
 
-  Widget historyIconButton() {
+  Widget _historyIconButton() {
     return IconButton(
       icon: const Icon(Icons.history),
       onPressed: () async {
