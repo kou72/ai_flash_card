@@ -44,34 +44,35 @@ class StartScreenState extends State<StartScreen> {
   }
 
   Future<void> _createFlashcards() async {
-    // if (_pickedFileName == '') {
-    //   if (!mounted) return;
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(
-    //       content: Text('PDFを選択してください。'),
-    //       backgroundColor: Colors.blueGrey,
-    //     ),
-    //   );
-    //   return;
-    // }
-    // setState(() => _isLoading = true);
-    // final url =
-    //     Uri.https('generateflashcardquestions-vhoidcprtq-uc.a.run.app', '');
-    // final req = http.MultipartRequest('POST', url);
-    // req.files.add(
-    //   http.MultipartFile.fromBytes(
-    //     'file',
-    //     _pickedFileBytes!,
-    //     filename: _pickedFileName,
-    //   ),
-    // );
+    if (_pickedFileName == '') {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('PDFを選択してください。'),
+          backgroundColor: Colors.blueGrey,
+        ),
+      );
+      return;
+    }
+    setState(() => _isLoading = true);
+    final url =
+        Uri.https('generateflashcardquestions-vhoidcprtq-uc.a.run.app', '');
+    final req = http.MultipartRequest('POST', url);
+    req.files.add(
+      http.MultipartFile.fromBytes(
+        'file',
+        _pickedFileBytes!,
+        filename: _pickedFileName,
+      ),
+    );
 
-    // final streamedResponse = await req.send();
-    // final response = await http.Response.fromStream(streamedResponse);
-    // print(response.body);
-    // setState(() {
-    //   _isLoading = false;
-    // });
+    final streamedResponse = await req.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    print(response.body);
+    setState(() {
+      _isLoading = false;
+    });
+    print(response.body);
 
     if (!mounted) return;
     Navigator.push(
