@@ -26,9 +26,11 @@ class ResultScreenState extends State<ResultScreen> {
 
   @override
   void initState() {
+    super.initState();
     flashCardData = createFlashCardDataList(widget.resultText);
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
