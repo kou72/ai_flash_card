@@ -323,17 +323,6 @@ class StartScreenState extends State<StartScreen> {
             ),
           ),
         ),
-        const Text(" か ", style: TextStyle(color: Colors.blueGrey)),
-        InkWell(
-          onTap: () => launchUrl(Uri.parse('https://twitter.com/kou7273')),
-          child: const Text(
-            'X(Twitter)',
-            style: TextStyle(
-              color: Colors.blue,
-              decoration: TextDecoration.underline,
-            ),
-          ),
-        ),
         const Text(" からフィードバックをお願いします。",
             style: TextStyle(color: Colors.blueGrey)),
       ],
