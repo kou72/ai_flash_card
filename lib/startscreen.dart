@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
@@ -58,12 +59,16 @@ class StartScreenState extends State<StartScreen> {
     setState(() => _isLoading = true);
     final url =
         Uri.https('generateflashcardquestions-vhoidcprtq-uc.a.run.app', '');
+    // // デバック用
+    // final url = Uri.http('127.0.0.1:5001',
+    //     'flash-pdf-card/us-central1/generateFlashCardQuestions');
     final req = http.MultipartRequest('POST', url);
+    final encodeFileName = base64Encode(utf8.encode(_pickedFileName));
     req.files.add(
       http.MultipartFile.fromBytes(
         'file',
         _pickedFileBytes!,
-        filename: _pickedFileName,
+        filename: encodeFileName,
       ),
     );
     final streamedResponse = await req.send();

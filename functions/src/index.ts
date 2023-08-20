@@ -47,8 +47,15 @@ const fileUpload = (req: Request, date: string): Promise<string> =>
   new Promise((resolve, reject) => {
     const bb = busboy({headers: req.headers});
     bb.on("file", (name, stream, info) => {
+      // 日本語不備のため、ファイル名をbase64&utf-8でエンコードしているためデコードする
+      const decodedBytes = atob(info.filename);
+      const decoder = new TextDecoder("utf-8");
+      const decodedFileName = decoder.decode(
+        new Uint8Array(decodedBytes.split("").map((char) => char.charCodeAt(0)))
+      );
+
       const folder = "upload";
-      const filePath = `${folder}/${date}-${info.filename}`;
+      const filePath = `${folder}/${date}-${decodedFileName}`;
       const bucketPath = bucket.file(filePath);
       stream.pipe(bucketPath.createWriteStream()).on("finish", () => {
         resolve(filePath);
