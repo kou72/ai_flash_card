@@ -311,7 +311,7 @@ class StartScreenState extends State<StartScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("もし良ければ ", style: TextStyle(color: Colors.blueGrey)),
+        const Text("もしよろしければ ", style: TextStyle(color: Colors.blueGrey)),
         InkWell(
           onTap: () =>
               launchUrl(Uri.parse('https://forms.gle/ZcUfqHR9acAbbbGp7')),
