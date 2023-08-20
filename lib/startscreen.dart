@@ -89,7 +89,7 @@ class StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PDF→暗記カード アプリ (Demo版)'),
+        title: const Text('PDF暗記カード (Demo版)'),
         actions: [
           const Center(child: Text("前の結果")),
           _historyIconButton(),
