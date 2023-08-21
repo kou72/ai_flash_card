@@ -149,7 +149,7 @@ class StartScreenState extends State<StartScreen> {
       onTap: () => launchUrl(Uri.parse(
           'https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/r01/pdf/01point.pdf')),
       child: const Text(
-        'サンプルのダウンロード',
+        'サンプルのダウンロード(総務省 情報通信白書のポイント)',
         style: TextStyle(
           color: Colors.blue,
           decoration: TextDecoration.underline,
