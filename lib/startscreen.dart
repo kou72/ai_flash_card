@@ -144,6 +144,8 @@ class StartScreenState extends State<StartScreen> {
     );
   }
 
+  // 総務省資料の著作権について
+  // https://www.soumu.go.jp/menu_kyotsuu/policy/tyosaku.html#tyosakuken
   Widget _samplePDF() {
     return InkWell(
       onTap: () => launchUrl(Uri.parse(
