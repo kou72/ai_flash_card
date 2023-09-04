@@ -16,11 +16,18 @@ const bucketName = "flash-pdf-card.appspot.com";
 export const generateFlashCardQuestions = onRequest(
   {timeoutSeconds: 300, cors: true},
   async (req, res) => {
+    // POST以外のリクエストは405を返す
     if (req.method !== "POST") {
       res.status(405).end();
       return;
     }
 
+    // メインの処理
+    // fileUpload：PDFをCloud Storageにアップロードし、保存先のpathを取得
+    // convertPdfToTextJson：SourceBucktのPDFをテキストに変換したJSONファイルをDestBucketに保存
+    // extractTextFromJson：JSONからテキストを抽出、テキストはPDF1ページごと1つの塊で取り出され配列状で格納
+    // generateQuestionsFromChatGPT：テキストをOpenAIのAPIに投げて質問を生成、テキスト1要素ごとにリクエスト
+    // saveQuestions：デバッグ用の中間ファイルとしてquestions.jsonを保存
     try {
       const date = getDate();
       const sourcePath = await fileUpload(req, date);
@@ -35,7 +42,9 @@ export const generateFlashCardQuestions = onRequest(
           return JSON.parse(questionsString);
         })
       );
+      // 返ってきた質問を1つにまとめる
       const questions = questionsList.reduce((acc, cur) => acc.concat(cur));
+      await saveQuestions(destFolder, questions);
       res.status(200).send(questions);
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -133,4 +142,10 @@ const extractTextFromJson = async (DestinationFolder: string) => {
     logger.error(error.message, {structuredData: true});
     throw new Error(error.message);
   }
+};
+
+const saveQuestions = async (DestinationFolder: string, questions: any) => {
+  const filePath = `${DestinationFolder}questions.json`;
+  const bucketPath = bucket.file(filePath);
+  bucketPath.save(JSON.stringify(questions));
 };
