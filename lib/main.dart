@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flash_pdf_card/startscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await FirebaseAnalytics.instance.logEvent(name: 'page_view');
   runApp(const MyApp());
 }
 
