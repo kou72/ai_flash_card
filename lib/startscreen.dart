@@ -138,8 +138,6 @@ class StartScreenState extends State<StartScreen> {
         _pdfPickContainer(),
         const SizedBox(height: 16.0),
         _createFlashcardsContainer(),
-        const SizedBox(height: 20.0),
-        _feedbackInformation()
       ],
     );
   }
@@ -310,28 +308,6 @@ class StartScreenState extends State<StartScreen> {
             fontSize: 12.0,
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _feedbackInformation() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("もしよろしければ ", style: TextStyle(color: Colors.blueGrey)),
-        InkWell(
-          onTap: () =>
-              launchUrl(Uri.parse('https://forms.gle/ZcUfqHR9acAbbbGp7')),
-          child: const Text(
-            'GoogleForm',
-            style: TextStyle(
-              color: Colors.blue,
-              decoration: TextDecoration.underline,
-            ),
-          ),
-        ),
-        const Text(" からフィードバックをお願いします。",
-            style: TextStyle(color: Colors.blueGrey)),
       ],
     );
   }
