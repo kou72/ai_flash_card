@@ -4,7 +4,8 @@ import {system, userEx1, assistantEx1} from "./prompt";
 
 export const generateQuestionsFromChatGPT = async (input: string) => {
   const URL = "https://api.openai.com/v1/chat/completions";
-  const model = "gpt-4";
+  // const model = "gpt-4";
+  const model = "gpt-3.5-turbo";
   const temperature = 0;
   const maxTokens = null;
   const messages = [
