@@ -7,6 +7,13 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
+  final List<String> decks = [
+    'デッキ1',
+    'デッキ2',
+    'デッキ3',
+    // ... (他のデッキデータも追加可能)
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,10 +32,19 @@ class HomeState extends State<Home> {
       ),
     );
   }
-}
 
-Widget _objects() {
-  return Column(
-    children: [const Text('テストデッキ')],
-  );
+  Widget _objects() {
+    return ListView.builder(
+      itemCount: decks.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          leading: Icon(Icons.style),
+          title: Text(decks[index]),
+          onTap: () {
+            // タップされたときの処理（例：そのデッキの詳細を表示）
+          },
+        );
+      },
+    );
+  }
 }
