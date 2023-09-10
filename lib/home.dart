@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flash_pdf_card/deck.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -41,7 +42,13 @@ class HomeState extends State<Home> {
           leading: Icon(Icons.style),
           title: Text(decks[index]),
           onTap: () {
-            // タップされたときの処理（例：そのデッキの詳細を表示）
+            // startscreen.dartに遷移
+            if (!mounted) return;
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Deck(questionsData: '[]')),
+            );
           },
         );
       },
