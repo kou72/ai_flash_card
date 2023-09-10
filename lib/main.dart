@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flash_pdf_card/startscreen.dart';
+import 'package:flash_pdf_card/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
       ),
-      home: const StartScreen(),
+      // home: const StartScreen(),
+      home: const Home(),
       debugShowCheckedModeBanner: false,
     );
   }
