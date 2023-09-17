@@ -39,7 +39,7 @@ class HomeState extends State<Home> {
       itemCount: decks.length,
       itemBuilder: (context, index) {
         return ListTile(
-          leading: Icon(Icons.style),
+          leading: const Icon(Icons.style),
           title: Text(decks[index]),
           onTap: () {
             // startscreen.dartに遷移
