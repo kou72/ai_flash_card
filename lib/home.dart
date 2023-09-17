@@ -47,7 +47,9 @@ class HomeState extends State<Home> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => Deck(questionsData: '[]')),
+                  builder: (context) => Deck(
+                        deckName: decks[index],
+                      )),
             );
           },
         );
