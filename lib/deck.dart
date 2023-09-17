@@ -30,19 +30,58 @@ class DeckState extends State<Deck> {
         mainAxisSize: MainAxisSize.min,
         children: [
           GradientFloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              _showAiDialog(context);
+            },
             iconData: Icons.smart_toy,
             label: '画像からカード生成',
             gradientColors: const [Colors.blue, Colors.purple],
           ),
           const SizedBox(height: 16),
           FloatingActionButton.extended(
+            heroTag: 'createCard',
             icon: const Icon(Icons.edit),
             label: const Text('自分でカードを作成'),
             onPressed: () {},
           ),
         ],
       ),
+    );
+  }
+
+  void _showAiDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('画像からカード生成します'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                title: Text('画像を選択'),
+                onTap: () {
+                  // ここにボタンを押したときの処理を追加
+                },
+              ),
+              ListTile(
+                title: Text('カードを生成'),
+                onTap: () {
+                  // ここにボタンを押したときの処理を追加
+                },
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('キャンセル', style: TextStyle(color: Colors.blue)),
+              onPressed: () {
+                Navigator.of(context).pop(); // ダイアログを閉じる
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
