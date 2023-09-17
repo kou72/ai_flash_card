@@ -37,7 +37,6 @@ class DeckState extends State<Deck> {
           ),
           const SizedBox(height: 16),
           FloatingActionButton.extended(
-            heroTag: "card",
             icon: const Icon(Icons.edit),
             label: const Text('自分でカードを作成'),
             onPressed: () {},
