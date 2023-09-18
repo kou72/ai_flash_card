@@ -59,7 +59,7 @@ class DeckState extends State<Deck> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              _pdfPickContainer(),
+              _gradationContainer(),
               ListTile(
                 title: Text('画像を選択'),
                 onTap: () {
@@ -88,20 +88,44 @@ class DeckState extends State<Deck> {
   }
 }
 
-Widget _pdfPickContainer() {
+Widget _gradationContainer() {
   return Container(
+    alignment: Alignment.center,
     decoration: BoxDecoration(
-      border: Border.all(
-        color: Colors.blueGrey,
-        width: 2.0,
+      gradient: LinearGradient(
+        colors: [Colors.blue, Colors.purple],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
       ),
       borderRadius: BorderRadius.circular(24.0),
     ),
-    width: 200,
-    height: 200,
-    child: InkWell(
-      child: _pdfPickedIcon(),
+    width: 204,
+    height: 104,
+    child: Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22.0),
+        color: Colors.white,
+      ),
+      width: 200,
+      height: 100,
+      child: _pdfPickContainer(),
     ),
+  );
+}
+
+Widget _pdfPickContainer() {
+  return Container(
+    // decoration: BoxDecoration(
+    //   border: Border.all(
+    //     color: Colors.blueGrey,
+    //     width: 2.0,
+    //   ),
+    //   borderRadius: BorderRadius.circular(24.0),
+    // ),
+    width: 200,
+    height: 100,
+    child: _pdfPickedIcon(),
   );
 }
 
