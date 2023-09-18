@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flash_pdf_card/components/gradient_floating_action_button.dart';
+import 'package:flash_pdf_card/components/gradient_container.dart';
 
 class Deck extends StatefulWidget {
   final String deckName;
@@ -59,7 +60,13 @@ class DeckState extends State<Deck> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              _gradationContainer(),
+              const GradientContainer(
+                text: "PDF",
+                iconData: Icons.upload_file,
+                width: 200,
+                height: 100,
+                colors: [Colors.blue, Colors.purple], // オプション: 新しいグラデーション色を指定
+              ),
               ListTile(
                 title: Text('画像を選択'),
                 onTap: () {
@@ -86,73 +93,4 @@ class DeckState extends State<Deck> {
       },
     );
   }
-}
-
-Widget _gradationContainer() {
-  return Container(
-    alignment: Alignment.center,
-    decoration: BoxDecoration(
-      gradient: const LinearGradient(
-        colors: [Colors.blue, Colors.purple],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      borderRadius: BorderRadius.circular(24.0),
-    ),
-    width: 204,
-    height: 104,
-    child: Material(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(22.0),
-      ),
-      child: InkWell(
-        onTap: () {
-          print("Tap!");
-        },
-        borderRadius: BorderRadius.circular(22.0),
-        child: SizedBox(
-          width: 200,
-          height: 100,
-          child: _pdfPickContainer(),
-        ),
-      ),
-    ),
-  );
-}
-
-Widget _pdfPickContainer() {
-  return Container(
-    // decoration: BoxDecoration(
-    //   border: Border.all(
-    //     color: Colors.blueGrey,
-    //     width: 2.0,
-    //   ),
-    //   borderRadius: BorderRadius.circular(24.0),
-    // ),
-    width: 200,
-    height: 100,
-    child: _pdfPickedIcon(),
-  );
-}
-
-Widget _pdfPickedIcon() {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-      const Icon(
-        Icons.check_circle,
-        color: Colors.blueGrey,
-        size: 64.0,
-      ),
-      const SizedBox(height: 8.0),
-      Text(
-        "PDF",
-        style: const TextStyle(
-          color: Colors.blueGrey,
-          fontSize: 16.0,
-        ),
-      ),
-    ],
-  );
 }
