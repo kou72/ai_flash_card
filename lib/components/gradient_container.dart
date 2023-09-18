@@ -12,8 +12,8 @@ class GradientContainer extends StatelessWidget {
     Key? key,
     required this.text,
     required this.iconData,
-    required this.width,
-    required this.height,
+    this.width = 200,
+    this.height = 100,
     this.colors = const [Colors.blue, Colors.purple],
     this.onTap,
   }) : super(key: key);
