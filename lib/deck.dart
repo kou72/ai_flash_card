@@ -60,12 +60,15 @@ class DeckState extends State<Deck> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const GradientContainer(
-                text: "PDF",
+              GradientContainer(
+                text: "画像をアップロード",
                 iconData: Icons.upload_file,
                 width: 200,
                 height: 100,
-                colors: [Colors.blue, Colors.purple], // オプション: 新しいグラデーション色を指定
+                colors: const [Colors.blue, Colors.purple],
+                onTap: () {
+                  print('画像をアップロード');
+                },
               ),
               ListTile(
                 title: Text('画像を選択'),

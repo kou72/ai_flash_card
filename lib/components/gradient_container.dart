@@ -6,6 +6,7 @@ class GradientContainer extends StatelessWidget {
   final double width;
   final double height;
   final List<Color> colors;
+  final VoidCallback? onTap;
 
   const GradientContainer({
     Key? key,
@@ -13,7 +14,8 @@ class GradientContainer extends StatelessWidget {
     required this.iconData,
     required this.width,
     required this.height,
-    this.colors = const [Colors.blue, Colors.purple], // デフォルトのグラデーション色
+    this.colors = const [Colors.blue, Colors.purple],
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -36,9 +38,7 @@ class GradientContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(22.0),
         ),
         child: InkWell(
-          onTap: () {
-            print("Tap!");
-          },
+          onTap: onTap,
           borderRadius: BorderRadius.circular(22.0),
           child: SizedBox(
             width: width,
@@ -76,7 +76,7 @@ class GradientContainer extends StatelessWidget {
           child: Text(
             text,
             style: const TextStyle(
-              color: Colors.white, // ShaderMaskを適用するためのベースとなる色
+              color: Colors.white,
               fontSize: 16.0,
             ),
           ),
