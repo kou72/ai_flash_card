@@ -92,7 +92,7 @@ Widget _gradationContainer() {
   return Container(
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      gradient: LinearGradient(
+      gradient: const LinearGradient(
         colors: [Colors.blue, Colors.purple],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -101,15 +101,22 @@ Widget _gradationContainer() {
     ),
     width: 204,
     height: 104,
-    child: Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
+    child: Material(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(22.0),
-        color: Colors.white,
       ),
-      width: 200,
-      height: 100,
-      child: _pdfPickContainer(),
+      child: InkWell(
+        onTap: () {
+          print("Tap!");
+        },
+        borderRadius: BorderRadius.circular(22.0),
+        child: SizedBox(
+          width: 200,
+          height: 100,
+          child: _pdfPickContainer(),
+        ),
+      ),
     ),
   );
 }
