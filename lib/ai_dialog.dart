@@ -16,6 +16,7 @@ class AiDialogState extends State<AiDialog> {
   String _pickedShowName = '画像を選択';
   Uint8List? _pickedFileBytes;
   IconData _pickedFileIcon = Icons.upload_file;
+  String _errorText = '';
 
   Future<void> _pickImages() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -34,18 +35,13 @@ class AiDialogState extends State<AiDialog> {
       _pickedShowName = "$head...$extension";
       _pickedFileBytes = file.bytes;
       _pickedFileIcon = Icons.check_circle;
+      _errorText = '';
     });
   }
 
   Future<void> _createFlashcards() async {
     if (_pickedFileName == null) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('画像を選択してください。'),
-          backgroundColor: Colors.blueGrey,
-        ),
-      );
+      setState(() => _errorText = '※画像を選択してください');
       return;
     }
     // final url =
@@ -106,6 +102,8 @@ class AiDialogState extends State<AiDialog> {
               _createFlashcards();
             },
           ),
+          const SizedBox(height: 8),
+          Text(_errorText, style: TextStyle(color: Colors.redAccent)),
         ],
       ),
       actions: <Widget>[
