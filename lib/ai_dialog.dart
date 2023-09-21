@@ -1,5 +1,7 @@
 import 'dart:typed_data';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:flash_pdf_card/components/gradient_container.dart';
 
@@ -10,7 +12,8 @@ class AiDialog extends StatefulWidget {
 }
 
 class AiDialogState extends State<AiDialog> {
-  String _pickedFileName = '画像を選択';
+  String? _pickedFileName;
+  String _pickedShowName = '画像を選択';
   Uint8List? _pickedFileBytes;
   IconData _pickedFileIcon = Icons.upload_file;
 
@@ -24,13 +27,55 @@ class AiDialogState extends State<AiDialog> {
     PlatformFile file = result.files.first;
 
     setState(() {
+      _pickedFileName = file.name;
       String head =
           file.name.length >= 5 ? file.name.substring(0, 5) : file.name;
       String extension = file.name.split(".").last;
-      _pickedFileName = "$head...$extension";
+      _pickedShowName = "$head...$extension";
       _pickedFileBytes = file.bytes;
       _pickedFileIcon = Icons.check_circle;
     });
+  }
+
+  Future<void> _createFlashcards() async {
+    if (_pickedFileName == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('画像を選択してください。'),
+          backgroundColor: Colors.blueGrey,
+        ),
+      );
+      return;
+    }
+    // final url =
+    //     Uri.https('generateflashcardquestions-vhoidcprtq-uc.a.run.app', '');
+    // デバック用
+    final url = Uri.http('127.0.0.1:5001', 'flash-pdf-card/us-central1/test');
+    final req = http.MultipartRequest('POST', url);
+    final encodeFileName = base64Encode(utf8.encode(_pickedFileName!));
+    req.files.add(
+      http.MultipartFile.fromBytes(
+        'file',
+        _pickedFileBytes!,
+        filename: encodeFileName,
+      ),
+    );
+    final streamedResponse = await req.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    print(response.body);
+
+    // // ローカルストレージに保存
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // prefs.setString('questionsData', response.body);
+
+    // if (!mounted) return;
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //       builder: (context) => ResultScreen(questionsData: response.body)),
+    // );
   }
 
   @override
@@ -41,7 +86,7 @@ class AiDialogState extends State<AiDialog> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           GradientContainer(
-            text: _pickedFileName,
+            text: _pickedShowName,
             iconData: _pickedFileIcon,
             width: 200,
             height: 100,
@@ -58,7 +103,7 @@ class AiDialogState extends State<AiDialog> {
             height: 100,
             colors: const [Colors.blue, Colors.purple],
             onTap: () {
-              print('カードを生成');
+              _createFlashcards();
             },
           ),
         ],
