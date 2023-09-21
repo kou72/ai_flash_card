@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flash_pdf_card/ai_dialog.dart';
 import 'package:flash_pdf_card/components/gradient_floating_action_button.dart';
-import 'package:flash_pdf_card/components/gradient_container.dart';
 
 class Deck extends StatefulWidget {
   final String deckName;
@@ -10,12 +10,6 @@ class Deck extends StatefulWidget {
 }
 
 class DeckState extends State<Deck> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   flashCardData = createFlashCardDataList(widget.questionsData);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,43 +49,7 @@ class DeckState extends State<Deck> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('画像からカード生成します'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              GradientContainer(
-                text: "画像をアップロード",
-                iconData: Icons.upload_file,
-                width: 200,
-                height: 100,
-                colors: const [Colors.blue, Colors.purple],
-                onTap: () {
-                  print('画像をアップロード');
-                },
-              ),
-              const SizedBox(height: 16),
-              GradientContainer(
-                text: "カードを生成",
-                iconData: Icons.history_edu,
-                width: 200,
-                height: 100,
-                colors: const [Colors.blue, Colors.purple],
-                onTap: () {
-                  print('カードを生成');
-                },
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('キャンセル', style: TextStyle(color: Colors.blue)),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
+        return const AiDialog();
       },
     );
   }
