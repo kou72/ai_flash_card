@@ -70,16 +70,15 @@ class DeckState extends State<Deck> {
                   print('画像をアップロード');
                 },
               ),
-              ListTile(
-                title: Text('画像を選択'),
+              const SizedBox(height: 16),
+              GradientContainer(
+                text: "カードを生成",
+                iconData: Icons.history_edu,
+                width: 200,
+                height: 100,
+                colors: const [Colors.blue, Colors.purple],
                 onTap: () {
-                  // ここにボタンを押したときの処理を追加
-                },
-              ),
-              ListTile(
-                title: Text('カードを生成'),
-                onTap: () {
-                  // ここにボタンを押したときの処理を追加
+                  print('カードを生成');
                 },
               ),
             ],
