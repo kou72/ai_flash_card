@@ -10,7 +10,7 @@ class AiDialog extends StatefulWidget {
 }
 
 class AiDialogState extends State<AiDialog> {
-  String _pickedFileName = 'ファイルを選択';
+  String _pickedFileName = '画像を選択';
   Uint8List? _pickedFileBytes;
   IconData _pickedFileIcon = Icons.upload_file;
 
@@ -24,7 +24,10 @@ class AiDialogState extends State<AiDialog> {
     PlatformFile file = result.files.first;
 
     setState(() {
-      _pickedFileName = file.name;
+      String head =
+          file.name.length >= 5 ? file.name.substring(0, 5) : file.name;
+      String extension = file.name.split(".").last;
+      _pickedFileName = "$head...$extension";
       _pickedFileBytes = file.bytes;
       _pickedFileIcon = Icons.check_circle;
     });
