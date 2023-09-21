@@ -103,12 +103,12 @@ class AiDialogState extends State<AiDialog> {
             },
           ),
           const SizedBox(height: 8),
-          Text(_errorText, style: TextStyle(color: Colors.redAccent)),
+          Text(_errorText, style: const TextStyle(color: Colors.redAccent)),
         ],
       ),
       actions: <Widget>[
         TextButton(
-          child: Text('キャンセル', style: TextStyle(color: Colors.blue)),
+          child: const Text('キャンセル', style: TextStyle(color: Colors.blue)),
           onPressed: () {
             Navigator.of(context).pop();
           },
