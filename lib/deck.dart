@@ -87,7 +87,7 @@ class DeckState extends State<Deck> {
             TextButton(
               child: Text('キャンセル', style: TextStyle(color: Colors.blue)),
               onPressed: () {
-                Navigator.of(context).pop(); // ダイアログを閉じる
+                Navigator.of(context).pop();
               },
             ),
           ],
