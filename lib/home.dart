@@ -26,7 +26,10 @@ class HomeState extends State<Home> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          print('デッキ作成');
+          // デッキを追加する
+          setState(() {
+            decks.add('追加のデッキ');
+          });
         },
         icon: const Icon(Icons.style),
         label: const Text('デッキ作成'),
@@ -42,7 +45,6 @@ class HomeState extends State<Home> {
           leading: const Icon(Icons.style),
           title: Text(decks[index]),
           onTap: () {
-            // startscreen.dartに遷移
             if (!mounted) return;
             Navigator.push(
               context,
