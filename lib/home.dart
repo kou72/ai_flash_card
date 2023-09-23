@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flash_pdf_card/deck.dart';
+import 'package:flash_pdf_card/deck_dialog.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -26,10 +27,7 @@ class HomeState extends State<Home> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // デッキを追加する
-          setState(() {
-            decks.add('追加のデッキ');
-          });
+          _showDeckDialog(context);
         },
         icon: const Icon(Icons.style),
         label: const Text('デッキ作成'),
@@ -55,6 +53,15 @@ class HomeState extends State<Home> {
             );
           },
         );
+      },
+    );
+  }
+
+  void _showDeckDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const DeckDialog();
       },
     );
   }
