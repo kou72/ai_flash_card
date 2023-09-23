@@ -47,7 +47,8 @@ class AiDialogState extends State<AiDialog> {
     // final url =
     //     Uri.https('generateflashcardquestions-vhoidcprtq-uc.a.run.app', '');
     // デバック用
-    final url = Uri.http('127.0.0.1:5001', 'flash-pdf-card/us-central1/test');
+    final url = Uri.http('127.0.0.1:5001',
+        'flash-pdf-card/us-central1/generateImageToQuestions');
     final req = http.MultipartRequest('POST', url);
     final encodeFileName = base64Encode(utf8.encode(_pickedFileName!));
     req.files.add(
@@ -61,6 +62,7 @@ class AiDialogState extends State<AiDialog> {
     final response = await http.Response.fromStream(streamedResponse);
 
     print(response.body);
+    print("finish");
 
     // // ローカルストレージに保存
     // final SharedPreferences prefs = await SharedPreferences.getInstance();

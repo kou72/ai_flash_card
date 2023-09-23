@@ -12,9 +12,8 @@ admin.initializeApp();
 const storage = admin.storage();
 const bucket = storage.bucket();
 const bucketName = "flash-pdf-card.appspot.com";
-const client = new vision.ImageAnnotatorClient();
 
-export const test = onRequest(
+export const generateImageToQuestions = onRequest(
   {timeoutSeconds: 300, cors: true},
   async (req, res) => {
     // POST以外のリクエストは405を返す
@@ -25,39 +24,25 @@ export const test = onRequest(
 
     // メインの処理
     // fileUpload：PDFをCloud Storageにアップロードし、保存先のpathを取得
-    // convertPdfToTextJson：SourceBucktのPDFをテキストに変換したJSONファイルをDestBucketに保存
-    // extractTextFromJson：JSONからテキストを抽出、テキストはPDF1ページごと1つの塊で取り出され配列状で格納
-    // generateQuestionsFromChatGPT：テキストをOpenAIのAPIに投げて質問を生成、テキスト1要素ごとにリクエスト
+    // convertImageToText：SourceBucktの画像をテキストに変換
+    // saveText：デバッグ用の中間ファイルとしてtext.txtを保存
+    // generateQuestionsFromChatGPT：テキストをOpenAIのAPIに投げて質問を生成
     // saveQuestions：デバッグ用の中間ファイルとしてquestions.jsonを保存
     try {
       const date = getDate();
       const sourcePath = await fileUpload(req, date);
       // dest用pathをsourcePathから生成（upload/0000-text.pdf → destination/0000-text）
-      // const destFolder =
-      //   "dest/" + sourcePath.split("/")[1].replace(/\.[^/.]+$/, "") + "/";
+      const destFolder =
+        "dest/" + sourcePath.split("/")[1].replace(/\.[^/.]+$/, "") + "/";
 
-      logger.info("sourcePath", sourcePath);
+      const text = await convertImageToText(sourcePath, destFolder);
+      await saveText(destFolder, text);
 
-      // // vision api
-      const [result] = await client.textDetection(
-        `gs://${bucketName}/${sourcePath}`
-      );
-      const detections = result.textAnnotations;
-      if (!detections) throw new Error("No text found");
-      detections.forEach((text) => logger.info(text));
+      const questionsString = await generateQuestionsFromChatGPT(text);
+      const questions = JSON.parse(questionsString);
+      await saveQuestions(destFolder, questions);
 
-      // // await convertPdfToTextJson(sourcePath, destFolder);
-      // const textList = await extractTextFromJson(destFolder);
-      // const questionsList = await Promise.all(
-      //   textList.map(async (text) => {
-      //     const questionsString = await generateQuestionsFromChatGPT(text);
-      //     return JSON.parse(questionsString);
-      //   })
-      // );
-      // // 返ってきた質問を1つにまとめる
-      // const questions = questionsList.reduce((acc, cur) => acc.concat(cur));
-      // await saveQuestions(destFolder, questions);
-      // res.status(200).send(questions);
+      res.status(200).send(questions);
     } catch (error: any) {
       res.status(500).send(error.message);
     }
@@ -110,12 +95,12 @@ const fileUpload = (req: Request, date: string): Promise<string> =>
       // 日本語不備のため、ファイル名をbase64&utf-8でエンコードしているためデコードする
       const decodedBytes = atob(info.filename);
       const decoder = new TextDecoder("utf-8");
-      const decodedFileName = decoder.decode(
+      const fileName = decoder.decode(
         new Uint8Array(decodedBytes.split("").map((char) => char.charCodeAt(0)))
       );
 
       const folder = "upload";
-      const filePath = `${folder}/${date}-${decodedFileName}`;
+      const filePath = `${folder}/${date}-${fileName}`;
       const bucketPath = bucket.file(filePath);
       stream.pipe(bucketPath.createWriteStream()).on("finish", () => {
         resolve(filePath);
@@ -129,6 +114,21 @@ const fileUpload = (req: Request, date: string): Promise<string> =>
 
     bb.end(req.rawBody);
   });
+
+const convertImageToText = async (sourcePath: string, destFolder: string) => {
+  const client = new vision.ImageAnnotatorClient();
+  const gcsSourceUri = `gs://${bucketName}/${sourcePath}`;
+
+  const [result] = await client.textDetection(gcsSourceUri);
+  if (!result) throw new Error("No text found");
+  const text = result.fullTextAnnotation?.text ?? "empty";
+
+  // // デバック用の中間ファイルとしてtext.txtを作成
+  // const bucketPath = bucket.file(`${destFolder}text.txt`);
+  // await bucketPath.save(text);
+
+  return text;
+};
 
 const convertPdfToTextJson = async (sourcePath: string, destFolder: string) => {
   const client = new vision.ImageAnnotatorClient();
@@ -193,6 +193,12 @@ const extractTextFromJson = async (DestinationFolder: string) => {
     logger.error(error.message, {structuredData: true});
     throw new Error(error.message);
   }
+};
+
+const saveText = async (DestinationFolder: string, text: string) => {
+  const filePath = `${DestinationFolder}text.txt`;
+  const bucketPath = bucket.file(filePath);
+  bucketPath.save(text);
 };
 
 const saveQuestions = async (DestinationFolder: string, questions: any) => {
