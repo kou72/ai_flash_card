@@ -18,12 +18,16 @@ dependencies:
   shared_preferences: ^2.2.0
   firebase_core: ^2.15.1
   firebase_analytics: ^10.4.5
+  # drift用パッケージ
+  drift: ^2.11.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^2.0.0
+  # drift用パッケージ
+  drift_dev: ^2.11.1
+  build_runner: ^2.4.6
 
 flutter:
   uses-material-design: true

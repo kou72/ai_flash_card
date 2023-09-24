@@ -5,12 +5,25 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
+import 'package:flash_pdf_card/drift/filename.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FirebaseAnalytics.instance.logEvent(name: 'page_view');
+
+  // final database = MyWebDatabase();
+  // // Simple insert:
+  // await database
+  //     .into(database.categories)
+  //     .insert(CategoriesCompanion.insert(description: 'my first category'));
+
+  // // Simple select:
+  // final allCategories = await database.select(database.categories).get();
+  // print('Categories in database: $allCategories');
+
   runApp(const MyApp());
 }
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flash_pdf_card/deck.dart';
 import 'package:flash_pdf_card/deck_dialog.dart';
 
+import 'package:flash_pdf_card/drift/filename.dart';
+
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
   @override
@@ -9,6 +11,7 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
+  final database = MyWebDatabase();
   final List<String> decks = [
     'デッキ1',
     'デッキ2',
@@ -27,7 +30,8 @@ class HomeState extends State<Home> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          _showDeckDialog(context);
+          // _showDeckDialog(context);
+          _insertDeck();
         },
         icon: const Icon(Icons.style),
         label: const Text('デッキ作成'),
@@ -64,5 +68,16 @@ class HomeState extends State<Home> {
         return const DeckDialog();
       },
     );
+  }
+
+  Future<void> _insertDeck() async {
+    // Simple insert:
+    await database
+        .into(database.categories)
+        .insert(CategoriesCompanion.insert(description: 'my first category'));
+
+    // Simple select:
+    final allCategories = await database.select(database.categories).get();
+    print('Categories in database: $allCategories');
   }
 }
