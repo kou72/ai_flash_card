@@ -1,35 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flash_pdf_card/deck.dart';
+import 'package:flash_pdf_card/deck_page.dart';
 import 'package:flash_pdf_card/deck_dialog.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flash_pdf_card/drift/filename.dart';
-import 'main.dart';
-
-// class Home extends StatefulWidget {
-//   const Home({Key? key}) : super(key: key);
-//   @override
-//   HomeState createState() => HomeState();
-// }
-
-// class HomeState extends State<Home> {
-//   final database = MyWebDatabase();
-//   final List<String> decks = [
-//     'デッキ1',
-//     'デッキ2',
-//     'デッキ3',
-//     // ... (他のデッキデータも追加可能)
-//   ];
-
-//   @override
-//   Widget build(BuildContext context) {
+import 'riverpod/decks_state.dart';
 
 class Home extends HookConsumerWidget {
   const Home({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final database = ref.watch(databaseProvider);
-    final categories = ref.watch(categoriesStreamProvider);
+    final decksDatabase = ref.watch(decksDatabaseProvider);
+    final decks = ref.watch(decksStreamProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -37,26 +18,34 @@ class Home extends HookConsumerWidget {
       ),
       body: Center(
         // child: _objects(),
-        child: Text(categories.toString()),
+        child: _deckList(decks),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        // onPressed: () {
-        //   // _showDeckDialog(context);
-        //   _insertDeck();
-        // },
         onPressed: () async {
-          // Simple insert:
-          await database.into(database.categories).insert(
-              CategoriesCompanion.insert(description: 'my first category'));
-
-          // Simple select:
-          final allCategories =
-              await database.select(database.categories).get();
-          print('Categories in database: $allCategories');
+          await decksDatabase.insertDeck('デッキ');
         },
         icon: const Icon(Icons.style),
         label: const Text('デッキ作成'),
       ),
+    );
+  }
+
+  Widget _deckList(AsyncValue decks) {
+    return decks.when(
+      data: (decks) {
+        return ListView.builder(
+          itemCount: decks.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              leading: const Icon(Icons.style),
+              title: Text(decks[index].title),
+              onTap: () {},
+            );
+          },
+        );
+      },
+      loading: () => const CircularProgressIndicator(),
+      error: (error, stackTrace) => Text('error: $error'),
     );
   }
 
@@ -90,15 +79,4 @@ class Home extends HookConsumerWidget {
       },
     );
   }
-
-  // Future<void> _insertDeck() async {
-  //   // Simple insert:
-  //   await database
-  //       .into(database.categories)
-  //       .insert(CategoriesCompanion.insert(description: 'my first category'));
-
-  //   // Simple select:
-  //   final allCategories = await database.select(database.categories).get();
-  //   print('Categories in database: $allCategories');
-  // }
 }
