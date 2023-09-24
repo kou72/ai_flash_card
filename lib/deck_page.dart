@@ -44,13 +44,13 @@ class DeckPageState extends State<DeckPage> {
       ),
     );
   }
+}
 
-  void _showAiDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return const AiDialog();
-      },
-    );
-  }
+void _showAiDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return const AiDialog();
+    },
+  );
 }
