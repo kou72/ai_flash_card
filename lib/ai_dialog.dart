@@ -3,20 +3,24 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
-import 'package:flash_pdf_card/components/gradient_container.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'components/gradient_container.dart';
+import 'components/gradient_circular_progress_indicator.dart';
+import 'riverpod/cards_state.dart';
 
-class AiDialog extends StatefulWidget {
+class AiDialog extends ConsumerStatefulWidget {
   const AiDialog({Key? key}) : super(key: key);
   @override
   AiDialogState createState() => AiDialogState();
 }
 
-class AiDialogState extends State<AiDialog> {
+class AiDialogState extends ConsumerState<AiDialog> {
   String? _pickedFileName;
   String _pickedShowName = '画像を選択';
   Uint8List? _pickedFileBytes;
   IconData _pickedFileIcon = Icons.upload_file;
   String _errorText = '';
+  bool _isLoading = false;
 
   Future<void> _pickImages() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -44,6 +48,7 @@ class AiDialogState extends State<AiDialog> {
       setState(() => _errorText = '※画像を選択してください');
       return;
     }
+    setState(() => _isLoading = true);
     // final url =
     //     Uri.https('generateflashcardquestions-vhoidcprtq-uc.a.run.app', '');
     // デバック用
@@ -61,19 +66,12 @@ class AiDialogState extends State<AiDialog> {
     final streamedResponse = await req.send();
     final response = await http.Response.fromStream(streamedResponse);
 
-    print(response.body);
-    print("finish");
+    final cardsDatabase = ref.watch(cardsDatabaseProvider);
+    await cardsDatabase.insertCardsFromJson(response.body);
 
-    // // ローカルストレージに保存
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // prefs.setString('questionsData', response.body);
-
-    // if (!mounted) return;
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //       builder: (context) => ResultScreen(questionsData: response.body)),
-    // );
+    setState(() => _isLoading = false);
+    if (!mounted) return;
+    Navigator.of(context).pop();
   }
 
   @override
@@ -82,31 +80,7 @@ class AiDialogState extends State<AiDialog> {
       title: Text('画像からカード生成します'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          GradientContainer(
-            text: _pickedShowName,
-            iconData: _pickedFileIcon,
-            width: 200,
-            height: 100,
-            colors: const [Colors.blue, Colors.purple],
-            onTap: () {
-              _pickImages();
-            },
-          ),
-          const SizedBox(height: 16),
-          GradientContainer(
-            text: "カードを生成",
-            iconData: Icons.history_edu,
-            width: 200,
-            height: 100,
-            colors: const [Colors.blue, Colors.purple],
-            onTap: () {
-              _createFlashcards();
-            },
-          ),
-          const SizedBox(height: 8),
-          Text(_errorText, style: const TextStyle(color: Colors.redAccent)),
-        ],
+        children: _dialogObject(),
       ),
       actions: <Widget>[
         TextButton(
@@ -117,5 +91,55 @@ class AiDialogState extends State<AiDialog> {
         ),
       ],
     );
+  }
+
+  List<Widget> _dialogObject() {
+    if (_isLoading) {
+      return _loadingIndicator();
+    } else {
+      return _createCardButton();
+    }
+  }
+
+  List<Widget> _createCardButton() {
+    return [
+      GradientContainer(
+        text: _pickedShowName,
+        iconData: _pickedFileIcon,
+        width: 200,
+        height: 100,
+        colors: const [Colors.blue, Colors.purple],
+        onTap: () {
+          _pickImages();
+        },
+      ),
+      const SizedBox(height: 16),
+      GradientContainer(
+        text: "カードを生成",
+        iconData: Icons.history_edu,
+        width: 200,
+        height: 100,
+        colors: const [Colors.blue, Colors.purple],
+        onTap: () {
+          _createFlashcards();
+        },
+      ),
+      const SizedBox(height: 8),
+      Text(_errorText, style: const TextStyle(color: Colors.redAccent)),
+    ];
+  }
+
+  List<Widget> _loadingIndicator() {
+    return [
+      const SizedBox(height: 16),
+      const GradientCircularProgressIndicator(
+        width: 100,
+        height: 100,
+        colors: [Colors.blue, Colors.purple],
+        milliseconds: 1500,
+      ),
+      const SizedBox(height: 16),
+      const Text("カードを生成しています"),
+    ];
   }
 }

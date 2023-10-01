@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
 part 'cards_database.g.dart';
@@ -20,6 +21,22 @@ class CardsDatabase extends _$CardsDatabase {
   Future insertCard(String question, String answer) {
     return into(cards)
         .insert(CardsCompanion.insert(question: question, answer: answer));
+  }
+
+  Future insertCardsFromJson(String json) async {
+    final List list = await Future.value(jsonDecode(json));
+    await Future.forEach(list, (item) async {
+      await insertCard(item["question"], item["answer"]);
+    });
+  }
+
+  Future deleteCard(int id) {
+    return (delete(cards)..where((t) => t.id.equals(id))).go();
+  }
+
+  Future updateCard(int id, String question, String answer) {
+    return (update(cards)..where((t) => t.id.equals(id))).write(
+        CardsCompanion(question: Value(question), answer: Value(answer)));
   }
 }
 
