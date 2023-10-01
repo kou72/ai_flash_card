@@ -19,6 +19,15 @@ class DecksDatabase extends _$DecksDatabase {
   Future insertDeck(String title) {
     return into(decks).insert(DecksCompanion.insert(title: title));
   }
+
+  Future deleteDeck(int id) {
+    return (delete(decks)..where((deck) => deck.id.equals(id))).go();
+  }
+
+  Future updateDeck(int id, String title) {
+    return (update(decks)..where((deck) => deck.id.equals(id)))
+        .write(DecksCompanion(title: Value(title)));
+  }
 }
 
 DatabaseConnection connectOnWeb() {
