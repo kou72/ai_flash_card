@@ -77,7 +77,7 @@ class AiDialogState extends ConsumerState<AiDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('画像からカード生成します'),
+      title: dialogTitle(),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: _dialogObject(),
@@ -91,6 +91,14 @@ class AiDialogState extends ConsumerState<AiDialog> {
         ),
       ],
     );
+  }
+
+  Widget dialogTitle() {
+    if (_isLoading) {
+      return const Text('カードを生成しています');
+    } else {
+      return const Text('画像からカード生成します');
+    }
   }
 
   List<Widget> _dialogObject() {
@@ -138,8 +146,6 @@ class AiDialogState extends ConsumerState<AiDialog> {
         colors: [Colors.blue, Colors.purple],
         milliseconds: 1500,
       ),
-      const SizedBox(height: 16),
-      const Text("カードを生成しています"),
     ];
   }
 }
