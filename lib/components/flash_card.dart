@@ -14,29 +14,29 @@ class FlashCard extends StatefulWidget {
 }
 
 class FlashCardState extends State<FlashCard> {
-  final cardWidth = 300.0;
-  final cardFontSize = 16.0;
-  final cardIconSize = 24.0;
-  final questionColor = Colors.blueGrey;
-  final answerColor = Colors.blueAccent;
+  final _cardWidth = 300.0;
+  final _cardFontSize = 16.0;
+  final _cardIconSize = 18.0;
+  final _questionColor = Colors.blueGrey;
+  final _answerColor = Colors.blueAccent;
   bool _isFlipped = true;
 
   // question と answer のテキストの高さを計算
   late TextPainter questionTextPainter = TextPainter(
     text: TextSpan(
       text: widget.question,
-      style: TextStyle(fontSize: cardFontSize),
+      style: TextStyle(fontSize: _cardFontSize),
     ),
     textDirection: TextDirection.ltr,
-  )..layout(minWidth: cardWidth - 100, maxWidth: cardWidth - 100);
+  )..layout(minWidth: _cardWidth - 100, maxWidth: _cardWidth - 100);
 
   late TextPainter answerTextPainter = TextPainter(
     text: TextSpan(
       text: widget.answer,
-      style: TextStyle(fontSize: cardFontSize),
+      style: TextStyle(fontSize: _cardFontSize),
     ),
     textDirection: TextDirection.ltr,
-  )..layout(minWidth: cardWidth - 100, maxWidth: cardWidth - 100);
+  )..layout(minWidth: _cardWidth - 100, maxWidth: _cardWidth - 100);
 
   late double cardHeight = max(
     questionTextPainter.height,
@@ -47,7 +47,7 @@ class FlashCardState extends State<FlashCard> {
   Widget build(BuildContext context) {
     return Center(
       child: SizedBox(
-        width: cardWidth,
+        width: _cardWidth,
         child: Card(
           margin: const EdgeInsets.all(10.0),
           child: InkWell(
@@ -55,13 +55,13 @@ class FlashCardState extends State<FlashCard> {
               setState(() => _isFlipped = !_isFlipped);
             },
             child: Padding(
-              padding: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(12.0),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight: cardHeight,
                   maxHeight: cardHeight,
                 ),
-                child: _flashCardText(),
+                child: _flashCardObject(),
               ),
             ),
           ),
@@ -70,43 +70,52 @@ class FlashCardState extends State<FlashCard> {
     );
   }
 
-  Widget _flashCardText() {
+  Widget _flashCardObject() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        _flashCardIcon(),
+        const SizedBox(width: 10.0),
+        Expanded(child: _flashCardText()),
+        const SizedBox(width: 10.0),
+        IconButton(
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+          color: _questionColor,
+          icon: Icon(Icons.edit, size: _cardIconSize),
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+
+  Widget _flashCardIcon() {
     if (_isFlipped) {
-      return _questionText();
+      return Icon(
+        Icons.sell,
+        color: _questionColor,
+        size: _cardIconSize,
+      );
     } else {
-      return _answerText();
+      return Icon(
+        Icons.sell_outlined,
+        color: _answerColor,
+        size: _cardIconSize,
+      );
     }
   }
 
-  Widget _questionText() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(Icons.sell, color: questionColor),
-        const SizedBox(width: 10.0),
-        Expanded(
-          child: Text(
-            widget.question,
-            style: TextStyle(color: questionColor, fontSize: cardFontSize),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _answerText() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(Icons.sell_outlined, color: answerColor),
-        const SizedBox(width: 10.0),
-        Expanded(
-          child: Text(
-            widget.answer,
-            style: TextStyle(color: answerColor, fontSize: cardFontSize),
-          ),
-        ),
-      ],
-    );
+  Widget _flashCardText() {
+    if (_isFlipped) {
+      return Text(
+        widget.question,
+        style: TextStyle(color: _questionColor, fontSize: _cardFontSize),
+      );
+    } else {
+      return Text(
+        widget.answer,
+        style: TextStyle(color: _answerColor, fontSize: _cardFontSize),
+      );
+    }
   }
 }
