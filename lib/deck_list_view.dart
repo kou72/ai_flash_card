@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flash_pdf_card/deck_page.dart';
+import 'package:flash_pdf_card/card_list_view.dart';
 import 'package:flash_pdf_card/deck_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'riverpod/decks_state.dart';
 
-class Home extends HookConsumerWidget {
-  const Home({Key? key}) : super(key: key);
+class DeckListView extends HookConsumerWidget {
+  const DeckListView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final decksStream = ref.watch(decksStreamProvider);
@@ -47,7 +47,7 @@ Widget _deckList(List decks) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => DeckPage(
+              builder: (context) => CardListView(
                 deckName: decks[index].title,
               ),
             ),

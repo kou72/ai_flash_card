@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 // import 'package:flash_pdf_card/startscreen.dart';
-import 'package:flash_pdf_card/home.dart';
+import 'package:flash_pdf_card/deck_list_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blueGrey,
       ),
       // home: const StartScreen(),
-      home: const Home(),
+      home: const DeckListView(),
       debugShowCheckedModeBanner: false,
     );
   }

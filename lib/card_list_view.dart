@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flash_pdf_card/ai_dialog.dart';
 import 'package:flash_pdf_card/components/gradient_floating_action_button.dart';
 
-class DeckPage extends StatefulWidget {
+class CardListView extends StatefulWidget {
   final String deckName;
-  const DeckPage({Key? key, required this.deckName}) : super(key: key);
+  const CardListView({Key? key, required this.deckName}) : super(key: key);
   @override
-  DeckPageState createState() => DeckPageState();
+  CardListViewState createState() => CardListViewState();
 }
 
-class DeckPageState extends State<DeckPage> {
+class CardListViewState extends State<CardListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
