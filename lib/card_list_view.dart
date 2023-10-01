@@ -4,15 +4,10 @@ import 'package:flash_pdf_card/ai_dialog.dart';
 import 'package:flash_pdf_card/components/gradient_floating_action_button.dart';
 import "riverpod/cards_state.dart";
 
-class CardListView extends ConsumerStatefulWidget {
+class CardListView extends HookConsumerWidget {
   const CardListView({Key? key}) : super(key: key);
   @override
-  CardListViewState createState() => CardListViewState();
-}
-
-class CardListViewState extends ConsumerState<CardListView> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cardsDatabase = ref.watch(cardsDatabaseProvider);
     final cardsStream = ref.watch(cardsStreamProvider);
 
