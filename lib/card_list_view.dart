@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flash_pdf_card/ai_dialog.dart';
-import 'package:flash_pdf_card/components/gradient_floating_action_button.dart';
+import 'ai_dialog.dart';
+import 'components/gradient_floating_action_button.dart';
+import "components/flash_card.dart";
 import "riverpod/cards_state.dart";
 
 class CardListView extends ConsumerStatefulWidget {
@@ -62,11 +63,15 @@ class CardListViewState extends ConsumerState<CardListView> {
       controller: _scrollController,
       itemCount: cards.length,
       itemBuilder: (context, index) {
-        return ListTile(
-          leading: const Icon(Icons.sell),
-          title: Text(cards[index].question),
-          onTap: () {},
+        return FlashCard(
+          question: cards[index].question,
+          answer: cards[index].answer,
         );
+        // return ListTile(
+        //   leading: const Icon(Icons.sell),
+        //   title: Text(cards[index].question),
+        //   onTap: () {},
+        // );
       },
     );
   }
