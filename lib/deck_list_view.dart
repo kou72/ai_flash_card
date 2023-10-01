@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'card_view_control.dart';
 import 'deck_insert_dialog.dart';
 import 'deck_update_dialog.dart';
+import 'deck_delete_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'riverpod/decks_state.dart';
 
@@ -40,7 +41,6 @@ class DeckListViewState extends ConsumerState<DeckListView> {
   }
 
   Widget _deckList(List decks) {
-    final decksDatabase = ref.watch(decksDatabaseProvider);
     return ListView.builder(
       itemCount: decks.length,
       itemBuilder: (context, index) {
@@ -61,14 +61,13 @@ class DeckListViewState extends ConsumerState<DeckListView> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () async {
-                  await decksDatabase.deleteDeck(decks[index].id);
-                },
-              ),
-              IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () => _showUpdateDeckDialog(
+                    context, decks[index].id, decks[index].title),
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () => _showDeleteDeckDialog(
                     context, decks[index].id, decks[index].title),
               ),
             ],
@@ -93,6 +92,15 @@ void _showUpdateDeckDialog(BuildContext context, int id, String title) {
     context: context,
     builder: (BuildContext context) {
       return DeckUpdateDialog(id: id, title: title);
+    },
+  );
+}
+
+void _showDeleteDeckDialog(BuildContext context, int id, String title) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return DeckDeleteDialog(id: id, title: title);
     },
   );
 }
