@@ -16,21 +16,25 @@ class GradientFloatingActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Ink(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: gradientColors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return Material(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      elevation: 4,
+      child: Ink(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: gradientColors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(30),
         ),
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: FloatingActionButton.extended(
-        backgroundColor: Colors.transparent,
-        elevation: 4,
-        icon: Icon(iconData),
-        label: Text(label),
-        onPressed: onPressed,
+        child: FloatingActionButton.extended(
+          backgroundColor: Colors.transparent,
+          elevation: 4,
+          icon: Icon(iconData),
+          label: Text(label),
+          onPressed: onPressed,
+        ),
       ),
     );
   }
