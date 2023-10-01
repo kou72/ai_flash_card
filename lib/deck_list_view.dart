@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'riverpod/decks_state.dart';
 
 class DeckListView extends ConsumerStatefulWidget {
-  const DeckListView({Key? key}) : super(key: key);
+  const DeckListView({super.key});
   @override
   DeckListViewState createState() => DeckListViewState();
 }

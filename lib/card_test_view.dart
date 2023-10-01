@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CardTestView extends StatefulWidget {
-  const CardTestView({Key? key}) : super(key: key);
+  const CardTestView({super.key});
   @override
   CardTestViewState createState() => CardTestViewState();
 }

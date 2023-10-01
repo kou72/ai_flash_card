@@ -5,7 +5,7 @@ import 'package:flash_pdf_card/components/gradient_floating_action_button.dart';
 import "riverpod/cards_state.dart";
 
 class CardListView extends ConsumerStatefulWidget {
-  const CardListView({Key? key}) : super(key: key);
+  const CardListView({super.key});
   @override
   CardListViewState createState() => CardListViewState();
 }

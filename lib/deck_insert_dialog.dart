@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'riverpod/decks_state.dart';
 
 class DeckInsertDialog extends ConsumerStatefulWidget {
-  const DeckInsertDialog({Key? key}) : super(key: key);
+  const DeckInsertDialog({super.key});
   @override
   DeckInsertDialogState createState() => DeckInsertDialogState();
 }

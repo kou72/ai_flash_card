@@ -10,7 +10,7 @@ const _viewList = [
 
 class CardViewControl extends StatefulWidget {
   final String deckName;
-  const CardViewControl({Key? key, required this.deckName}) : super(key: key);
+  const CardViewControl({super.key, required this.deckName});
   @override
   CardViewControlState createState() => CardViewControlState();
 }

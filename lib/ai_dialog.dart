@@ -9,7 +9,7 @@ import 'components/gradient_circular_progress_indicator.dart';
 import 'riverpod/cards_state.dart';
 
 class AiDialog extends ConsumerStatefulWidget {
-  const AiDialog({Key? key}) : super(key: key);
+  const AiDialog({super.key});
   @override
   AiDialogState createState() => AiDialogState();
 }
