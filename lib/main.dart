@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 // import 'package:flash_pdf_card/startscreen.dart';
-import 'package:flash_pdf_card/deck_list_view.dart';
+import 'deck_list_view.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'firebase/firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
