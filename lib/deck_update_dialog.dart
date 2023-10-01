@@ -5,8 +5,8 @@ import 'riverpod/decks_state.dart';
 class DeckUpdateDialog extends ConsumerStatefulWidget {
   final int id;
   final String title;
-  const DeckUpdateDialog({Key? key, required this.id, required this.title})
-      : super(key: key);
+  const DeckUpdateDialog({super.key, required this.id, required this.title});
+
   @override
   DeckUpdateDialogState createState() => DeckUpdateDialogState();
 }
@@ -17,11 +17,17 @@ class DeckUpdateDialogState extends ConsumerState<DeckUpdateDialog> {
   @override
   void initState() {
     super.initState();
-    _deckName = widget.title;
+    setState(() => _deckName = widget.title);
   }
 
   @override
   Widget build(BuildContext context) {
+    // TextFieldの初期値をセット
+    final controller = TextEditingController(text: _deckName);
+    // TextFieldのカーソルを末尾にするために必要
+    controller.selection = TextSelection.fromPosition(
+      TextPosition(offset: controller.text.length),
+    );
     final decksDatabase = ref.watch(decksDatabaseProvider);
 
     return AlertDialog(
@@ -30,7 +36,7 @@ class DeckUpdateDialogState extends ConsumerState<DeckUpdateDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
-            controller: TextEditingController(text: _deckName),
+            controller: controller,
             decoration: const InputDecoration(labelText: 'デッキ名'),
             onChanged: (String value) {
               setState(() => _deckName = value);
