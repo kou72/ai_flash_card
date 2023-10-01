@@ -71,9 +71,9 @@ class CardListViewState extends ConsumerState<CardListView> {
     );
   }
 
-  Widget _floatingActionButton() {
+  Widget? _floatingActionButton() {
     final cardsDatabase = ref.watch(cardsDatabaseProvider);
-    if (!_showFab) return const Column();
+    if (!_showFab) return null;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
