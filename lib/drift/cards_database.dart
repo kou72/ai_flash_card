@@ -18,6 +18,7 @@ class CardsDatabase extends _$CardsDatabase {
   @override
   int get schemaVersion => 1;
 
+  // ローカルデータベースへアクセスするメソッドを設定
   Future insertCard(String question, String answer) {
     return into(cards)
         .insert(CardsCompanion.insert(question: question, answer: answer));

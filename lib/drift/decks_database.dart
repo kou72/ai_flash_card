@@ -16,6 +16,7 @@ class DecksDatabase extends _$DecksDatabase {
   @override
   int get schemaVersion => 1;
 
+  // ローカルデータベースへアクセスするメソッドを設定
   Future insertDeck(String title) {
     return into(decks).insert(DecksCompanion.insert(title: title));
   }
