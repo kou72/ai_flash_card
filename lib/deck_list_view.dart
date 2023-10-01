@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flash_pdf_card/card_list_view.dart';
+import 'package:flash_pdf_card/card_view_control.dart';
 import 'package:flash_pdf_card/deck_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'riverpod/decks_state.dart';
@@ -47,7 +47,7 @@ Widget _deckList(List decks) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CardListView(
+              builder: (context) => CardViewControl(
                 deckName: decks[index].title,
               ),
             ),

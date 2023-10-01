@@ -3,8 +3,7 @@ import 'package:flash_pdf_card/ai_dialog.dart';
 import 'package:flash_pdf_card/components/gradient_floating_action_button.dart';
 
 class CardListView extends StatefulWidget {
-  final String deckName;
-  const CardListView({Key? key, required this.deckName}) : super(key: key);
+  const CardListView({Key? key}) : super(key: key);
   @override
   CardListViewState createState() => CardListViewState();
 }
@@ -13,9 +12,6 @@ class CardListViewState extends State<CardListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.deckName),
-      ),
       // body: ListView.builder(
       //   itemCount: flashCardData.length,
       //   itemBuilder: (context, index) {
