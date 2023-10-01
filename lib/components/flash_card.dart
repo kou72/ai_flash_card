@@ -16,7 +16,7 @@ class FlashCard extends StatefulWidget {
 class FlashCardState extends State<FlashCard> {
   final _cardWidth = 300.0;
   final _cardFontSize = 16.0;
-  final _cardIconSize = 18.0;
+  final _cardIconSize = 20.0;
   final _questionColor = Colors.blueGrey;
   final _answerColor = Colors.blueAccent;
   bool _isFlipped = true;
