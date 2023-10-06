@@ -36,6 +36,7 @@ class DeckUpdateDialogState extends ConsumerState<DeckUpdateDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
+            autofocus: true,
             controller: controller,
             decoration: const InputDecoration(labelText: 'デッキ名'),
             onChanged: (String value) {

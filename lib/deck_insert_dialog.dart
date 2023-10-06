@@ -21,6 +21,7 @@ class DeckInsertDialogState extends ConsumerState<DeckInsertDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
+            autofocus: true,
             decoration: const InputDecoration(labelText: 'デッキ名'),
             onChanged: (String value) {
               setState(() => _deckName = value);
