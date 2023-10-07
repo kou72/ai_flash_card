@@ -39,7 +39,7 @@ class CardDetailViewState extends State<CardDetailView> {
         child: Center(
           child: Column(
             children: [
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
               const Text('問題'),
               _questionCard(),
               const SizedBox(height: 24),
@@ -52,7 +52,7 @@ class CardDetailViewState extends State<CardDetailView> {
               _saveButton(),
               const SizedBox(height: 12),
               _deleteButton(),
-              const SizedBox(height: 22),
+              const SizedBox(height: 36),
             ],
           ),
         ),
