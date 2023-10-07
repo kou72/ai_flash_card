@@ -17,7 +17,7 @@ class DeckDeleteDialogState extends ConsumerState<DeckDeleteDialog> {
   @override
   void initState() {
     super.initState();
-    setState(() => _deckName = widget.title);
+    _deckName = widget.title;
   }
 
   @override

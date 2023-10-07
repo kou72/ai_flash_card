@@ -22,11 +22,9 @@ class CardDetailViewState extends State<CardDetailView> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _question = widget.question;
-      _answer = widget.answer;
-      // _note = widget.note;
-    });
+    _question = widget.question;
+    _answer = widget.answer;
+    // _note = widget.note;
   }
 
   @override

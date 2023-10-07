@@ -17,7 +17,7 @@ class DeckUpdateDialogState extends ConsumerState<DeckUpdateDialog> {
   @override
   void initState() {
     super.initState();
-    setState(() => _deckName = widget.title);
+    _deckName = widget.title;
   }
 
   @override
