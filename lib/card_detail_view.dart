@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 
 class CardDetailView extends StatefulWidget {
-  const CardDetailView({super.key});
+  final String question;
+  final String answer;
+  // final String note;
+  const CardDetailView({
+    super.key,
+    required this.question,
+    required this.answer,
+    // required this.note,
+  });
   @override
   CardDetailViewState createState() => CardDetailViewState();
 }
@@ -10,9 +18,23 @@ class CardDetailViewState extends State<CardDetailView> {
   String _question = '';
   String _answer = '';
   String _note = '';
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _question = widget.question;
+      _answer = widget.answer;
+      // _note = widget.note;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('カード詳細'),
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -39,6 +61,12 @@ class CardDetailViewState extends State<CardDetailView> {
   }
 
   Widget _questionCard() {
+    // TextFieldの初期値をセット
+    final controller = TextEditingController(text: _question);
+    // TextFieldのカーソルを末尾にするために必要
+    controller.selection = TextSelection.fromPosition(
+      TextPosition(offset: controller.text.length),
+    );
     const cardWidth = 400.0;
     const cardHeight = 200.0;
     return Card(
@@ -54,10 +82,9 @@ class CardDetailViewState extends State<CardDetailView> {
             right: 24.0,
           ),
           child: TextField(
+            controller: controller,
             maxLines: null,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-            ),
+            decoration: const InputDecoration(border: InputBorder.none),
             onChanged: (String value) {
               setState(() => _question = value);
             },
@@ -68,6 +95,12 @@ class CardDetailViewState extends State<CardDetailView> {
   }
 
   Widget _answerCard() {
+    // TextFieldの初期値をセット
+    final controller = TextEditingController(text: _answer);
+    // TextFieldのカーソルを末尾にするために必要
+    controller.selection = TextSelection.fromPosition(
+      TextPosition(offset: controller.text.length),
+    );
     const cardWidth = 400.0;
     const cardHeight = 200.0;
     return Card(
@@ -83,6 +116,7 @@ class CardDetailViewState extends State<CardDetailView> {
             right: 24.0,
           ),
           child: TextField(
+            controller: controller,
             maxLines: null,
             decoration: const InputDecoration(
               border: InputBorder.none,
@@ -97,6 +131,12 @@ class CardDetailViewState extends State<CardDetailView> {
   }
 
   Widget _noteCard() {
+    // TextFieldの初期値をセット
+    final controller = TextEditingController(text: _note);
+    // TextFieldのカーソルを末尾にするために必要
+    controller.selection = TextSelection.fromPosition(
+      TextPosition(offset: controller.text.length),
+    );
     const cardWidth = 400.0;
     const cardHeight = 200.0;
     return Card(
@@ -112,6 +152,7 @@ class CardDetailViewState extends State<CardDetailView> {
             right: 24.0,
           ),
           child: TextField(
+            controller: controller,
             maxLines: null,
             decoration: const InputDecoration(
               border: InputBorder.none,

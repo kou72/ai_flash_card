@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../card_detail_view.dart';
 
 class FlashCard extends StatefulWidget {
   final String question;
@@ -83,7 +84,17 @@ class FlashCardState extends State<FlashCard> {
           constraints: const BoxConstraints(),
           color: _questionColor,
           icon: Icon(Icons.edit, size: _cardIconSize),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CardDetailView(
+                  question: widget.question,
+                  answer: widget.answer,
+                ),
+              ),
+            );
+          },
         ),
       ],
     );

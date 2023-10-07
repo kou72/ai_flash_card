@@ -6,8 +6,7 @@ import 'card_detail_view.dart';
 // bottomNavigationBarでページを出し分ける用のリスト
 const _viewList = [
   CardListView(),
-  // CardTestView(),
-  CardDetailView()
+  CardTestView(),
 ];
 
 class CardViewControl extends StatefulWidget {
