@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import "card_list_view.dart";
 import "card_test_view.dart";
+import 'card_detail_view.dart';
 
 // bottomNavigationBarでページを出し分ける用のリスト
 const _viewList = [
   CardListView(),
-  CardTestView(),
+  // CardTestView(),
+  CardDetailView()
 ];
 
 class CardViewControl extends StatefulWidget {
@@ -26,6 +28,7 @@ class CardViewControlState extends State<CardViewControl> {
       ),
       body: _viewList[_pageListIndex],
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _pageListIndex,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.list),

@@ -10,15 +10,24 @@ class CardDetailViewState extends State<CardDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          const SizedBox(height: 12),
-          const Text('問題'),
-          _textFildCard(),
-          const SizedBox(height: 24),
-          const Text('答え'),
-          _textFildCard(),
-        ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              const Text('問題'),
+              _textFildCard(),
+              const SizedBox(height: 24),
+              const Text('答え'),
+              _textFildCard(),
+              const SizedBox(height: 24),
+              _saveButton(),
+              const SizedBox(height: 12),
+              _deleteButton(),
+              const SizedBox(height: 22),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -48,6 +57,32 @@ class CardDetailViewState extends State<CardDetailView> {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _saveButton() {
+    return SizedBox(
+      width: 200,
+      height: 40,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(),
+        onPressed: () {},
+        child: const Text('保存'),
+      ),
+    );
+  }
+
+  Widget _deleteButton() {
+    return SizedBox(
+      width: 200,
+      height: 40,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: Colors.red, width: 0.5),
+        ),
+        onPressed: () {},
+        child: const Text('削除', style: TextStyle(color: Colors.red)),
       ),
     );
   }
