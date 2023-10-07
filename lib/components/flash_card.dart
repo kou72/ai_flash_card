@@ -14,7 +14,7 @@ class FlashCard extends StatefulWidget {
 }
 
 class FlashCardState extends State<FlashCard> {
-  final _cardWidth = 300.0;
+  final _cardWidth = 400.0;
   final _cardFontSize = 16.0;
   final _cardIconSize = 20.0;
   final _questionColor = Colors.blueGrey;
