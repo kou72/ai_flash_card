@@ -77,17 +77,20 @@ class CardListViewState extends ConsumerState<CardListView> {
   }
 
   Widget _cardList(List cards) {
-    return ListView.builder(
-      controller: _scrollController,
-      itemCount: cards.length,
-      itemBuilder: (context, index) {
-        return FlashCard(
-          id: cards[index].id,
-          deckId: cards[index].deckId,
-          question: cards[index].question,
-          answer: cards[index].answer,
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: ListView.builder(
+        controller: _scrollController,
+        itemCount: cards.length,
+        itemBuilder: (context, index) {
+          return FlashCard(
+            id: cards[index].id,
+            deckId: cards[index].deckId,
+            question: cards[index].question,
+            answer: cards[index].answer,
+          );
+        },
+      ),
     );
   }
 

@@ -54,7 +54,12 @@ class FlashCardState extends State<FlashCard> {
       child: SizedBox(
         width: _cardWidth,
         child: Card(
-          margin: const EdgeInsets.all(10.0),
+          margin: const EdgeInsets.only(
+            top: 4,
+            bottom: 4,
+            left: 12,
+            right: 12,
+          ),
           child: InkWell(
             onTap: () {
               setState(() => _isFlipped = !_isFlipped);
