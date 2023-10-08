@@ -96,9 +96,7 @@ class CardListViewState extends ConsumerState<CardListView> {
       mainAxisSize: MainAxisSize.min,
       children: [
         GradientFloatingActionButton(
-          onPressed: () {
-            _showAiDialog(context);
-          },
+          onPressed: () => _showAiDialog(),
           iconData: Icons.smart_toy,
           label: '画像からカード生成',
           gradientColors: const [Colors.blue, Colors.purple],
@@ -115,13 +113,13 @@ class CardListViewState extends ConsumerState<CardListView> {
       ],
     );
   }
-}
 
-void _showAiDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return const AiDialog();
-    },
-  );
+  void _showAiDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const AiDialog();
+      },
+    );
+  }
 }
