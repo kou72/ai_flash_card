@@ -7,7 +7,7 @@ export const generateQuestionsFromChatGPT = async ({
   gpt4,
 }: {
   input: string;
-  gpt4: boolean;
+  gpt4: boolean; // gpt4を使う場合trueにする
 }) => {
   const URL = "https://api.openai.com/v1/chat/completions";
   const model = gpt4 ? "gpt-4" : "gpt-3.5-turbo";
