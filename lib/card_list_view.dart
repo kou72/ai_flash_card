@@ -4,6 +4,7 @@ import 'ai_dialog.dart';
 import 'components/gradient_floating_action_button.dart';
 import "components/flash_card.dart";
 import "riverpod/cards_state.dart";
+import "card_detail_view.dart";
 
 class CardListView extends ConsumerStatefulWidget {
   final int deckId;
@@ -82,6 +83,7 @@ class CardListViewState extends ConsumerState<CardListView> {
       itemBuilder: (context, index) {
         return FlashCard(
           id: cards[index].id,
+          deckId: cards[index].deckId,
           question: cards[index].question,
           answer: cards[index].answer,
         );
@@ -90,7 +92,6 @@ class CardListViewState extends ConsumerState<CardListView> {
   }
 
   Widget? _floatingActionButton() {
-    final cardsDatabase = ref.watch(cardsDatabaseProvider);
     if (!_showFab) return null;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -107,7 +108,18 @@ class CardListViewState extends ConsumerState<CardListView> {
           icon: const Icon(Icons.edit),
           label: const Text('自分でカードを作成'),
           onPressed: () async {
-            await cardsDatabase.insertCard(widget.deckId, "question", "answer");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CardDetailView(
+                  isnew: true,
+                  id: 0,
+                  deckId: widget.deckId,
+                  question: "",
+                  answer: "",
+                ),
+              ),
+            );
           },
         ),
       ],

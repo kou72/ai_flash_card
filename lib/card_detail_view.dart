@@ -5,21 +5,28 @@ import 'card_delete_dialog.dart';
 
 class CardDetailView extends ConsumerStatefulWidget {
   final int id;
+  final int deckId;
   final String question;
   final String answer;
   // final String note;
+  // 新規でカードを作成するときはtrueにする
+  final bool? isnew;
   const CardDetailView({
     super.key,
     required this.id,
+    required this.deckId,
     required this.question,
     required this.answer,
     // required this.note,
+    this.isnew,
   });
   @override
   CardDetailViewState createState() => CardDetailViewState();
 }
 
 class CardDetailViewState extends ConsumerState<CardDetailView> {
+  bool _isnew = false;
+  int _id = 0;
   String _question = '';
   String _answer = '';
   String _note = '';
@@ -27,6 +34,8 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
   @override
   void initState() {
     super.initState();
+    _isnew = widget.isnew ?? false;
+    _id = widget.id;
     _question = widget.question;
     _answer = widget.answer;
     // _note = widget.note;
@@ -61,7 +70,7 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
                 (value) => setState(() => _note = value),
               ),
               const SizedBox(height: 24),
-              _saveButton(),
+              _saveButtonController(),
               const SizedBox(height: 12),
               _deleteButton(),
               const SizedBox(height: 36),
@@ -104,7 +113,39 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
     );
   }
 
-  Widget _saveButton() {
+  Widget _saveButtonController() {
+    // 新規作成の時はinsert、既存のカードの時はupdate
+    if (_isnew) return _insertButton();
+    return _updateButton();
+  }
+
+  Widget _insertButton() {
+    final cardsDatabase = ref.watch(cardsDatabaseProvider);
+    return SizedBox(
+      width: 200,
+      height: 40,
+      child: ElevatedButton(
+        child: const Text('作成'),
+        onPressed: () async {
+          final id = await cardsDatabase.insertCard(
+            widget.deckId,
+            _question,
+            _answer,
+          );
+          setState(() {
+            _id = id;
+            _isnew = false;
+          });
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('新規作成しました！')),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _updateButton() {
     final cardsDatabase = ref.watch(cardsDatabaseProvider);
     return SizedBox(
       width: 200,
@@ -113,7 +154,7 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
         child: const Text('保存'),
         onPressed: () async {
           await cardsDatabase.updateCard(
-            widget.id,
+            _id,
             _question,
             _answer,
           );
@@ -137,9 +178,9 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
         ),
         child: const Text('削除', style: TextStyle(color: Colors.red)),
         onPressed: () async {
-          final result = await _showDeleteCardDialog(context, widget.id);
+          final result = await _showDeleteCardDialog(context, _id);
           if (!result) return;
-          await cardsDatabase.deleteCard(widget.id);
+          await cardsDatabase.deleteCard(_id);
           if (!context.mounted) return;
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
