@@ -70,7 +70,7 @@ class CardListViewState extends ConsumerState<CardListView> {
         Icon(Icons.sell, color: Colors.grey, size: 72.0),
         SizedBox(height: 16.0),
         Text('画像からカードを生成してみましょう！', style: textStyle),
-        Text('画像中の文字を抽出して暗記カードに変換します', style: textStyle),
+        Text('文字を抽出して暗記カードに変換します', style: textStyle),
       ],
     );
   }
