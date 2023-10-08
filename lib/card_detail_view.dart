@@ -138,21 +138,23 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
         child: const Text('削除', style: TextStyle(color: Colors.red)),
         onPressed: () async {
           final result = await _showDeleteCardDialog(context, widget.id);
-          if (result == true) {
-            await cardsDatabase.deleteCard(widget.id);
-            if (!context.mounted) return;
-            Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('カードを削除しました')),
-            );
-          }
+          if (!result) return;
+          await cardsDatabase.deleteCard(widget.id);
+          if (!context.mounted) return;
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('カードを削除しました')),
+          );
         },
       ),
     );
   }
 }
 
-Future<bool?> _showDeleteCardDialog(BuildContext context, int id) async {
+Future<bool> _showDeleteCardDialog(
+  BuildContext context,
+  int id,
+) async {
   bool result = await showDialog(
     context: context,
     builder: (BuildContext context) {

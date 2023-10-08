@@ -41,6 +41,7 @@ class DeckListViewState extends ConsumerState<DeckListView> {
   }
 
   Widget _deckList(List decks) {
+    final decksDatabase = ref.watch(decksDatabaseProvider);
     return ListView.builder(
       itemCount: decks.length,
       itemBuilder: (context, index) {
@@ -66,10 +67,15 @@ class DeckListViewState extends ConsumerState<DeckListView> {
                     context, decks[index].id, decks[index].title),
               ),
               IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () => _showDeleteDeckDialog(
-                    context, decks[index].id, decks[index].title),
-              ),
+                  icon: const Icon(Icons.delete),
+                  onPressed: () async {
+                    final result = await _showDeleteDeckDialog(
+                      context,
+                      decks[index].title,
+                    );
+                    if (!result) return;
+                    await decksDatabase.deleteDeck(decks[index].id);
+                  }),
             ],
           ),
         );
@@ -96,11 +102,13 @@ void _showUpdateDeckDialog(BuildContext context, int id, String title) {
   );
 }
 
-void _showDeleteDeckDialog(BuildContext context, int id, String title) {
-  showDialog(
+Future<bool> _showDeleteDeckDialog(
+  BuildContext context,
+  String title,
+) async {
+  bool result = await showDialog(
     context: context,
-    builder: (BuildContext context) {
-      return DeckDeleteDialog(id: id, title: title);
-    },
+    builder: (BuildContext context) => DeckDeleteDialog(title: title),
   );
+  return result;
 }
