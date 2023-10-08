@@ -33,7 +33,7 @@ class DeckInsertDialogState extends ConsumerState<DeckInsertDialog> {
         ),
         TextButton(
           child: const Text('作成', style: TextStyle(color: Colors.blue)),
-          onPressed: () async => Navigator.of(context).pop(_deckName),
+          onPressed: () => Navigator.of(context).pop(_deckName),
         ),
       ],
     );
