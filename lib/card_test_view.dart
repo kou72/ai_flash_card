@@ -9,8 +9,27 @@ class CardTestView extends StatefulWidget {
 class CardTestViewState extends State<CardTestView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Text('test'),
+    return const Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.construction,
+              color: Colors.grey,
+              size: 72.0,
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              'ただいま開発中です！',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 24.0,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
