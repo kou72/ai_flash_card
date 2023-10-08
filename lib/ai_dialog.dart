@@ -22,6 +22,7 @@ class AiDialogState extends ConsumerState<AiDialog> {
   IconData _pickedFileIcon = Icons.upload_file;
   String _errorText = '';
   bool _isLoading = false;
+  bool _isError = false;
 
   Future<void> _pickImages() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -75,10 +76,10 @@ class AiDialogState extends ConsumerState<AiDialog> {
       if (!mounted) return;
       Navigator.of(context).pop();
     } catch (e) {
-      // エラー発生時の処理をここに書く
-      print('エラーが発生しました');
-      print(e);
-      Navigator.of(context).pop();
+      setState(() {
+        _isLoading = false;
+        _isError = true;
+      });
     }
   }
 
@@ -92,29 +93,29 @@ class AiDialogState extends ConsumerState<AiDialog> {
       ),
       actions: <Widget>[
         TextButton(
-          child: const Text('キャンセル', style: TextStyle(color: Colors.blue)),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          child: buttonText(),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ],
     );
   }
 
   Widget dialogTitle() {
-    if (_isLoading) {
-      return const Text('カードを生成しています');
-    } else {
-      return const Text('画像からカード生成します');
-    }
+    if (_isError) return const Text('エラーが発生しました');
+    if (_isLoading) return const Text('カードを生成しています');
+    return const Text('画像からカード生成します');
+  }
+
+  Widget buttonText() {
+    if (_isError) return const Text('OK');
+    return const Text('キャンセル', style: TextStyle(color: Colors.blue));
   }
 
   List<Widget> _dialogObject() {
-    if (_isLoading) {
-      return _loadingIndicator();
-    } else {
-      return _createCardButton();
-    }
+    const errorStyle = TextStyle(color: Colors.redAccent);
+    if (_isError) return [const Text('画像の読み取りに失敗しました', style: errorStyle)];
+    if (_isLoading) return _loadingIndicator();
+    return _createCardButton();
   }
 
   List<Widget> _createCardButton() {
@@ -125,9 +126,7 @@ class AiDialogState extends ConsumerState<AiDialog> {
         width: 200,
         height: 100,
         colors: const [Colors.blue, Colors.purple],
-        onTap: () {
-          _pickImages();
-        },
+        onTap: () => _pickImages(),
       ),
       const SizedBox(height: 16),
       GradientContainer(
@@ -136,9 +135,7 @@ class AiDialogState extends ConsumerState<AiDialog> {
         width: 200,
         height: 100,
         colors: const [Colors.blue, Colors.purple],
-        onTap: () {
-          _createFlashcards();
-        },
+        onTap: () => _createFlashcards(),
       ),
       const SizedBox(height: 8),
       Text(_errorText, style: const TextStyle(color: Colors.redAccent)),
