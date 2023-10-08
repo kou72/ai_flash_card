@@ -58,7 +58,6 @@ class DeckListViewState extends ConsumerState<DeckListView> {
           '最初のデッキを作成しましょう！',
           style: TextStyle(
             color: Colors.grey,
-            fontWeight: FontWeight.bold,
             fontSize: 24.0,
           ),
         ),

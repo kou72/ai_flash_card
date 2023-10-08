@@ -61,7 +61,6 @@ class CardListViewState extends ConsumerState<CardListView> {
   Widget _noCardsText() {
     const textStyle = TextStyle(
       color: Colors.grey,
-      fontWeight: FontWeight.bold,
       fontSize: 24.0,
     );
     return const Column(
