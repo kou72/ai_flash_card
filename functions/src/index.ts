@@ -23,7 +23,7 @@ export const generateImageToQuestions = onRequest(
     }
 
     // メインの処理
-    // fileUpload：PDFをCloud Storageにアップロードし、保存先のpathを取得
+    // fileUpload：画像をCloud Storageにアップロードし、保存先のpathを取得
     // convertImageToText：SourceBucktの画像をテキストに変換
     // saveText：デバッグ用の中間ファイルとしてtext.txtを保存
     // generateQuestionsFromChatGPT：テキストをOpenAIのAPIに投げて質問を生成
@@ -38,12 +38,26 @@ export const generateImageToQuestions = onRequest(
       const text = await convertImageToText(sourcePath, destFolder);
       await saveText(destFolder, text);
 
-      const questionsString = await generateQuestionsFromChatGPT(text);
-      const questions = JSON.parse(questionsString);
+      let questions;
+      try {
+        const questionsString = await generateQuestionsFromChatGPT({
+          input: text,
+          gpt4: false,
+        });
+        questions = JSON.parse(questionsString);
+      } catch (error: any) {
+        logger.error(error.message, {structuredData: true});
+        const questionsString = await generateQuestionsFromChatGPT({
+          input: text,
+          gpt4: true,
+        });
+        questions = JSON.parse(questionsString);
+      }
       await saveQuestions(destFolder, questions);
 
       res.status(200).send(questions);
     } catch (error: any) {
+      logger.error(error.message, {structuredData: true});
       res.status(500).send(error.message);
     }
   }
@@ -74,7 +88,10 @@ export const generateFlashCardQuestions = onRequest(
       const textList = await extractTextFromJson(destFolder);
       const questionsList = await Promise.all(
         textList.map(async (text) => {
-          const questionsString = await generateQuestionsFromChatGPT(text);
+          const questionsString = await generateQuestionsFromChatGPT({
+            input: text,
+            gpt4: false,
+          });
           return JSON.parse(questionsString);
         })
       );

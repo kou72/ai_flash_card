@@ -9,7 +9,7 @@ import 'components/gradient_circular_progress_indicator.dart';
 import 'riverpod/cards_state.dart';
 
 class AiDialog extends ConsumerStatefulWidget {
-  final deckId;
+  final int deckId;
   const AiDialog({super.key, required this.deckId});
   @override
   AiDialogState createState() => AiDialogState();
@@ -49,30 +49,37 @@ class AiDialogState extends ConsumerState<AiDialog> {
       setState(() => _errorText = '※画像を選択してください');
       return;
     }
+
     setState(() => _isLoading = true);
-    // final url =
-    //     Uri.https('generateflashcardquestions-vhoidcprtq-uc.a.run.app', '');
-    // デバック用
-    final url = Uri.http('127.0.0.1:5001',
-        'flash-pdf-card/us-central1/generateImageToQuestions');
-    final req = http.MultipartRequest('POST', url);
-    final encodeFileName = base64Encode(utf8.encode(_pickedFileName!));
-    req.files.add(
-      http.MultipartFile.fromBytes(
-        'file',
-        _pickedFileBytes!,
-        filename: encodeFileName,
-      ),
-    );
-    final streamedResponse = await req.send();
-    final response = await http.Response.fromStream(streamedResponse);
 
-    final cardsDatabase = ref.watch(cardsDatabaseProvider);
-    await cardsDatabase.insertCardsFromJson(widget.deckId, response.body);
+    try {
+      // デバック用
+      final url = Uri.http('127.0.0.1:5001',
+          'flash-pdf-card/us-central1/generateImageToQuestions');
+      final req = http.MultipartRequest('POST', url);
+      final encodeFileName = base64Encode(utf8.encode(_pickedFileName!));
+      req.files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          _pickedFileBytes!,
+          filename: encodeFileName,
+        ),
+      );
+      final streamedResponse = await req.send();
+      final response = await http.Response.fromStream(streamedResponse);
 
-    setState(() => _isLoading = false);
-    if (!mounted) return;
-    Navigator.of(context).pop();
+      final cardsDatabase = ref.watch(cardsDatabaseProvider);
+      await cardsDatabase.insertCardsFromJson(widget.deckId, response.body);
+
+      setState(() => _isLoading = false);
+      if (!mounted) return;
+      Navigator.of(context).pop();
+    } catch (e) {
+      // エラー発生時の処理をここに書く
+      print('エラーが発生しました');
+      print(e);
+      Navigator.of(context).pop();
+    }
   }
 
   @override
