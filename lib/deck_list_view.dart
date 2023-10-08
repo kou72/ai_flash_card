@@ -63,19 +63,29 @@ class DeckListViewState extends ConsumerState<DeckListView> {
             children: <Widget>[
               IconButton(
                 icon: const Icon(Icons.edit),
-                onPressed: () => _showUpdateDeckDialog(
-                    context, decks[index].id, decks[index].title),
+                onPressed: () async {
+                  final result = await _showUpdateDeckDialog(
+                    context,
+                    decks[index].title,
+                  );
+                  if (result == null) return;
+                  await decksDatabase.updateDeck(
+                    decks[index].id,
+                    result,
+                  );
+                },
               ),
               IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () async {
-                    final result = await _showDeleteDeckDialog(
-                      context,
-                      decks[index].title,
-                    );
-                    if (!result) return;
-                    await decksDatabase.deleteDeck(decks[index].id);
-                  }),
+                icon: const Icon(Icons.delete),
+                onPressed: () async {
+                  final result = await _showDeleteDeckDialog(
+                    context,
+                    decks[index].title,
+                  );
+                  if (!result) return;
+                  await decksDatabase.deleteDeck(decks[index].id);
+                },
+              ),
             ],
           ),
         );
@@ -93,13 +103,15 @@ void _showInsertDeckDialog(BuildContext context) {
   );
 }
 
-void _showUpdateDeckDialog(BuildContext context, int id, String title) {
-  showDialog(
+Future<String?> _showUpdateDeckDialog(
+  BuildContext context,
+  String title,
+) async {
+  String? result = await showDialog(
     context: context,
-    builder: (BuildContext context) {
-      return DeckUpdateDialog(id: id, title: title);
-    },
+    builder: (BuildContext context) => DeckUpdateDialog(title: title),
   );
+  return result;
 }
 
 Future<bool> _showDeleteDeckDialog(
