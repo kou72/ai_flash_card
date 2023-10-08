@@ -69,9 +69,18 @@ class CardListViewState extends ConsumerState<CardListView> {
         ),
         SizedBox(height: 16.0),
         Text(
-          '最初のカードを作成しましょう！',
+          '画像からカードを生成してみましょう！',
           style: TextStyle(
             color: Colors.grey,
+            fontWeight: FontWeight.bold,
+            fontSize: 24.0,
+          ),
+        ),
+        Text(
+          '画像中の文字を抽出して暗記カードに変換します',
+          style: TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.bold,
             fontSize: 24.0,
           ),
         ),
