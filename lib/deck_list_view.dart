@@ -41,7 +41,6 @@ class DeckListViewState extends ConsumerState<DeckListView> {
   }
 
   Widget _deckList(List decks) {
-    final decksDatabase = ref.watch(decksDatabaseProvider);
     return ListView.builder(
       itemCount: decks.length,
       itemBuilder: (context, index) {
@@ -61,66 +60,61 @@ class DeckListViewState extends ConsumerState<DeckListView> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () async {
-                  final result = await _showUpdateDeckDialog(
-                    context,
-                    decks[index].title,
-                  );
-                  if (result == null) return;
-                  await decksDatabase.updateDeck(
-                    decks[index].id,
-                    result,
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () async {
-                  final result = await _showDeleteDeckDialog(
-                    context,
-                    decks[index].title,
-                  );
-                  if (!result) return;
-                  await decksDatabase.deleteDeck(decks[index].id);
-                },
-              ),
+              _updateDeckButton(decks[index].id, decks[index].title),
+              _deleteDeckButton(decks[index].id, decks[index].title),
             ],
           ),
         );
       },
     );
   }
-}
 
-void _showInsertDeckDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return const DeckInsertDialog();
-    },
-  );
-}
+  Widget _updateDeckButton(int id, String title) {
+    final decksDatabase = ref.watch(decksDatabaseProvider);
+    return IconButton(
+      icon: const Icon(Icons.edit),
+      onPressed: () async {
+        final result = await _showUpdateDeckDialog(title);
+        if (result == null) return;
+        await decksDatabase.updateDeck(id, result);
+      },
+    );
+  }
 
-Future<String?> _showUpdateDeckDialog(
-  BuildContext context,
-  String title,
-) async {
-  String? result = await showDialog(
-    context: context,
-    builder: (BuildContext context) => DeckUpdateDialog(title: title),
-  );
-  return result;
-}
+  Widget _deleteDeckButton(int id, String title) {
+    final decksDatabase = ref.watch(decksDatabaseProvider);
+    return IconButton(
+      icon: const Icon(Icons.delete),
+      onPressed: () async {
+        final result = await _showDeleteDeckDialog(title);
+        if (!result) return;
+        await decksDatabase.deleteDeck(id);
+      },
+    );
+  }
 
-Future<bool> _showDeleteDeckDialog(
-  BuildContext context,
-  String title,
-) async {
-  bool result = await showDialog(
-    context: context,
-    builder: (BuildContext context) => DeckDeleteDialog(title: title),
-  );
-  return result;
+  void _showInsertDeckDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const DeckInsertDialog();
+      },
+    );
+  }
+
+  Future<String?> _showUpdateDeckDialog(String title) async {
+    String? result = await showDialog(
+      context: context,
+      builder: (BuildContext context) => DeckUpdateDialog(title: title),
+    );
+    return result;
+  }
+
+  Future<bool> _showDeleteDeckDialog(String title) async {
+    bool result = await showDialog(
+      context: context,
+      builder: (BuildContext context) => DeckDeleteDialog(title: title),
+    );
+    return result;
+  }
 }
