@@ -16,7 +16,7 @@ class DeckListViewState extends ConsumerState<DeckListView> {
   @override
   Widget build(BuildContext context) {
     final decksStream = ref.watch(decksStreamProvider);
-
+    final decksDatabase = ref.watch(decksDatabaseProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('AI暗記カード (Demo版)'),
@@ -25,7 +25,11 @@ class DeckListViewState extends ConsumerState<DeckListView> {
         child: _asyncDeckList(decksStream),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showInsertDeckDialog(context),
+        onPressed: () async {
+          final result = await _showInsertDeckDialog();
+          if (result == null) return;
+          await decksDatabase.insertDeck(result);
+        },
         icon: const Icon(Icons.style),
         label: const Text('デッキ作成'),
       ),
@@ -93,13 +97,12 @@ class DeckListViewState extends ConsumerState<DeckListView> {
     );
   }
 
-  void _showInsertDeckDialog(BuildContext context) {
-    showDialog(
+  Future<String?> _showInsertDeckDialog() async {
+    String? result = await showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return const DeckInsertDialog();
-      },
+      builder: (BuildContext context) => const DeckInsertDialog(),
     );
+    return result;
   }
 
   Future<String?> _showUpdateDeckDialog(String title) async {
