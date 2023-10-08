@@ -52,9 +52,30 @@ class CardListViewState extends ConsumerState<CardListView> {
 
   Widget _asyncCardList(AsyncValue cardsStream) {
     return cardsStream.when(
-      data: (cards) => _cardList(cards),
+      data: (cards) => cards.isNotEmpty ? _cardList(cards) : _noCardsText(),
       loading: () => const CircularProgressIndicator(),
       error: (error, stackTrace) => Text('error: $error'),
+    );
+  }
+
+  Widget _noCardsText() {
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.sell,
+          color: Colors.grey,
+          size: 72.0,
+        ),
+        SizedBox(height: 16.0),
+        Text(
+          '最初のカードを作成しましょう！',
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 24.0,
+          ),
+        ),
+      ],
     );
   }
 
