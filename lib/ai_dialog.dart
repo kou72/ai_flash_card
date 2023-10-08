@@ -35,13 +35,14 @@ class AiDialogState extends ConsumerState<AiDialog> {
 
     setState(() {
       _pickedFileName = file.name;
+      _pickedFileBytes = file.bytes;
+      _pickedFileIcon = Icons.check_circle;
+      _errorText = '';
+      // ファイル名が長い場合、先頭5文字と拡張子を表示
       String head =
           file.name.length >= 5 ? file.name.substring(0, 5) : file.name;
       String extension = file.name.split(".").last;
       _pickedShowName = "$head...$extension";
-      _pickedFileBytes = file.bytes;
-      _pickedFileIcon = Icons.check_circle;
-      _errorText = '';
     });
   }
 
