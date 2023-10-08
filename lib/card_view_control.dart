@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import "card_list_view.dart";
 import "card_test_view.dart";
-import 'card_detail_view.dart';
 
 // bottomNavigationBarでページを出し分ける用のリスト
 const _viewList = [
