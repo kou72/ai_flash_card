@@ -38,9 +38,31 @@ class DeckListViewState extends ConsumerState<DeckListView> {
 
   Widget _asyncDeckList(AsyncValue decksStream) {
     return decksStream.when(
-      data: (decks) => _deckList(decks),
+      data: (decks) => decks.isNotEmpty ? _deckList(decks) : _noDecksText(),
       loading: () => const CircularProgressIndicator(),
       error: (error, stackTrace) => Text('error: $error'),
+    );
+  }
+
+  Widget _noDecksText() {
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.style,
+          color: Colors.grey,
+          size: 72.0,
+        ),
+        SizedBox(height: 16.0),
+        Text(
+          '最初のデッキを作成しましょう！',
+          style: TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.bold,
+            fontSize: 24.0,
+          ),
+        ),
+      ],
     );
   }
 
