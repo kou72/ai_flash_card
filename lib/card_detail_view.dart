@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CardDetailView extends StatefulWidget {
+  // final int id;
   final String question;
   final String answer;
   // final String note;
   const CardDetailView({
     super.key,
+    // required this.id,
     required this.question,
     required this.answer,
     // required this.note,
@@ -39,13 +41,22 @@ class CardDetailViewState extends State<CardDetailView> {
             children: [
               const SizedBox(height: 24),
               const Text('問題'),
-              _questionCard(),
+              _textFieldCard(
+                _question,
+                (value) => setState(() => _question = value),
+              ),
               const SizedBox(height: 24),
               const Text('答え'),
-              _answerCard(),
+              _textFieldCard(
+                _answer,
+                (value) => setState(() => _answer = value),
+              ),
               const SizedBox(height: 24),
               const Text('ノート'),
-              _noteCard(),
+              _textFieldCard(
+                _note,
+                (value) => setState(() => _note = value),
+              ),
               const SizedBox(height: 24),
               _saveButton(),
               const SizedBox(height: 12),
@@ -58,9 +69,9 @@ class CardDetailViewState extends State<CardDetailView> {
     );
   }
 
-  Widget _questionCard() {
+  Widget _textFieldCard(String text, Function(String) onChanged) {
     // TextFieldの初期値をセット
-    final controller = TextEditingController(text: _question);
+    final controller = TextEditingController(text: text);
     // TextFieldのカーソルを末尾にするために必要
     controller.selection = TextSelection.fromPosition(
       TextPosition(offset: controller.text.length),
@@ -83,81 +94,7 @@ class CardDetailViewState extends State<CardDetailView> {
             controller: controller,
             maxLines: null,
             decoration: const InputDecoration(border: InputBorder.none),
-            onChanged: (String value) {
-              setState(() => _question = value);
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _answerCard() {
-    // TextFieldの初期値をセット
-    final controller = TextEditingController(text: _answer);
-    // TextFieldのカーソルを末尾にするために必要
-    controller.selection = TextSelection.fromPosition(
-      TextPosition(offset: controller.text.length),
-    );
-    const cardWidth = 400.0;
-    const cardHeight = 200.0;
-    return Card(
-      margin: const EdgeInsets.all(10.0),
-      child: SizedBox(
-        width: cardWidth,
-        height: cardHeight,
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 8.0,
-            bottom: 8.0,
-            left: 24.0,
-            right: 24.0,
-          ),
-          child: TextField(
-            controller: controller,
-            maxLines: null,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-            ),
-            onChanged: (String value) {
-              setState(() => _answer = value);
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _noteCard() {
-    // TextFieldの初期値をセット
-    final controller = TextEditingController(text: _note);
-    // TextFieldのカーソルを末尾にするために必要
-    controller.selection = TextSelection.fromPosition(
-      TextPosition(offset: controller.text.length),
-    );
-    const cardWidth = 400.0;
-    const cardHeight = 200.0;
-    return Card(
-      margin: const EdgeInsets.all(10.0),
-      child: SizedBox(
-        width: cardWidth,
-        height: cardHeight,
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 8.0,
-            bottom: 8.0,
-            left: 24.0,
-            right: 24.0,
-          ),
-          child: TextField(
-            controller: controller,
-            maxLines: null,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-            ),
-            onChanged: (String value) {
-              setState(() => _note = value);
-            },
+            onChanged: onChanged,
           ),
         ),
       ),
