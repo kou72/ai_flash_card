@@ -1,10 +1,14 @@
 import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
+
+// 以下コマンドでbuildして自動生成
+// flutter pub run build_runner build --delete-conflicting-outputs
 part 'cards_database.g.dart';
 
 class Cards extends Table {
   IntColumn get id => integer().autoIncrement()();
+  IntColumn get deckId => integer().nullable()();
   TextColumn get question => text()();
   TextColumn get answer => text()();
 }
@@ -19,15 +23,18 @@ class CardsDatabase extends _$CardsDatabase {
   int get schemaVersion => 1;
 
   // ローカルデータベースへアクセスするメソッドを設定
-  Future insertCard(String question, String answer) {
-    return into(cards)
-        .insert(CardsCompanion.insert(question: question, answer: answer));
+  Future insertCard(int deckId, String question, String answer) {
+    return into(cards).insert(CardsCompanion.insert(
+      deckId: Value(deckId),
+      question: question,
+      answer: answer,
+    ));
   }
 
-  Future insertCardsFromJson(String json) async {
+  Future insertCardsFromJson(int deckId, String json) async {
     final List list = await Future.value(jsonDecode(json));
     await Future.forEach(list, (item) async {
-      await insertCard(item["question"], item["answer"]);
+      await insertCard(deckId, item["question"], item["answer"]);
     });
   }
 

@@ -1,5 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
+
+// 以下コマンドでbuildして自動生成
+// flutter pub run build_runner build --delete-conflicting-outputs
 part 'decks_database.g.dart';
 
 class Decks extends Table {

@@ -25,13 +25,13 @@ class DeckListViewState extends ConsumerState<DeckListView> {
         child: _asyncDeckList(decksStream),
       ),
       floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.style),
+        label: const Text('デッキ作成'),
         onPressed: () async {
           final result = await _showInsertDeckDialog();
           if (result == null) return;
           await decksDatabase.insertDeck(result);
         },
-        icon: const Icon(Icons.style),
-        label: const Text('デッキ作成'),
       ),
     );
   }
@@ -77,6 +77,7 @@ class DeckListViewState extends ConsumerState<DeckListView> {
               context,
               MaterialPageRoute(
                 builder: (context) => CardViewControl(
+                  deckId: decks[index].id,
                   deckName: decks[index].title,
                 ),
               ),

@@ -6,7 +6,8 @@ import "components/flash_card.dart";
 import "riverpod/cards_state.dart";
 
 class CardListView extends ConsumerStatefulWidget {
-  const CardListView({super.key});
+  final int deckId;
+  const CardListView({super.key, required this.deckId});
   @override
   CardListViewState createState() => CardListViewState();
 }
@@ -41,7 +42,7 @@ class CardListViewState extends ConsumerState<CardListView> {
 
   @override
   Widget build(BuildContext context) {
-    final cardsStream = ref.watch(cardsStreamProvider);
+    final cardsStream = ref.watch(cardsStreamProvider(widget.deckId));
     return Scaffold(
       body: Center(
         child: _asyncCardList(cardsStream),
@@ -106,7 +107,7 @@ class CardListViewState extends ConsumerState<CardListView> {
           icon: const Icon(Icons.edit),
           label: const Text('自分でカードを作成'),
           onPressed: () async {
-            await cardsDatabase.insertCard("question", "answer");
+            await cardsDatabase.insertCard(widget.deckId, "question", "answer");
           },
         ),
       ],
@@ -117,7 +118,7 @@ class CardListViewState extends ConsumerState<CardListView> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const AiDialog();
+        return AiDialog(deckId: widget.deckId);
       },
     );
   }

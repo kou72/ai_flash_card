@@ -9,7 +9,8 @@ import 'components/gradient_circular_progress_indicator.dart';
 import 'riverpod/cards_state.dart';
 
 class AiDialog extends ConsumerStatefulWidget {
-  const AiDialog({super.key});
+  final deckId;
+  const AiDialog({super.key, required this.deckId});
   @override
   AiDialogState createState() => AiDialogState();
 }
@@ -67,7 +68,7 @@ class AiDialogState extends ConsumerState<AiDialog> {
     final response = await http.Response.fromStream(streamedResponse);
 
     final cardsDatabase = ref.watch(cardsDatabaseProvider);
-    await cardsDatabase.insertCardsFromJson(response.body);
+    await cardsDatabase.insertCardsFromJson(widget.deckId, response.body);
 
     setState(() => _isLoading = false);
     if (!mounted) return;

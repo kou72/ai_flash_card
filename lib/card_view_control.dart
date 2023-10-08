@@ -2,21 +2,25 @@ import 'package:flutter/material.dart';
 import "card_list_view.dart";
 import "card_test_view.dart";
 
-// bottomNavigationBarでページを出し分ける用のリスト
-const _viewList = [
-  CardListView(),
-  CardTestView(),
-];
-
 class CardViewControl extends StatefulWidget {
+  final int deckId;
   final String deckName;
-  const CardViewControl({super.key, required this.deckName});
+  const CardViewControl({
+    super.key,
+    required this.deckId,
+    required this.deckName,
+  });
   @override
   CardViewControlState createState() => CardViewControlState();
 }
 
 class CardViewControlState extends State<CardViewControl> {
   int _pageListIndex = 0;
+// bottomNavigationBarでページを出し分ける用のリスト
+  late final _viewList = [
+    CardListView(deckId: widget.deckId),
+    const CardTestView(),
+  ];
 
   @override
   Widget build(BuildContext context) {
