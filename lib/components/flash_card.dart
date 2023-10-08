@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import '../card_detail_view.dart';
 
 class FlashCard extends StatefulWidget {
+  final int id;
   final String question;
   final String answer;
   const FlashCard({
     super.key,
+    required this.id,
     required this.question,
     required this.answer,
   });
@@ -89,6 +91,7 @@ class FlashCardState extends State<FlashCard> {
               context,
               MaterialPageRoute(
                 builder: (context) => CardDetailView(
+                  id: widget.id,
                   question: widget.question,
                   answer: widget.answer,
                 ),

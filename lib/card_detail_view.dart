@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'riverpod/cards_state.dart';
+import 'card_delete_dialog.dart';
 
-class CardDetailView extends StatefulWidget {
-  // final int id;
+class CardDetailView extends ConsumerStatefulWidget {
+  final int id;
   final String question;
   final String answer;
   // final String note;
   const CardDetailView({
     super.key,
-    // required this.id,
+    required this.id,
     required this.question,
     required this.answer,
     // required this.note,
@@ -16,7 +19,7 @@ class CardDetailView extends StatefulWidget {
   CardDetailViewState createState() => CardDetailViewState();
 }
 
-class CardDetailViewState extends State<CardDetailView> {
+class CardDetailViewState extends ConsumerState<CardDetailView> {
   String _question = '';
   String _answer = '';
   String _note = '';
@@ -102,18 +105,29 @@ class CardDetailViewState extends State<CardDetailView> {
   }
 
   Widget _saveButton() {
+    final cardsDatabase = ref.watch(cardsDatabaseProvider);
     return SizedBox(
       width: 200,
       height: 40,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(),
-        onPressed: () {},
         child: const Text('保存'),
+        onPressed: () async {
+          await cardsDatabase.updateCard(
+            widget.id,
+            _question,
+            _answer,
+          );
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('保存しました！')),
+          );
+        },
       ),
     );
   }
 
   Widget _deleteButton() {
+    final cardsDatabase = ref.watch(cardsDatabaseProvider);
     return SizedBox(
       width: 200,
       height: 40,
@@ -121,9 +135,29 @@ class CardDetailViewState extends State<CardDetailView> {
         style: OutlinedButton.styleFrom(
           side: const BorderSide(color: Colors.red, width: 0.5),
         ),
-        onPressed: () {},
         child: const Text('削除', style: TextStyle(color: Colors.red)),
+        onPressed: () async {
+          final result = await _showDeleteCardDialog(context, widget.id);
+          if (result == true) {
+            await cardsDatabase.deleteCard(widget.id);
+            if (!context.mounted) return;
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('カードを削除しました')),
+            );
+          }
+        },
       ),
     );
   }
+}
+
+Future<bool?> _showDeleteCardDialog(BuildContext context, int id) async {
+  bool result = await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return const CardDeleteDialog();
+    },
+  );
+  return result;
 }

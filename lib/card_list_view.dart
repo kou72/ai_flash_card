@@ -64,14 +64,10 @@ class CardListViewState extends ConsumerState<CardListView> {
       itemCount: cards.length,
       itemBuilder: (context, index) {
         return FlashCard(
+          id: cards[index].id,
           question: cards[index].question,
           answer: cards[index].answer,
         );
-        // return ListTile(
-        //   leading: const Icon(Icons.sell),
-        //   title: Text(cards[index].question),
-        //   onTap: () {},
-        // );
       },
     );
   }
