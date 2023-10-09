@@ -1,6 +1,11 @@
-import axios from "axios";
+import OpenAI from "openai";
+import {ChatCompletionMessageParam} from "openai/resources/chat";
 import * as logger from "firebase-functions/logger";
 import {system, userEx1, assistantEx1} from "./prompt";
+
+const openai = new OpenAI({
+  apiKey: `${process.env.OPENAI_API_KEY}`,
+});
 
 export const generateQuestionsFromChatGPT = async ({
   input,
@@ -8,12 +13,10 @@ export const generateQuestionsFromChatGPT = async ({
 }: {
   input: string;
   gpt4: boolean; // gpt4を使う場合trueにする
-}) => {
-  const URL = "https://api.openai.com/v1/chat/completions";
+}): Promise<string | undefined> => {
   const model = gpt4 ? "gpt-4" : "gpt-3.5-turbo";
   const temperature = 0;
-  const maxTokens = null;
-  const messages = [
+  const messages: ChatCompletionMessageParam[] = [
     {role: "system", content: system},
     {role: "user", content: userEx1},
     {role: "assistant", content: assistantEx1},
@@ -21,23 +24,14 @@ export const generateQuestionsFromChatGPT = async ({
   ];
 
   try {
-    const response = await axios.post(
-      URL,
-      {
-        model: model,
-        messages: messages,
-        temperature: temperature,
-        max_tokens: maxTokens,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-      }
-    );
+    const response = await openai.chat.completions.create({
+      model: model,
+      messages: messages,
+      temperature: temperature,
+    });
 
-    const res = response.data.choices[0].message.content;
+    const res = response.choices[0].message.content;
+    if (res == null) throw new Error("OpenAIのAPIからのレスポンスがnullです。");
     logger.info(res, {structuredData: true});
     return res;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,5 +43,6 @@ export const generateQuestionsFromChatGPT = async ({
       console.error(error.response.data.error.message);
       logger.error(error.response.data.error.message, {structuredData: true});
     }
+    throw error;
   }
 };
