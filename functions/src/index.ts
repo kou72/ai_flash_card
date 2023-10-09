@@ -183,6 +183,7 @@ const convertTextToQaJson = (text: string) => {
     result.push({
       question: match[1].trim(),
       answer: match[2].trim(),
+      note: "",
     });
   }
   return JSON.parse(JSON.stringify(result));
