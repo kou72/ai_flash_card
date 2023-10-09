@@ -47,7 +47,8 @@ export const generateImageToQuestions = onRequest(
         });
         if (!questionsStream) return;
         const questionsString = await questionsStreamReader(questionsStream);
-        questions = JSON.parse(questionsString);
+        // questions = JSON.parse(questionsString);
+        questions = convertTextToQaJson(questionsString);
       } catch (error: any) {
         logger.error(error.message, {structuredData: true});
         const questionsStream = await generateQuestionsFromChatGPT({
@@ -56,7 +57,8 @@ export const generateImageToQuestions = onRequest(
         });
         if (!questionsStream) return;
         const questionsString = await questionsStreamReader(questionsStream);
-        questions = JSON.parse(questionsString);
+        // questions = JSON.parse(questionsString);
+        questions = convertTextToQaJson(questionsString);
       }
       await saveQuestions(destFolder, questions);
 
@@ -165,6 +167,25 @@ const questionsStreamReader = async (questionsStream: ReadableStream) => {
   }
   console.log(questionsString);
   return questionsString;
+};
+
+const convertTextToQaJson = (text: string) => {
+  // メタ情報（<1/11>, <end>, \n）を削除
+  const noMetaText = text
+    .replace(/<\d+\/\d+>|<end>/g, "")
+    .replace(/\n/g, "")
+    .trim();
+  // テキストから問題と回答を抽出してJSON形式に変換する
+  const regex = /問題:(.*?)回答:(.*?)(?=問題:|回答:|$)/g;
+  const result = [];
+  let match;
+  while ((match = regex.exec(noMetaText)) !== null) {
+    result.push({
+      question: match[1].trim(),
+      answer: match[2].trim(),
+    });
+  }
+  return JSON.parse(JSON.stringify(result));
 };
 
 // const convertPdfToTextJson =
