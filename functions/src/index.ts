@@ -27,7 +27,8 @@ export const generateImageToQuestions = onRequest(
     // convertImageToText：SourceBucktの画像をテキストに変換
     // saveText：デバッグ用の中間ファイルとしてtext.txtを保存
     // generateQuestionsFromChatGPT：テキストをOpenAIのAPIに投げて質問を生成
-    // questionsStreamReader：Streamで返ってきた質問を文字列に変換
+    // progressStreamReader：返ってきたStreamを進捗率に変換、処理完了後に全出力を返す
+    // convertTextToQaJson：テキストから質問と回答を抽出してJSON形式に変換
     // saveQuestions：デバッグ用の中間ファイルとしてquestions.jsonを保存
     try {
       const date = getDate();
@@ -39,16 +40,21 @@ export const generateImageToQuestions = onRequest(
       const text = await convertImageToText(sourcePath);
       await saveText(destFolder, text);
 
-      let questions;
+      let questionsString;
       try {
         const questionsStream = await generateQuestionsFromChatGPT({
           input: text,
           gpt4: false,
         });
         if (!questionsStream) return;
-        const questionsString = await questionsStreamReader(questionsStream);
-        // questions = JSON.parse(questionsString);
-        questions = convertTextToQaJson(questionsString);
+        const progressStream = await progressStreamReader(questionsStream);
+        const reader = progressStream.getReader();
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const {done, value} = await reader.read();
+          if (done) break;
+          questionsString = value;
+        }
       } catch (error: any) {
         logger.error(error.message, {structuredData: true});
         const questionsStream = await generateQuestionsFromChatGPT({
@@ -56,10 +62,16 @@ export const generateImageToQuestions = onRequest(
           gpt4: true,
         });
         if (!questionsStream) return;
-        const questionsString = await questionsStreamReader(questionsStream);
-        // questions = JSON.parse(questionsString);
-        questions = convertTextToQaJson(questionsString);
+        const progressStream = await progressStreamReader(questionsStream);
+        const reader = progressStream.getReader();
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const {done, value} = await reader.read();
+          if (done) break;
+          questionsString = value;
+        }
       }
+      const questions = convertTextToQaJson(questionsString);
       await saveQuestions(destFolder, questions);
 
       res.status(200).send(questions);
@@ -150,27 +162,66 @@ const convertImageToText = async (sourcePath: string) => {
   return text;
 };
 
-const questionsStreamReader = async (questionsStream: ReadableStream) => {
-  const reader = questionsStream.getReader();
-  const textDecoder = new TextDecoder("utf-8");
-  let questionsString = "";
-  let loop = true;
-  while (loop) {
-    const {done, value} = await reader.read();
-    if (done) {
-      loop = false;
-      break;
-    }
-    const text = textDecoder.decode(value);
-    console.log(text);
-    questionsString += text;
-  }
-  console.log(questionsString);
-  return questionsString;
+const progressStreamReader = async (questionsStream: ReadableStream) => {
+  const progressStream = new ReadableStream({
+    async start(controller) {
+      const reader = questionsStream.getReader();
+      const textDecoder = new TextDecoder("utf-8");
+      let questionsString = "";
+      let isRecordingMeta = false;
+      let metaString = "";
+      let loop = true;
+
+      while (loop) {
+        const {done, value} = await reader.read();
+        if (done) {
+          loop = false;
+          // <end> が検知できなかったら途中で切れてると判断する
+          if (!metaString.includes("<end>")) {
+            throw new Error("出力が完了しませんでした。");
+          }
+          break;
+        }
+
+        const text = textDecoder.decode(value);
+        questionsString += text;
+        console.log(text);
+
+        // メタ情報（<1/22>, <end>）を検知して、進捗率を計算する
+        if (text === "<") {
+          metaString = "";
+          isRecordingMeta = true;
+        }
+        if (isRecordingMeta) metaString += text;
+        if (text === ">") {
+          isRecordingMeta = false;
+          if (metaString.includes("<end>")) {
+            // 文字列最後の<end>を検知したら100%を返す
+            controller.enqueue(100);
+          } else {
+            // <1/22> から 1 と 22 を取り出して、進捗率を計算して返す
+            const regex = /^<(\d+)\/(\d+)>$/;
+            const match = metaString.match(regex);
+            if (!match) return;
+            const count = parseInt(match[1], 10) - 1;
+            const total = parseInt(match[2], 10);
+            const progress = (count / total) * 100;
+            controller.enqueue(progress.toFixed(0));
+          }
+        }
+      }
+      console.log("close");
+      // 取得した文字列をまとめて返す
+      controller.enqueue(questionsString);
+      controller.close();
+    },
+  });
+
+  return progressStream;
 };
 
 const convertTextToQaJson = (text: string) => {
-  // メタ情報（<1/11>, <end>, \n）を削除
+  // メタ情報（<1/22>, <end>, \n）を削除
   const noMetaText = text
     .replace(/<\d+\/\d+>|<end>/g, "")
     .replace(/\n/g, "")
