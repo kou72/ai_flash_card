@@ -27,6 +27,7 @@ export const generateImageToQuestions = onRequest(
     // convertImageToText：SourceBucktの画像をテキストに変換
     // saveText：デバッグ用の中間ファイルとしてtext.txtを保存
     // generateQuestionsFromChatGPT：テキストをOpenAIのAPIに投げて質問を生成
+    // questionsStreamReader：Streamで返ってきた質問を文字列に変換
     // saveQuestions：デバッグ用の中間ファイルとしてquestions.jsonを保存
     try {
       const date = getDate();
@@ -40,17 +41,21 @@ export const generateImageToQuestions = onRequest(
 
       let questions;
       try {
-        const questionsString = (await generateQuestionsFromChatGPT({
+        const questionsStream = await generateQuestionsFromChatGPT({
           input: text,
           gpt4: false,
-        })) as string;
+        });
+        if (!questionsStream) return;
+        const questionsString = await questionsStreamReader(questionsStream);
         questions = JSON.parse(questionsString);
       } catch (error: any) {
         logger.error(error.message, {structuredData: true});
-        const questionsString = (await generateQuestionsFromChatGPT({
+        const questionsStream = await generateQuestionsFromChatGPT({
           input: text,
           gpt4: true,
-        })) as string;
+        });
+        if (!questionsStream) return;
+        const questionsString = await questionsStreamReader(questionsStream);
         questions = JSON.parse(questionsString);
       }
       await saveQuestions(destFolder, questions);
@@ -63,47 +68,47 @@ export const generateImageToQuestions = onRequest(
   }
 );
 
-export const generateFlashCardQuestions = onRequest(
-  {timeoutSeconds: 300, cors: true},
-  async (req, res) => {
-    // POST以外のリクエストは405を返す
-    if (req.method !== "POST") {
-      res.status(405).end();
-      return;
-    }
+// export const generateFlashCardQuestions = onRequest(
+//   {timeoutSeconds: 300, cors: true},
+//   async (req, res) => {
+//     // POST以外のリクエストは405を返す
+//     if (req.method !== "POST") {
+//       res.status(405).end();
+//       return;
+//     }
 
-    // メインの処理
-    // fileUpload：PDFをCloud Storageにアップロードし、保存先のpathを取得
-    // convertPdfToTextJson：SourceBucktのPDFをテキストに変換したJSONファイルをDestBucketに保存
-    // extractTextFromJson：JSONからテキストを抽出、テキストはPDF1ページごと1つの塊で取り出され配列状で格納
-    // generateQuestionsFromChatGPT：テキストをOpenAIのAPIに投げて質問を生成、テキスト1要素ごとにリクエスト
-    // saveQuestions：デバッグ用の中間ファイルとしてquestions.jsonを保存
-    try {
-      const date = getDate();
-      const sourcePath = await fileUpload(req, date);
-      // dest用pathをsourcePathから生成（upload/0000-text.pdf → destination/0000-text）
-      const destFolder =
-        "dest/" + sourcePath.split("/")[1].replace(/\.[^/.]+$/, "") + "/";
-      await convertPdfToTextJson(sourcePath, destFolder);
-      const textList = await extractTextFromJson(destFolder);
-      const questionsList = await Promise.all(
-        textList.map(async (text) => {
-          const questionsString = (await generateQuestionsFromChatGPT({
-            input: text,
-            gpt4: false,
-          })) as string;
-          return JSON.parse(questionsString);
-        })
-      );
-      // 返ってきた質問を1つにまとめる
-      const questions = questionsList.reduce((acc, cur) => acc.concat(cur));
-      await saveQuestions(destFolder, questions);
-      res.status(200).send(questions);
-    } catch (error: any) {
-      res.status(500).send(error.message);
-    }
-  }
-);
+//     // メインの処理
+//     // fileUpload：PDFをCloud Storageにアップロードし、保存先のpathを取得
+//     // convertPdfToTextJson：SourceBucktのPDFをテキストに変換したJSONファイルをDestBucketに保存
+//     // extractTextFromJson：JSONからテキストを抽出、テキストはPDF1ページごと1つの塊で取り出され配列状で格納
+//     // generateQuestionsFromChatGPT：テキストをOpenAIのAPIに投げて質問を生成、テキスト1要素ごとにリクエスト
+//     // saveQuestions：デバッグ用の中間ファイルとしてquestions.jsonを保存
+//     try {
+//       const date = getDate();
+//       const sourcePath = await fileUpload(req, date);
+//     // dest用pathをsourcePathから生成（upload/0000-text.pdf → destination/0000-text）
+//       const destFolder =
+//         "dest/" + sourcePath.split("/")[1].replace(/\.[^/.]+$/, "") + "/";
+//       await convertPdfToTextJson(sourcePath, destFolder);
+//       const textList = await extractTextFromJson(destFolder);
+//       const questionsList = await Promise.all(
+//         textList.map(async (text) => {
+//           const questionsString = await generateQuestionsFromChatGPT({
+//             input: text,
+//             gpt4: false,
+//           });
+//           return JSON.parse(questionsString);
+//         })
+//       );
+//       // 返ってきた質問を1つにまとめる
+//       const questions = questionsList.reduce((acc, cur) => acc.concat(cur));
+//       await saveQuestions(destFolder, questions);
+//       res.status(200).send(questions);
+//     } catch (error: any) {
+//       res.status(500).send(error.message);
+//     }
+//   }
+// );
 
 const fileUpload = (req: Request, date: string): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -143,70 +148,90 @@ const convertImageToText = async (sourcePath: string) => {
   return text;
 };
 
-const convertPdfToTextJson = async (sourcePath: string, destFolder: string) => {
-  const client = new vision.ImageAnnotatorClient();
-  const gcsSourceUri = `gs://${bucketName}/${sourcePath}`;
-  const gcsDestinationUri = `gs://${bucketName}/${destFolder}`;
-
-  const inputConfig = {
-    mimeType: "application/pdf",
-    gcsSource: {
-      uri: gcsSourceUri,
-    },
-  };
-  const outputConfig = {
-    gcsDestination: {
-      uri: gcsDestinationUri,
-    },
-  };
-  const features = [{type: "DOCUMENT_TEXT_DETECTION"}];
-  const config = {
-    requests: [
-      {
-        inputConfig: inputConfig,
-        outputConfig: outputConfig,
-        features: features,
-      },
-    ],
-  };
-
-  const [operation] = await client.asyncBatchAnnotateFiles(config as any);
-  await operation.promise();
-};
-
-const extractTextFromJson = async (DestinationFolder: string) => {
-  try {
-    const [files] = await bucket.getFiles({prefix: DestinationFolder});
-    const jsonFile = await Promise.all(
-      files.map(async (file: any) => {
-        const json = bucket.file(file.name);
-        const contents = await json.download();
-        const jsonString = contents.toString();
-        const jsonData = JSON.parse(jsonString);
-        return jsonData;
-      })
-    );
-    const textList: any[] = [];
-    jsonFile.map((data: any) => {
-      data.responses.map(
-        // (res: any) => (text = text + res.fullTextAnnotation.text)
-        (res: any) => textList.push(res.fullTextAnnotation.text)
-      );
-    });
-
-    // デバック用の中間ファイルとしてtext.txtを作成
-    textList.map(async (text: any, index: number) => {
-      const filePath = `${DestinationFolder}text${index.toString()}.txt`;
-      const bucketPath = bucket.file(filePath);
-      bucketPath.save(await text);
-    });
-
-    return textList;
-  } catch (error: any) {
-    logger.error(error.message, {structuredData: true});
-    throw new Error(error.message);
+const questionsStreamReader = async (questionsStream: ReadableStream) => {
+  const reader = questionsStream.getReader();
+  const textDecoder = new TextDecoder("utf-8");
+  let questionsString = "";
+  let loop = true;
+  while (loop) {
+    const {done, value} = await reader.read();
+    if (done) {
+      loop = false;
+      break;
+    }
+    const text = textDecoder.decode(value);
+    console.log(text);
+    questionsString += text;
   }
+  console.log(questionsString);
+  return questionsString;
 };
+
+// const convertPdfToTextJson =
+// async (sourcePath: string, destFolder: string) => {
+//   const client = new vision.ImageAnnotatorClient();
+//   const gcsSourceUri = `gs://${bucketName}/${sourcePath}`;
+//   const gcsDestinationUri = `gs://${bucketName}/${destFolder}`;
+
+//   const inputConfig = {
+//     mimeType: "application/pdf",
+//     gcsSource: {
+//       uri: gcsSourceUri,
+//     },
+//   };
+//   const outputConfig = {
+//     gcsDestination: {
+//       uri: gcsDestinationUri,
+//     },
+//   };
+//   const features = [{type: "DOCUMENT_TEXT_DETECTION"}];
+//   const config = {
+//     requests: [
+//       {
+//         inputConfig: inputConfig,
+//         outputConfig: outputConfig,
+//         features: features,
+//       },
+//     ],
+//   };
+
+//   const [operation] = await client.asyncBatchAnnotateFiles(config as any);
+//   await operation.promise();
+// };
+
+// const extractTextFromJson = async (DestinationFolder: string) => {
+//   try {
+//     const [files] = await bucket.getFiles({prefix: DestinationFolder});
+//     const jsonFile = await Promise.all(
+//       files.map(async (file: any) => {
+//         const json = bucket.file(file.name);
+//         const contents = await json.download();
+//         const jsonString = contents.toString();
+//         const jsonData = JSON.parse(jsonString);
+//         return jsonData;
+//       })
+//     );
+//     const textList: any[] = [];
+//     jsonFile.map((data: any) => {
+//       data.responses.map(
+//         // (res: any) => (text = text + res.fullTextAnnotation.text)
+//         (res: any) => textList.push(res.fullTextAnnotation.text)
+//       );
+//     });
+
+//     // デバック用の中間ファイルとしてtext.txtを作成
+//     textList.map(async (text: any, index: number) => {
+//       const filePath = `${DestinationFolder}text${index.toString()}.txt`;
+//       const bucketPath = bucket.file(filePath);
+//       bucketPath.save(await text);
+//     });
+
+//     return textList;
+//   } catch (error: any) {
+//     logger.error(error.message, {structuredData: true});
+//     throw new Error(error.message);
+//   }
+// };
 
 const saveText = async (DestinationFolder: string, text: string) => {
   const filePath = `${DestinationFolder}text.txt`;
