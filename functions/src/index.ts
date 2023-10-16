@@ -13,6 +13,19 @@ const storage = admin.storage();
 const bucket = storage.bucket();
 const bucketName = "flash-pdf-card.appspot.com";
 
+export const test = onRequest(
+  {timeoutSeconds: 300, cors: true},
+  async (req, res) => {
+    res.write("1");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    res.write("2");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    res.write("3");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    res.end();
+  }
+);
+
 export const generateImageToQuestions = onRequest(
   {timeoutSeconds: 300, cors: true},
   async (req, res) => {
@@ -40,6 +53,12 @@ export const generateImageToQuestions = onRequest(
       const text = await convertImageToText(sourcePath);
       await saveText(destFolder, text);
 
+      res.setHeader("Content-Type", "application/json");
+      // res.write(JSON.stringify({progress: 0}));
+      // res.end();
+      // res.send(JSON.stringify({progress: 1}));
+      // res.send(JSON.stringify({progress: 2}));
+
       let questionsString;
       try {
         const questionsStream = await generateQuestionsFromChatGPT({
@@ -54,6 +73,7 @@ export const generateImageToQuestions = onRequest(
           const {done, value} = await reader.read();
           if (done) break;
           questionsString = value;
+          res.write(JSON.stringify({progress: value}));
         }
       } catch (error: any) {
         logger.error(error.message, {structuredData: true});
@@ -69,12 +89,15 @@ export const generateImageToQuestions = onRequest(
           const {done, value} = await reader.read();
           if (done) break;
           questionsString = value;
+          res.write(JSON.stringify({progress: value}));
         }
       }
       const questions = convertTextToQaJson(questionsString);
       await saveQuestions(destFolder, questions);
 
-      res.status(200).send(questions);
+      // res.status(200).send(questions);
+      res.write(JSON.stringify({questions: questions}));
+      res.end();
     } catch (error: any) {
       logger.error(error.message, {structuredData: true});
       res.status(500).send(error.message);
@@ -185,7 +208,7 @@ const progressStreamReader = async (questionsStream: ReadableStream) => {
 
         const text = textDecoder.decode(value);
         questionsString += text;
-        console.log(text);
+        console.log(text); // デバック用
 
         // メタ情報（<1/22>, <end>）を検知して、進捗率を計算する
         if (text === "<") {
