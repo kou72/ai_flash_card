@@ -7,6 +7,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'components/gradient_container.dart';
 import 'components/gradient_circular_progress_indicator.dart';
 import 'riverpod/cards_state.dart';
+import 'dart:html';
+
+import 'js/stream_response.dart';
 
 class AiDialog extends ConsumerStatefulWidget {
   final int deckId;
@@ -46,6 +49,11 @@ class AiDialogState extends ConsumerState<AiDialog> {
     });
   }
 
+  Future<void> test() async {
+    final t = teststream();
+    print(t);
+  }
+
   Future<void> _createFlashcards() async {
     if (_pickedFileName == null) {
       setState(() => _errorText = '※画像を選択してください');
@@ -67,15 +75,30 @@ class AiDialogState extends ConsumerState<AiDialog> {
           filename: encodeFileName,
         ),
       );
+
       final streamedResponse = await req.send();
-      final response = await http.Response.fromStream(streamedResponse);
+      // final client = http.Client();
+      // final streamedResponse = await client.send(req);
 
-      final cardsDatabase = ref.watch(cardsDatabaseProvider);
-      await cardsDatabase.insertCardsFromJson(widget.deckId, response.body);
+      streamedResponse.stream.listen((value) {
+        print(value);
+      });
 
-      setState(() => _isLoading = false);
-      if (!mounted) return;
-      Navigator.of(context).pop();
+      // final streamedResponse = await req.send();
+      // final response = await http.Response.fromStream(streamedResponse);
+      // print(response);
+
+      // // var streamedResponse = await http.Client().send(req);
+      // await for (var chunk in streamedResponse.stream) {
+      //   print(chunk);
+      // }
+
+      // final cardsDatabase = ref.watch(cardsDatabaseProvider);
+      // await cardsDatabase.insertCardsFromJson(widget.deckId, response.body);
+
+      // setState(() => _isLoading = false);
+      // if (!mounted) return;
+      // Navigator.of(context).pop();
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -136,7 +159,8 @@ class AiDialogState extends ConsumerState<AiDialog> {
         width: 200,
         height: 100,
         colors: const [Colors.blue, Colors.purple],
-        onTap: () => _createFlashcards(),
+        // onTap: () => _createFlashcards(),
+        onTap: () => test(),
       ),
       const SizedBox(height: 8),
       Text(_errorText, style: const TextStyle(color: Colors.redAccent)),
