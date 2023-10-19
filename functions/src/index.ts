@@ -17,10 +17,13 @@ export const test = onRequest(
   {timeoutSeconds: 300, cors: true},
   async (req, res) => {
     res.write("1");
+    console.log("1");
     await new Promise((resolve) => setTimeout(resolve, 1000));
     res.write("2");
+    console.log("2");
     await new Promise((resolve) => setTimeout(resolve, 1000));
     res.write("3");
+    console.log("3");
     await new Promise((resolve) => setTimeout(resolve, 1000));
     res.end();
   }
