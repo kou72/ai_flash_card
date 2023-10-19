@@ -9,8 +9,6 @@ import 'components/gradient_circular_progress_indicator.dart';
 import 'riverpod/cards_state.dart';
 import 'dart:html';
 
-import 'js/stream_response.dart';
-
 class AiDialog extends ConsumerStatefulWidget {
   final int deckId;
   const AiDialog({super.key, required this.deckId});
@@ -50,8 +48,14 @@ class AiDialogState extends ConsumerState<AiDialog> {
   }
 
   Future<void> test() async {
-    final t = teststream();
-    print(t);
+    final httpReq = HttpRequest();
+    String url = 'http://localhost:5001/flash-pdf-card/us-central1/test';
+
+    httpReq.open('GET', url);
+    httpReq.onProgress.listen((ProgressEvent e) {
+      print("test");
+    });
+    httpReq.send();
   }
 
   Future<void> _createFlashcards() async {
