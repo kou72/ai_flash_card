@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'components/gradient_container.dart';
 import 'components/gradient_circular_progress_indicator.dart';
 import 'riverpod/cards_state.dart';
-import 'dart:html';
 
 class AiDialog extends ConsumerStatefulWidget {
   final int deckId;
@@ -47,17 +47,6 @@ class AiDialogState extends ConsumerState<AiDialog> {
     });
   }
 
-  Future<void> test() async {
-    final httpReq = HttpRequest();
-    String url = 'http://localhost:5001/flash-pdf-card/us-central1/test';
-
-    httpReq.open('GET', url);
-    httpReq.onProgress.listen((ProgressEvent e) {
-      print("test");
-    });
-    httpReq.send();
-  }
-
   Future<void> _createFlashcards() async {
     if (_pickedFileName == null) {
       setState(() => _errorText = '※画像を選択してください');
@@ -81,28 +70,24 @@ class AiDialogState extends ConsumerState<AiDialog> {
       );
 
       final streamedResponse = await req.send();
-      // final client = http.Client();
-      // final streamedResponse = await client.send(req);
+      final response = await http.Response.fromStream(streamedResponse);
+      final docid = response.body;
 
-      streamedResponse.stream.listen((value) {
-        print(value);
-      });
-
-      // final streamedResponse = await req.send();
-      // final response = await http.Response.fromStream(streamedResponse);
-      // print(response);
-
-      // // var streamedResponse = await http.Client().send(req);
-      // await for (var chunk in streamedResponse.stream) {
-      //   print(chunk);
-      // }
+      while (true) {
+        final db = FirebaseFirestore.instance;
+        final doc = await db.collection("aicard").doc(docid).get();
+        final progress = (doc.data() as Map<String, dynamic>)['progress'];
+        print(progress);
+        await Future.delayed(Duration(seconds: 3));
+        if (progress == 100) break;
+      }
 
       // final cardsDatabase = ref.watch(cardsDatabaseProvider);
       // await cardsDatabase.insertCardsFromJson(widget.deckId, response.body);
 
-      // setState(() => _isLoading = false);
-      // if (!mounted) return;
-      // Navigator.of(context).pop();
+      setState(() => _isLoading = false);
+      if (!mounted) return;
+      Navigator.of(context).pop();
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -163,8 +148,11 @@ class AiDialogState extends ConsumerState<AiDialog> {
         width: 200,
         height: 100,
         colors: const [Colors.blue, Colors.purple],
-        // onTap: () => _createFlashcards(),
-        onTap: () => test(),
+        onTap: () => _createFlashcards(),
+        // onTap: () async {
+        //   await test();
+        //   print("OK");
+        // },
       ),
       const SizedBox(height: 8),
       Text(_errorText, style: const TextStyle(color: Colors.redAccent)),
