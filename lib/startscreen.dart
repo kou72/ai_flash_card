@@ -9,7 +9,7 @@ import 'package:flash_pdf_card/resultscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StartScreen extends StatefulWidget {
-  const StartScreen({Key? key}) : super(key: key);
+  const StartScreen({super.key});
   @override
   StartScreenState createState() => StartScreenState();
 }
