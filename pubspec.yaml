@@ -16,14 +16,15 @@ dependencies:
   url_launcher: ^6.1.12
   pdfx: ^2.4.0
   shared_preferences: ^2.2.0
+  # firebase用パッケージ
   firebase_core: ^2.15.1
   firebase_analytics: ^10.4.5
+  cloud_firestore: ^4.11.0
   # drift用パッケージ
   drift: ^2.11.1
   # riverpod用パッケージ
   flutter_hooks: ^0.18.0
   hooks_riverpod: ^2.1.1
-  js: ^0.6.7
 
 dev_dependencies:
   flutter_test:
