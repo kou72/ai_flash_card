@@ -62,7 +62,7 @@ export const generateImageToQuestions = onRequest(
         });
       }
       const questions = convertTextToQaJson(questionsText);
-      await questionStore.set({progress: 100, data: questions});
+      await questionStore.set({progress: 1, data: questions});
       await saveQuestions(destFolder, questions);
     } catch (error: any) {
       logger.error(error.message, {structuredData: true});
@@ -157,13 +157,13 @@ const progressStreamReader = async (questionsStream: ReadableStream) => {
           if (!match) return;
           const count = parseInt(match[1], 10) - 1;
           const total = parseInt(match[2], 10);
-          const progress = Math.trunc((count / total) * 100); // 整数%の進捗率
+          const progress = Math.trunc((count / total) * 100) / 100; // 小数点2桁の進捗率
           const json = {progress: progress, questionsText: ""};
           controller.enqueue(JSON.stringify(json));
         }
       }
       // 取得した文字列をまとめて返す
-      const json = {progress: 100, questionsText: questionsText};
+      const json = {progress: 1, questionsText: questionsText};
       controller.enqueue(JSON.stringify(json));
       controller.close();
     },

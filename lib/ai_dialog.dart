@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'components/gradient_container.dart';
 import 'components/gradient_circular_spinning_indicator.dart';
+import 'components/gradient_circular_progress_indicator.dart';
 import 'riverpod/cards_state.dart';
 
 class AiDialog extends ConsumerStatefulWidget {
@@ -24,6 +25,7 @@ class AiDialogState extends ConsumerState<AiDialog> {
   String _errorText = '';
   bool _isLoading = false;
   bool _isError = false;
+  double _progress = 0.0;
 
   Future<void> _pickImages() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -56,9 +58,11 @@ class AiDialogState extends ConsumerState<AiDialog> {
     setState(() => _isLoading = true);
 
     try {
+      final url =
+          Uri.https('generateimagetoquestions-vhoidcprtq-uc.a.run.app', '');
       // デバック用
-      final url = Uri.http('127.0.0.1:5001',
-          'flash-pdf-card/us-central1/generateImageToQuestions');
+      // final url = Uri.http('127.0.0.1:5001',
+      //     'flash-pdf-card/us-central1/generateImageToQuestions');
       final req = http.MultipartRequest('POST', url);
       final encodeFileName = base64Encode(utf8.encode(_pickedFileName!));
       req.files.add(
@@ -72,23 +76,28 @@ class AiDialogState extends ConsumerState<AiDialog> {
       final streamedResponse = await req.send();
       final response = await http.Response.fromStream(streamedResponse);
       final docid = response.body;
+      final db = FirebaseFirestore.instance;
+      final docRef = db.collection("aicard").doc(docid);
 
       while (true) {
-        final db = FirebaseFirestore.instance;
-        final doc = await db.collection("aicard").doc(docid).get();
+        final doc = await docRef.get();
         final progress = (doc.data() as Map<String, dynamic>)['progress'];
-        print(progress);
-        await Future.delayed(Duration(seconds: 3));
-        if (progress == 100) break;
+        await Future.delayed(const Duration(seconds: 3));
+        setState(() => _progress = progress);
+        if (progress == 1) break;
       }
+      final doneDoc = await docRef.get();
+      final cardData = (doneDoc.data() as Map<String, dynamic>)['data'];
+      final cardJson = jsonEncode(cardData);
 
-      // final cardsDatabase = ref.watch(cardsDatabaseProvider);
-      // await cardsDatabase.insertCardsFromJson(widget.deckId, response.body);
+      final cardsDatabase = ref.watch(cardsDatabaseProvider);
+      await cardsDatabase.insertCardsFromJson(widget.deckId, cardJson);
 
       setState(() => _isLoading = false);
       if (!mounted) return;
       Navigator.of(context).pop();
     } catch (e) {
+      print(e);
       setState(() {
         _isLoading = false;
         _isError = true;
@@ -127,7 +136,7 @@ class AiDialogState extends ConsumerState<AiDialog> {
   List<Widget> _dialogObject() {
     const errorStyle = TextStyle(color: Colors.redAccent);
     if (_isError) return [const Text('画像の読み取りに失敗しました', style: errorStyle)];
-    if (_isLoading) return _loadingIndicator();
+    if (_isLoading) return _loadingIndicator(_progress);
     return _createCardButton();
   }
 
@@ -155,15 +164,27 @@ class AiDialogState extends ConsumerState<AiDialog> {
     ];
   }
 
-  List<Widget> _loadingIndicator() {
-    return [
-      const SizedBox(height: 16),
-      const GradientCircularSpinningIndicator(
-        width: 100,
-        height: 100,
-        colors: [Colors.blue, Colors.purple],
-        milliseconds: 1500,
-      ),
-    ];
+  List<Widget> _loadingIndicator(double? progress) {
+    if (progress == null || progress == 0) {
+      return [
+        const SizedBox(height: 16),
+        const GradientCircularSpinningIndicator(
+          width: 100,
+          height: 100,
+          colors: [Colors.blue, Colors.purple],
+          milliseconds: 1500,
+        ),
+      ];
+    } else {
+      return [
+        const SizedBox(height: 16),
+        GradientCircularProgressIndicator(
+          width: 100,
+          height: 100,
+          colors: const [Colors.blue, Colors.purple],
+          progress: progress,
+        ),
+      ];
+    }
   }
 }
