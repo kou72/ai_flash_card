@@ -171,7 +171,7 @@ const convertImageToText = async (sourcePath: string) => {
 };
 
 const progressStreamReader = async (questionsStream: ReadableStream) => {
-  // 以下フォーマットでのStreamを解析して進捗率を計算する
+  // 以下フォーマットのStreamを解析して進捗率を計算する
   // --- ここからフォーマット ---
   // <1/3>問題:テキスト回答:テキスト
   // <2/3>問題:テキスト回答:テキスト
@@ -191,16 +191,14 @@ const progressStreamReader = async (questionsStream: ReadableStream) => {
         const {done, value} = await reader.read();
         if (done) {
           // <end> が検知できなかったら途中で切れてると判断する
-          if (!metaString.includes("<end>")) {
-            throw new Error("出力が完了しませんでした。");
-          }
+          const errorText = "出力が完了しませんでした。";
+          if (!metaString.includes("<end>")) throw new Error(errorText);
           break;
         }
 
         // valueに一文字ずつ入るのでデコードしたあとtextに入れて解析する
         const text = textDecoder.decode(value);
         questionsText += text;
-        console.log(text); // デバック用
 
         // メタ情報（<1/3>, <end>）を検知して、進捗率を計算する
         if (text === "<") {
@@ -210,31 +208,27 @@ const progressStreamReader = async (questionsStream: ReadableStream) => {
         if (isRecordingMeta) metaString += text;
         if (text === ">") {
           isRecordingMeta = false;
-          if (metaString.includes("<end>")) {
-            // 文字列最後の<end>を検知したら100%を返す
-            const json = {progress: 100, questionsText: ""};
-            controller.enqueue(JSON.stringify(json));
-          } else {
-            // <1/3> から 1 と 3 を取り出して、進捗率を計算してjsonで返す
-            const regex = /^<(\d+)\/(\d+)>$/;
-            const match = metaString.match(regex);
-            if (!match) return;
-            const count = parseInt(match[1], 10) - 1;
-            const total = parseInt(match[2], 10);
-            const progress = Math.trunc((count / total) * 100); // 整数%の進捗率
-            const json = {progress: progress, questionsText: ""};
-            controller.enqueue(JSON.stringify(json));
-          }
+
+          // <end>を検知したら進捗率の計算をスキップする
+          if (metaString.includes("<end>")) continue;
+
+          // <1/3> から 1 と 3 を取り出して、進捗率を計算してjsonで返す
+          const regex = /^<(\d+)\/(\d+)>$/;
+          const match = metaString.match(regex);
+          if (!match) return;
+          const count = parseInt(match[1], 10) - 1;
+          const total = parseInt(match[2], 10);
+          const progress = Math.trunc((count / total) * 100); // 整数%の進捗率
+          const json = {progress: progress, questionsText: ""};
+          controller.enqueue(JSON.stringify(json));
         }
       }
-      console.log("close");
       // 取得した文字列をまとめて返す
       const json = {progress: 100, questionsText: questionsText};
       controller.enqueue(JSON.stringify(json));
       controller.close();
     },
   });
-
   return progressStream;
 };
 
