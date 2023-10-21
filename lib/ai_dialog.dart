@@ -149,10 +149,6 @@ class AiDialogState extends ConsumerState<AiDialog> {
         height: 100,
         colors: const [Colors.blue, Colors.purple],
         onTap: () => _createFlashcards(),
-        // onTap: () async {
-        //   await test();
-        //   print("OK");
-        // },
       ),
       const SizedBox(height: 8),
       Text(_errorText, style: const TextStyle(color: Colors.redAccent)),
@@ -162,7 +158,7 @@ class AiDialogState extends ConsumerState<AiDialog> {
   List<Widget> _loadingIndicator() {
     return [
       const SizedBox(height: 16),
-      const GradientCircularProgressIndicator(
+      const GradientCircularSpinningIndicator(
         width: 100,
         height: 100,
         colors: [Colors.blue, Colors.purple],

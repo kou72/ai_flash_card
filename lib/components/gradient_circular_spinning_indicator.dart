@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-class GradientCircularProgressIndicator extends StatefulWidget {
+class GradientCircularSpinningIndicator extends StatefulWidget {
   final double width;
   final double height;
   final List<Color> colors;
   final int milliseconds;
 
-  const GradientCircularProgressIndicator({
+  const GradientCircularSpinningIndicator({
     Key? key,
     this.width = 100.0,
     this.height = 100.0,
@@ -16,12 +16,12 @@ class GradientCircularProgressIndicator extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  GradientCircularProgressIndicatorState createState() =>
-      GradientCircularProgressIndicatorState();
+  GradientCircularSpinningIndicatorState createState() =>
+      GradientCircularSpinningIndicatorState();
 }
 
-class GradientCircularProgressIndicatorState
-    extends State<GradientCircularProgressIndicator>
+class GradientCircularSpinningIndicatorState
+    extends State<GradientCircularSpinningIndicator>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animationStart;
