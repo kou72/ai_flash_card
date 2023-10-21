@@ -12,20 +12,24 @@ admin.initializeApp();
 const storage = admin.storage();
 const bucket = storage.bucket();
 const bucketName = "flash-pdf-card.appspot.com";
+const firestore = admin.firestore();
 
 export const test = onRequest(
   {timeoutSeconds: 300, cors: true},
   async (req, res) => {
-    res.write("1");
-    console.log("1");
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    res.write("2");
-    console.log("2");
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    res.write("3");
-    console.log("3");
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    res.end();
+    let count = 0;
+    await firestore.collection("users").doc("Sgd1c4ZoT9bACZ6l87l4").set({
+      progress: count,
+    });
+    res.status(200).send();
+    for (let i = 0; i < 30; i++) {
+      count++;
+      await firestore.collection("users").doc("Sgd1c4ZoT9bACZ6l87l4").set({
+        progress: count,
+      });
+      console.log(count);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
   }
 );
 
@@ -42,65 +46,43 @@ export const generateImageToQuestions = onRequest(
     // fileUpload：画像をCloud Storageにアップロードし、保存先のpathを取得
     // convertImageToText：SourceBucktの画像をテキストに変換
     // saveText：デバッグ用の中間ファイルとしてtext.txtを保存
-    // generateQuestionsFromChatGPT：テキストをOpenAIのAPIに投げて質問を生成
-    // progressStreamReader：返ってきたStreamを進捗率に変換、処理完了後に全出力を返す
+    // streamingQuestionsProgressToFirestore：問題文生成の進捗をFirestoreに保存、処理完了後に全出力を返す
+    //  - generateQuestionsFromChatGPT：テキストをOpenAIのAPIに投げて質問を生成、ストリームで返答する
+    //  - progressStreamReader：返ってきたStreamを進捗率に変換、処理完了後に全出力を返す
     // convertTextToQaJson：テキストから質問と回答を抽出してJSON形式に変換
     // saveQuestions：デバッグ用の中間ファイルとしてquestions.jsonを保存
     try {
       const date = getDate();
       const sourcePath = await fileUpload(req, date);
       // dest用pathをsourcePathから生成（upload/0000-text.pdf → destination/0000-text）
-      const destFolder =
-        "dest/" + sourcePath.split("/")[1].replace(/\.[^/.]+$/, "") + "/";
+      const destFile = sourcePath.split("/")[1].replace(/\.[^/.]+$/, "") + "/";
+      const destFolder = "dest/" + destFile;
 
       const text = await convertImageToText(sourcePath);
       await saveText(destFolder, text);
 
-      res.setHeader("Content-Type", "application/json");
-      // res.write(JSON.stringify({progress: 0}));
-      // res.end();
-      // res.send(JSON.stringify({progress: 1}));
-      // res.send(JSON.stringify({progress: 2}));
+      const questionStore = firestore.collection("aicard").doc(destFile);
+      await questionStore.set({progress: 0, data: {}});
+      res.status(200).send(destFile);
 
-      let questionsString;
+      let questionsText;
       try {
-        const questionsStream = await generateQuestionsFromChatGPT({
-          input: text,
+        questionsText = await streamingQuestionsProgressToFirestore({
+          text: text,
           gpt4: false,
+          store: questionStore,
         });
-        if (!questionsStream) return;
-        const progressStream = await progressStreamReader(questionsStream);
-        const reader = progressStream.getReader();
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-          const {done, value} = await reader.read();
-          if (done) break;
-          questionsString = value;
-          res.write(JSON.stringify({progress: value}));
-        }
       } catch (error: any) {
         logger.error(error.message, {structuredData: true});
-        const questionsStream = await generateQuestionsFromChatGPT({
-          input: text,
+        questionsText = await streamingQuestionsProgressToFirestore({
+          text: text,
           gpt4: true,
+          store: questionStore,
         });
-        if (!questionsStream) return;
-        const progressStream = await progressStreamReader(questionsStream);
-        const reader = progressStream.getReader();
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-          const {done, value} = await reader.read();
-          if (done) break;
-          questionsString = value;
-          res.write(JSON.stringify({progress: value}));
-        }
       }
-      const questions = convertTextToQaJson(questionsString);
+      const questions = convertTextToQaJson(questionsText);
+      await questionStore.set({progress: 100, data: questions});
       await saveQuestions(destFolder, questions);
-
-      // res.status(200).send(questions);
-      res.write(JSON.stringify({questions: questions}));
-      res.end();
     } catch (error: any) {
       logger.error(error.message, {structuredData: true});
       res.status(500).send(error.message);
@@ -189,19 +171,25 @@ const convertImageToText = async (sourcePath: string) => {
 };
 
 const progressStreamReader = async (questionsStream: ReadableStream) => {
+  // 以下フォーマットでのStreamを解析して進捗率を計算する
+  // --- ここからフォーマット ---
+  // <1/3>問題:テキスト回答:テキスト
+  // <2/3>問題:テキスト回答:テキスト
+  // <3/3>問題:テキスト回答:テキスト
+  // <end>
+  // --- ここまで ---
   const progressStream = new ReadableStream({
     async start(controller) {
       const reader = questionsStream.getReader();
       const textDecoder = new TextDecoder("utf-8");
-      let questionsString = "";
+      let questionsText = "";
       let isRecordingMeta = false;
       let metaString = "";
-      let loop = true;
 
-      while (loop) {
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
         const {done, value} = await reader.read();
         if (done) {
-          loop = false;
           // <end> が検知できなかったら途中で切れてると判断する
           if (!metaString.includes("<end>")) {
             throw new Error("出力が完了しませんでした。");
@@ -209,11 +197,12 @@ const progressStreamReader = async (questionsStream: ReadableStream) => {
           break;
         }
 
+        // valueに一文字ずつ入るのでデコードしたあとtextに入れて解析する
         const text = textDecoder.decode(value);
-        questionsString += text;
+        questionsText += text;
         console.log(text); // デバック用
 
-        // メタ情報（<1/22>, <end>）を検知して、進捗率を計算する
+        // メタ情報（<1/3>, <end>）を検知して、進捗率を計算する
         if (text === "<") {
           metaString = "";
           isRecordingMeta = true;
@@ -223,27 +212,58 @@ const progressStreamReader = async (questionsStream: ReadableStream) => {
           isRecordingMeta = false;
           if (metaString.includes("<end>")) {
             // 文字列最後の<end>を検知したら100%を返す
-            controller.enqueue(100);
+            const json = {progress: 100, questionsText: ""};
+            controller.enqueue(JSON.stringify(json));
           } else {
-            // <1/22> から 1 と 22 を取り出して、進捗率を計算して返す
+            // <1/3> から 1 と 3 を取り出して、進捗率を計算してjsonで返す
             const regex = /^<(\d+)\/(\d+)>$/;
             const match = metaString.match(regex);
             if (!match) return;
             const count = parseInt(match[1], 10) - 1;
             const total = parseInt(match[2], 10);
-            const progress = (count / total) * 100;
-            controller.enqueue(progress.toFixed(0));
+            const progress = Math.trunc((count / total) * 100); // 整数%の進捗率
+            const json = {progress: progress, questionsText: ""};
+            controller.enqueue(JSON.stringify(json));
           }
         }
       }
       console.log("close");
       // 取得した文字列をまとめて返す
-      controller.enqueue(questionsString);
+      const json = {progress: 100, questionsText: questionsText};
+      controller.enqueue(JSON.stringify(json));
       controller.close();
     },
   });
 
   return progressStream;
+};
+
+const streamingQuestionsProgressToFirestore = async ({
+  text,
+  gpt4,
+  store,
+}: {
+  text: string;
+  gpt4: boolean;
+  store: any;
+}) => {
+  let questionsText;
+  const questionsStream = await generateQuestionsFromChatGPT({
+    input: text,
+    gpt4: gpt4,
+  });
+  if (!questionsStream) return;
+  const progressStream = await progressStreamReader(questionsStream);
+  const reader = progressStream.getReader();
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const {done, value} = await reader.read();
+    if (done) break;
+    const json = JSON.parse(value);
+    questionsText = json.questionsText;
+    await store.set({progress: json.progress, data: {}});
+  }
+  return questionsText;
 };
 
 const convertTextToQaJson = (text: string) => {
