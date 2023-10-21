@@ -3,7 +3,7 @@ name: Deploy to Firebase Hosting
 on:
   push:
     branches:
-      - main # またはデプロイをトリガーするブランチ名
+      - main # デプロイをトリガーするブランチ名
 
 jobs:
   build_and_deploy:
@@ -25,14 +25,21 @@ jobs:
       - name: Build Flutter Web
         run: flutter build web
 
+      - name: Deploy to Firebase Hosting
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
       - name: Install Firebase Functions Dependencies
         run: npm install
         working-directory: functions
 
-      - name: Deploy to Firebase
+      - name: Deploy to Firebase Functions
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting,functions
+          args: deploy --only functions
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
