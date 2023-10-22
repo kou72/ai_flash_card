@@ -25,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -72,5 +69,14 @@ class DefaultFirebaseOptions {
     storageBucket: 'flash-pdf-card.appspot.com',
     iosClientId: '108517378329-bentvou74e7nqa7gik45dfofapmg7som.apps.googleusercontent.com',
     iosBundleId: 'com.example.flashPdfCard',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyA0jWDWJybhRN5HMZNywYueE8Y1GeYBV2U',
+    appId: '1:108517378329:ios:ab3b5fa883079cc594dd88',
+    messagingSenderId: '108517378329',
+    projectId: 'flash-pdf-card',
+    storageBucket: 'flash-pdf-card.appspot.com',
+    iosBundleId: 'com.example.flashPdfCard.RunnerTests',
   );
 }
