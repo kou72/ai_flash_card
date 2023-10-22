@@ -25,9 +25,10 @@ class $DecksTable extends Decks with TableInfo<$DecksTable, Deck> {
   @override
   List<GeneratedColumn> get $columns => [id, title];
   @override
-  String get aliasedName => _alias ?? 'decks';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'decks';
+  String get actualTableName => $name;
+  static const String $name = 'decks';
   @override
   VerificationContext validateIntegrity(Insertable<Deck> instance,
       {bool isInserting = false}) {

@@ -8,7 +8,7 @@ class CardDetailView extends ConsumerStatefulWidget {
   final int deckId;
   final String question;
   final String answer;
-  // final String note;
+  final String note;
   // 新規でカードを作成するときはtrueにする
   final bool? isnew;
   const CardDetailView({
@@ -17,7 +17,7 @@ class CardDetailView extends ConsumerStatefulWidget {
     required this.deckId,
     required this.question,
     required this.answer,
-    // required this.note,
+    required this.note,
     this.isnew,
   });
   @override
@@ -38,7 +38,7 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
     _id = widget.id;
     _question = widget.question;
     _answer = widget.answer;
-    // _note = widget.note;
+    _note = widget.note;
   }
 
   @override
@@ -131,6 +131,7 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
             widget.deckId,
             _question,
             _answer,
+            _note,
           );
           setState(() {
             _id = id;
@@ -157,6 +158,7 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
             _id,
             _question,
             _answer,
+            _note,
           );
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(

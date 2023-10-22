@@ -88,6 +88,7 @@ class CardListViewState extends ConsumerState<CardListView> {
             deckId: cards[index].deckId,
             question: cards[index].question,
             answer: cards[index].answer,
+            note: cards[index].note,
           );
         },
       ),
@@ -120,6 +121,7 @@ class CardListViewState extends ConsumerState<CardListView> {
                   deckId: widget.deckId,
                   question: "",
                   answer: "",
+                  note: "",
                 ),
               ),
             );

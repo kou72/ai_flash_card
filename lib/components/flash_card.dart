@@ -7,12 +7,14 @@ class FlashCard extends StatefulWidget {
   final int deckId;
   final String question;
   final String answer;
+  final String note;
   const FlashCard({
     super.key,
     required this.id,
     required this.deckId,
     required this.question,
     required this.answer,
+    required this.note,
   });
   @override
   FlashCardState createState() => FlashCardState();
@@ -102,6 +104,7 @@ class FlashCardState extends State<FlashCard> {
                   deckId: widget.deckId,
                   question: widget.question,
                   answer: widget.answer,
+                  note: widget.note,
                 ),
               ),
             );

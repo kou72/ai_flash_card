@@ -11,6 +11,7 @@ class Cards extends Table {
   IntColumn get deckId => integer().nullable()();
   TextColumn get question => text()();
   TextColumn get answer => text()();
+  TextColumn get note => text()();
 }
 
 @DriftDatabase(tables: [Cards])
@@ -23,18 +24,19 @@ class CardsDatabase extends _$CardsDatabase {
   int get schemaVersion => 1;
 
   // ローカルデータベースへアクセスするメソッドを設定
-  Future insertCard(int deckId, String question, String answer) {
+  Future insertCard(int deckId, String question, String answer, String note) {
     return into(cards).insert(CardsCompanion.insert(
       deckId: Value(deckId),
       question: question,
       answer: answer,
+      note: note,
     ));
   }
 
   Future insertCardsFromJson(int deckId, String json) async {
     final List list = await Future.value(jsonDecode(json));
     await Future.forEach(list, (item) async {
-      await insertCard(deckId, item["question"], item["answer"]);
+      await insertCard(deckId, item["question"], item["answer"], item["note"]);
     });
   }
 
@@ -42,9 +44,9 @@ class CardsDatabase extends _$CardsDatabase {
     return (delete(cards)..where((t) => t.id.equals(id))).go();
   }
 
-  Future updateCard(int id, String question, String answer) {
-    return (update(cards)..where((t) => t.id.equals(id))).write(
-        CardsCompanion(question: Value(question), answer: Value(answer)));
+  Future updateCard(int id, String question, String answer, String note) {
+    return (update(cards)..where((t) => t.id.equals(id))).write(CardsCompanion(
+        question: Value(question), answer: Value(answer), note: Value(note)));
   }
 }
 
