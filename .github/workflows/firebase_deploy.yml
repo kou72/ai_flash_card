@@ -33,7 +33,7 @@ jobs:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
       - name: Install Firebase Functions Dependencies
-        run: npm install
+        run: npm install && npm run build
         working-directory: functions
 
       - name: Deploy to Firebase Functions
