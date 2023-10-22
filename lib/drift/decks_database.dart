@@ -39,7 +39,7 @@ DatabaseConnection connectOnWeb() {
     final result = await WasmDatabase.open(
       databaseName: 'decks_db',
       sqlite3Uri: Uri.parse('sqlite3.wasm'),
-      driftWorkerUri: Uri.parse('drift_worker.dart.js'),
+      driftWorkerUri: Uri.parse('drift_worker.js'),
     );
 
     if (result.missingFeatures.isNotEmpty) {
