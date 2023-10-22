@@ -32,11 +32,6 @@ export const generateQuestionsFromChatGPT = async ({
       stream: true,
     });
 
-    // const res = response.choices[0].message.content;
-    // if (res == null) throw new Error("OpenAIのAPIからのレスポンスがnullです。");
-    // logger.info(res, {structuredData: true});
-    // return res;
-
     const openAIStream = OpenAIStream;
     const stream = openAIStream(response);
     return stream;
