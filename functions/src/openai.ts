@@ -14,7 +14,6 @@ export const generateQaFromChatGPT = async ({
   input: string;
   gpt4: boolean; // gpt4を使う場合trueにする
 }) => {
-  logger.warn("apiKey:" + process.env.OPENAI_API_KEY, {structuredData: true});
   const model = gpt4 ? "gpt-4" : "gpt-3.5-turbo";
   const temperature = 0;
   const messages: ChatCompletionMessageParam[] = [

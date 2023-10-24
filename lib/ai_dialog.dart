@@ -83,9 +83,9 @@ class AiDialogState extends ConsumerState<AiDialog> {
         if (done == true) setState(() => _progress = 1);
       });
 
+      const max = 100;
       while (_progress < 1) {
-        const max = 90;
-        if (_progress < max - 1 / max) setState(() => _progress += 1 / max);
+        if (_progress < (max - 5) / max) setState(() => _progress += (1 / max));
         await Future.delayed(const Duration(seconds: 1));
       }
 
