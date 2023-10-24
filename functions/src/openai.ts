@@ -1,5 +1,4 @@
 import OpenAI from "openai";
-import {OpenAIStream} from "ai";
 import {ChatCompletionMessageParam} from "openai/resources/chat";
 import * as logger from "firebase-functions/logger";
 import {system, userEx1, assistantEx1} from "./prompt";
@@ -8,13 +7,13 @@ const openai = new OpenAI({
   apiKey: `${process.env.OPENAI_API_KEY}`,
 });
 
-export const generateQuestionsFromChatGPT = async ({
+export const generateQaFromChatGPT = async ({
   input,
   gpt4,
 }: {
   input: string;
   gpt4: boolean; // gpt4を使う場合trueにする
-}): Promise<ReadableStream | undefined> => {
+}) => {
   const model = gpt4 ? "gpt-4" : "gpt-3.5-turbo";
   const temperature = 0;
   const messages: ChatCompletionMessageParam[] = [
@@ -29,12 +28,12 @@ export const generateQuestionsFromChatGPT = async ({
       model: model,
       messages: messages,
       temperature: temperature,
-      stream: true,
     });
 
-    const openAIStream = OpenAIStream;
-    const stream = openAIStream(response);
-    return stream;
+    const res = response.choices[0].message.content;
+    if (res == null) throw new Error("OpenAIのAPIからのレスポンスがnullです。");
+    // logger.info(res, {structuredData: true});
+    return res;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
