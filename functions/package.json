@@ -16,7 +16,6 @@
   "main": "lib/index.js",
   "dependencies": {
     "@google-cloud/vision": "^4.0.1",
-    "ai": "^2.2.14",
     "axios": "^1.4.0",
     "busboy": "^1.6.0",
     "firebase-admin": "^11.8.0",

@@ -58,11 +58,11 @@ class AiDialogState extends ConsumerState<AiDialog> {
     setState(() => _isLoading = true);
 
     try {
-      final url =
-          Uri.https('generateimagetoquestions-vhoidcprtq-uc.a.run.app', '');
+      // final url =
+      //     Uri.https('generateimagetoqa-vhoidcprtq-uc.a.run.app', '');
       // デバック用
-      // final url = Uri.http('127.0.0.1:5001',
-      //     'flash-pdf-card/us-central1/generateImageToQuestions');
+      final url = Uri.http(
+          '127.0.0.1:5001', 'flash-pdf-card/us-central1/generateImageToQa');
       final req = http.MultipartRequest('POST', url);
       final encodeFileName = base64Encode(utf8.encode(_pickedFileName!));
       req.files.add(
@@ -79,13 +79,18 @@ class AiDialogState extends ConsumerState<AiDialog> {
       final db = FirebaseFirestore.instance;
       final docRef = db.collection("aicard").doc(docid);
 
-      while (true) {
-        final doc = await docRef.get();
-        final progress = (doc.data() as Map<String, dynamic>)['progress'];
-        await Future.delayed(const Duration(seconds: 3));
-        setState(() => _progress = progress);
-        if (progress == 1) break;
+      final listener = docRef.snapshots().listen((doc) {
+        final done = (doc.data() as Map<String, dynamic>)['done'];
+        if (done == true) setState(() => _progress = 1);
+      });
+
+      while (_progress < 1) {
+        const max = 90;
+        if (_progress < max - 1 / max) setState(() => _progress += 1 / max);
+        await Future.delayed(const Duration(seconds: 1));
       }
+
+      listener.cancel();
       final doneDoc = await docRef.get();
       final cardData = (doneDoc.data() as Map<String, dynamic>)['data'];
       final cardJson = jsonEncode(cardData);
