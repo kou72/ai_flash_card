@@ -58,11 +58,10 @@ class AiDialogState extends ConsumerState<AiDialog> {
     setState(() => _isLoading = true);
 
     try {
-      // final url =
-      //     Uri.https('generateimagetoqa-vhoidcprtq-uc.a.run.app', '');
-      // デバック用
-      final url = Uri.http(
-          '127.0.0.1:5001', 'flash-pdf-card/us-central1/generateImageToQa');
+      final url = Uri.https('generateimagetoqa-vhoidcprtq-uc.a.run.app', '');
+      // // デバック用
+      // final url = Uri.http(
+      //     '127.0.0.1:5001', 'flash-pdf-card/us-central1/generateImageToQa');
       final req = http.MultipartRequest('POST', url);
       final encodeFileName = base64Encode(utf8.encode(_pickedFileName!));
       req.files.add(
