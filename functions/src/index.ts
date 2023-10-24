@@ -193,6 +193,7 @@ const streamingQuestionsProgressToFirestore = async ({
     const {done, value} = await reader.read();
     if (done) break;
     const json = JSON.parse(value);
+    logger.info(`progress: ${json.progress}`, {structuredData: true});
     questionsText = json.questionsText;
     await store.set({progress: json.progress, data: {}});
   }
@@ -200,7 +201,7 @@ const streamingQuestionsProgressToFirestore = async ({
 };
 
 const convertTextToQaJson = (text: string) => {
-  // メタ情報（<1/22>, <end>, \n）を削除
+  // メタ情報（<1/3>, <end>, \n）を削除
   const noMetaText = text
     .replace(/<\d+\/\d+>|<end>/g, "")
     .replace(/\n/g, "")
