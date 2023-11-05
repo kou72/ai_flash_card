@@ -63,12 +63,12 @@ class CardListViewState extends ConsumerState<CardListView> {
   Widget _noCardsText() {
     const textStyle = TextStyle(
       color: Colors.grey,
-      fontSize: 24.0,
+      fontSize: 18.0,
     );
     return const Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.sell, color: Colors.grey, size: 72.0),
+        Icon(Icons.sell, color: Colors.grey, size: 64.0),
         SizedBox(height: 16.0),
         Text('画像からカードを生成してみましょう！', style: textStyle),
         Text('文字を抽出して暗記カードに変換します', style: textStyle),
