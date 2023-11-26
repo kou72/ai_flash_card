@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'ai_dialog.dart';
+import 'card_dialog/ai_dialog.dart';
 import 'components/gradient_floating_action_button.dart';
 import "components/flash_card.dart";
 import "riverpod/cards_state.dart";

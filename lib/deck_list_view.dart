@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'card_view_control.dart';
-import 'deck_insert_dialog.dart';
-import 'deck_update_dialog.dart';
-import 'deck_delete_dialog.dart';
+import 'deck_dialog/deck_insert_dialog.dart';
+import 'deck_dialog/deck_update_dialog.dart';
+import 'deck_dialog/deck_delete_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'riverpod/decks_state.dart';
 
