@@ -70,6 +70,7 @@ class DeckListViewState extends ConsumerState<DeckListView> {
       itemCount: decks.length,
       itemBuilder: (context, index) {
         return ListTile(
+          tileColor: Colors.white,
           leading: const Icon(Icons.style),
           title: Text(decks[index].title),
           onTap: () {
