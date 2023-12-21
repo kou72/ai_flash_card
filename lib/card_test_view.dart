@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class CardTestView extends StatefulWidget {
-  const CardTestView({super.key});
+class CardTestView extends ConsumerStatefulWidget {
   @override
   CardTestViewState createState() => CardTestViewState();
 }
 
-class CardTestViewState extends State<CardTestView> {
+class CardTestViewState extends ConsumerState<CardTestView> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(

@@ -19,7 +19,7 @@ class CardViewControlState extends State<CardViewControl> {
 // bottomNavigationBarでページを出し分ける用のリスト
   late final _viewList = [
     CardListView(deckId: widget.deckId),
-    const CardTestView(),
+    CardTestView(),
   ];
 
   @override
