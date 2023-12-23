@@ -24,7 +24,15 @@ class CardTestViewState extends ConsumerState<CardTestView> {
           _flashCard(),
           const SizedBox(height: 8),
           _noteButton(),
-          const SizedBox(height: 24),
+          const SizedBox(height: 48),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _correctButton(),
+              _almostButton(),
+              _incorrectButton(),
+            ],
+          )
         ],
       ),
     );
@@ -39,13 +47,61 @@ class CardTestViewState extends ConsumerState<CardTestView> {
         : null;
 
     return Container(
-      padding: const EdgeInsets.only(left: 2, right: 2),
-      width: 300,
+      padding: const EdgeInsets.only(left: 4, right: 4),
+      width: 400,
       height: 40,
       child: ElevatedButton(
         onPressed: () => setState(() => _onNote = !_onNote),
         style: buttonStyle,
         child: const Text('ノート'),
+      ),
+    );
+  }
+
+  Widget _correctButton() {
+    return Container(
+      margin: const EdgeInsets.only(left: 4, right: 4),
+      width: 100,
+      height: 40,
+      child: ElevatedButton(
+        onPressed: () => {},
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.white),
+          foregroundColor: MaterialStateProperty.all(Colors.green),
+        ),
+        child: const Icon(Icons.check),
+      ),
+    );
+  }
+
+  Widget _almostButton() {
+    return Container(
+      margin: const EdgeInsets.only(left: 4, right: 4),
+      width: 100,
+      height: 40,
+      child: ElevatedButton(
+        onPressed: () => {},
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.white),
+          foregroundColor: MaterialStateProperty.all(Colors.amber),
+        ),
+        child: const Icon(Icons.change_history),
+      ),
+    );
+  }
+
+  Widget _incorrectButton() {
+    return Container(
+      margin: const EdgeInsets.only(left: 4, right: 4),
+      width: 100,
+      height: 40,
+      child: ElevatedButton(
+        onPressed: () => {},
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.white),
+          foregroundColor: MaterialStateProperty.all(Colors.red),
+        ),
+        child: const Icon(Icons.close),
       ),
     );
   }
