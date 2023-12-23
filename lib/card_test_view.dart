@@ -13,6 +13,7 @@ class CardTestViewState extends ConsumerState<CardTestView> {
   final _questionColor = Colors.blueGrey;
   final _answerColor = Colors.blueAccent;
   bool _isFlipped = true;
+  bool _onNote = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,30 @@ class CardTestViewState extends ConsumerState<CardTestView> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _flashCard(),
+          const SizedBox(height: 8),
+          _noteButton(),
+          const SizedBox(height: 24),
         ],
+      ),
+    );
+  }
+
+  Widget _noteButton() {
+    var buttonStyle = _onNote
+        ? ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.grey[700]),
+            foregroundColor: MaterialStateProperty.all(Colors.grey),
+          )
+        : null;
+
+    return Container(
+      padding: const EdgeInsets.only(left: 2, right: 2),
+      width: 300,
+      height: 40,
+      child: ElevatedButton(
+        onPressed: () => setState(() => _onNote = !_onNote),
+        style: buttonStyle,
+        child: const Text('ノート'),
       ),
     );
   }
@@ -30,12 +54,6 @@ class CardTestViewState extends ConsumerState<CardTestView> {
     return SizedBox(
       width: _cardWidth,
       child: Card(
-        margin: const EdgeInsets.only(
-          top: 4,
-          bottom: 4,
-          left: 12,
-          right: 12,
-        ),
         child: InkWell(
           onTap: () {
             setState(() => _isFlipped = !_isFlipped);
