@@ -9,8 +9,75 @@ class TestSettingView extends ConsumerStatefulWidget {
 class TestSettingViewState extends ConsumerState<TestSettingView> {
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('TestSettingView'),
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _correctCount(),
+              const SizedBox(width: 16),
+              _almostCount(),
+              const SizedBox(width: 16),
+              _incorrectCount(),
+            ],
+          ),
+          const SizedBox(height: 48),
+          _startButton(),
+        ],
+      ),
     );
   }
+}
+
+Widget _correctCount() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(
+        Icons.check,
+        color: Colors.green,
+      ),
+      Text("10", style: TextStyle(fontSize: 16)),
+    ],
+  );
+}
+
+Widget _almostCount() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(
+        Icons.change_history,
+        color: Colors.amber,
+      ),
+      Text("10", style: TextStyle(fontSize: 16)),
+    ],
+  );
+}
+
+Widget _incorrectCount() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(
+        Icons.close,
+        color: Colors.red,
+      ),
+      Text("10", style: TextStyle(fontSize: 16)),
+    ],
+  );
+}
+
+Widget _startButton() {
+  return Container(
+    padding: const EdgeInsets.only(left: 4, right: 4),
+    width: 400,
+    height: 40,
+    child: ElevatedButton(
+      onPressed: () => {},
+      child: const Text('スタート'),
+    ),
+  );
 }
