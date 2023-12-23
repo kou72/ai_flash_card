@@ -16,45 +16,42 @@ class CardTestViewState extends ConsumerState<CardTestView> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: _cardWidth,
-          child: Card(
-            margin: const EdgeInsets.only(
-              top: 4,
-              bottom: 4,
-              left: 12,
-              right: 12,
-            ),
-            child: InkWell(
-              onTap: () {
-                setState(() => _isFlipped = !_isFlipped);
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: _cardHeight,
-                    maxHeight: _cardHeight,
-                  ),
-                  child: _flashCardObject(),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _flashCard(),
+        ],
+      ),
     );
   }
 
-  Widget _flashCardObject() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(child: _flashCardText()),
-      ],
+  Widget _flashCard() {
+    return SizedBox(
+      width: _cardWidth,
+      child: Card(
+        margin: const EdgeInsets.only(
+          top: 4,
+          bottom: 4,
+          left: 12,
+          right: 12,
+        ),
+        child: InkWell(
+          onTap: () {
+            setState(() => _isFlipped = !_isFlipped);
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: _cardHeight,
+                maxHeight: _cardHeight,
+              ),
+              child: Expanded(child: _flashCardText()),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
