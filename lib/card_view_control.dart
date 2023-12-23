@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import "card_list_view.dart";
-import "card_test_view.dart";
+import 'test_play_view.dart';
 
 class CardViewControl extends StatefulWidget {
   final int deckId;
@@ -19,7 +19,7 @@ class CardViewControlState extends State<CardViewControl> {
 // bottomNavigationBarでページを出し分ける用のリスト
   late final _viewList = [
     CardListView(deckId: widget.deckId),
-    CardTestView(),
+    TestPlayView(),
   ];
 
   @override
