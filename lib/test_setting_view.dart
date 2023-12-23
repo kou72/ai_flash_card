@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'test_play_view.dart';
 
 class TestSettingView extends ConsumerStatefulWidget {
+  final int deckId;
+  const TestSettingView({super.key, required this.deckId});
   @override
   TestSettingViewState createState() => TestSettingViewState();
 }
@@ -28,6 +31,25 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
           const SizedBox(height: 48),
           _startButton(),
         ],
+      ),
+    );
+  }
+
+  Widget _startButton() {
+    return Container(
+      padding: const EdgeInsets.only(left: 4, right: 4),
+      width: 400,
+      height: 40,
+      child: ElevatedButton(
+        onPressed: () => {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TestPlayView(deckId: widget.deckId),
+            ),
+          ),
+        },
+        child: const Text('スタート'),
       ),
     );
   }
@@ -69,17 +91,5 @@ Widget _incorrectCount() {
       ),
       Text("10", style: TextStyle(fontSize: 16)),
     ],
-  );
-}
-
-Widget _startButton() {
-  return Container(
-    padding: const EdgeInsets.only(left: 4, right: 4),
-    width: 400,
-    height: 40,
-    child: ElevatedButton(
-      onPressed: () => {},
-      child: const Text('スタート'),
-    ),
   );
 }

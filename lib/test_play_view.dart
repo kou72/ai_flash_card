@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'riverpod/decks_state.dart';
 
 class TestPlayView extends ConsumerStatefulWidget {
+  final int deckId;
+  const TestPlayView({super.key, required this.deckId});
   @override
   TestPlayViewState createState() => TestPlayViewState();
 }
@@ -17,24 +20,43 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _flashCard(),
-          const SizedBox(height: 8),
-          _noteButton(),
-          const SizedBox(height: 48),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _correctButton(),
-              _almostButton(),
-              _incorrectButton(),
-            ],
-          )
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: _asyncDeckName(),
       ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _flashCard(),
+            const SizedBox(height: 8),
+            _noteButton(),
+            const SizedBox(height: 48),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _correctButton(),
+                _almostButton(),
+                _incorrectButton(),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _asyncDeckName() {
+    final decksDatabase = ref.watch(decksDatabaseProvider);
+    return FutureBuilder(
+      future: decksDatabase.getDeckName(widget.deckId),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          return Text(snapshot.data);
+        } else {
+          return const Text("");
+        }
+      },
     );
   }
 
@@ -121,7 +143,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
                 minHeight: _cardHeight,
                 maxHeight: _cardHeight,
               ),
-              child: Expanded(child: _flashCardText()),
+              child: _flashCardText(),
             ),
           ),
         ),
