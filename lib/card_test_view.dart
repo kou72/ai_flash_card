@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class TestView extends ConsumerStatefulWidget {
+class CardTestView extends ConsumerStatefulWidget {
   @override
-  TestViewState createState() => TestViewState();
+  CardTestViewState createState() => CardTestViewState();
 }
 
-class TestViewState extends ConsumerState<TestView> {
+class CardTestViewState extends ConsumerState<CardTestView> {
   final _cardWidth = 400.0;
   final _cardHeight = 200.0;
   final _cardFontSize = 16.0;
