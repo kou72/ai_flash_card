@@ -13,6 +13,8 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          const Text("テスト", style: TextStyle(fontSize: 24)),
+          const SizedBox(height: 48),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
