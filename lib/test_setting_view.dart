@@ -1,4 +1,3 @@
-import 'package:flash_pdf_card/drift/cards_database.dart';
 import 'package:flash_pdf_card/type/types.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
