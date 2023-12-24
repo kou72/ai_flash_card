@@ -38,8 +38,15 @@ class $CardsTable extends Cards with TableInfo<$CardsTable, Card> {
   late final GeneratedColumn<String> note = GeneratedColumn<String>(
       'note', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
-  List<GeneratedColumn> get $columns => [id, deckId, question, answer, note];
+  late final GeneratedColumnWithTypeConverter<CardStatus, int> status =
+      GeneratedColumn<int>('status', aliasedName, false,
+              type: DriftSqlType.int, requiredDuringInsert: true)
+          .withConverter<CardStatus>($CardsTable.$converterstatus);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, deckId, question, answer, note, status];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -75,6 +82,7 @@ class $CardsTable extends Cards with TableInfo<$CardsTable, Card> {
     } else if (isInserting) {
       context.missing(_noteMeta);
     }
+    context.handle(_statusMeta, const VerificationResult.success());
     return context;
   }
 
@@ -94,6 +102,8 @@ class $CardsTable extends Cards with TableInfo<$CardsTable, Card> {
           .read(DriftSqlType.string, data['${effectivePrefix}answer'])!,
       note: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}note'])!,
+      status: $CardsTable.$converterstatus.fromSql(attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}status'])!),
     );
   }
 
@@ -101,6 +111,9 @@ class $CardsTable extends Cards with TableInfo<$CardsTable, Card> {
   $CardsTable createAlias(String alias) {
     return $CardsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<CardStatus, int, int> $converterstatus =
+      const EnumIndexConverter<CardStatus>(CardStatus.values);
 }
 
 class Card extends DataClass implements Insertable<Card> {
@@ -109,12 +122,14 @@ class Card extends DataClass implements Insertable<Card> {
   final String question;
   final String answer;
   final String note;
+  final CardStatus status;
   const Card(
       {required this.id,
       this.deckId,
       required this.question,
       required this.answer,
-      required this.note});
+      required this.note,
+      required this.status});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -125,6 +140,10 @@ class Card extends DataClass implements Insertable<Card> {
     map['question'] = Variable<String>(question);
     map['answer'] = Variable<String>(answer);
     map['note'] = Variable<String>(note);
+    {
+      final converter = $CardsTable.$converterstatus;
+      map['status'] = Variable<int>(converter.toSql(status));
+    }
     return map;
   }
 
@@ -136,6 +155,7 @@ class Card extends DataClass implements Insertable<Card> {
       question: Value(question),
       answer: Value(answer),
       note: Value(note),
+      status: Value(status),
     );
   }
 
@@ -148,6 +168,8 @@ class Card extends DataClass implements Insertable<Card> {
       question: serializer.fromJson<String>(json['question']),
       answer: serializer.fromJson<String>(json['answer']),
       note: serializer.fromJson<String>(json['note']),
+      status: $CardsTable.$converterstatus
+          .fromJson(serializer.fromJson<int>(json['status'])),
     );
   }
   @override
@@ -159,6 +181,8 @@ class Card extends DataClass implements Insertable<Card> {
       'question': serializer.toJson<String>(question),
       'answer': serializer.toJson<String>(answer),
       'note': serializer.toJson<String>(note),
+      'status':
+          serializer.toJson<int>($CardsTable.$converterstatus.toJson(status)),
     };
   }
 
@@ -167,13 +191,15 @@ class Card extends DataClass implements Insertable<Card> {
           Value<int?> deckId = const Value.absent(),
           String? question,
           String? answer,
-          String? note}) =>
+          String? note,
+          CardStatus? status}) =>
       Card(
         id: id ?? this.id,
         deckId: deckId.present ? deckId.value : this.deckId,
         question: question ?? this.question,
         answer: answer ?? this.answer,
         note: note ?? this.note,
+        status: status ?? this.status,
       );
   @override
   String toString() {
@@ -182,13 +208,14 @@ class Card extends DataClass implements Insertable<Card> {
           ..write('deckId: $deckId, ')
           ..write('question: $question, ')
           ..write('answer: $answer, ')
-          ..write('note: $note')
+          ..write('note: $note, ')
+          ..write('status: $status')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, deckId, question, answer, note);
+  int get hashCode => Object.hash(id, deckId, question, answer, note, status);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -197,7 +224,8 @@ class Card extends DataClass implements Insertable<Card> {
           other.deckId == this.deckId &&
           other.question == this.question &&
           other.answer == this.answer &&
-          other.note == this.note);
+          other.note == this.note &&
+          other.status == this.status);
 }
 
 class CardsCompanion extends UpdateCompanion<Card> {
@@ -206,12 +234,14 @@ class CardsCompanion extends UpdateCompanion<Card> {
   final Value<String> question;
   final Value<String> answer;
   final Value<String> note;
+  final Value<CardStatus> status;
   const CardsCompanion({
     this.id = const Value.absent(),
     this.deckId = const Value.absent(),
     this.question = const Value.absent(),
     this.answer = const Value.absent(),
     this.note = const Value.absent(),
+    this.status = const Value.absent(),
   });
   CardsCompanion.insert({
     this.id = const Value.absent(),
@@ -219,15 +249,18 @@ class CardsCompanion extends UpdateCompanion<Card> {
     required String question,
     required String answer,
     required String note,
+    required CardStatus status,
   })  : question = Value(question),
         answer = Value(answer),
-        note = Value(note);
+        note = Value(note),
+        status = Value(status);
   static Insertable<Card> custom({
     Expression<int>? id,
     Expression<int>? deckId,
     Expression<String>? question,
     Expression<String>? answer,
     Expression<String>? note,
+    Expression<int>? status,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -235,6 +268,7 @@ class CardsCompanion extends UpdateCompanion<Card> {
       if (question != null) 'question': question,
       if (answer != null) 'answer': answer,
       if (note != null) 'note': note,
+      if (status != null) 'status': status,
     });
   }
 
@@ -243,13 +277,15 @@ class CardsCompanion extends UpdateCompanion<Card> {
       Value<int?>? deckId,
       Value<String>? question,
       Value<String>? answer,
-      Value<String>? note}) {
+      Value<String>? note,
+      Value<CardStatus>? status}) {
     return CardsCompanion(
       id: id ?? this.id,
       deckId: deckId ?? this.deckId,
       question: question ?? this.question,
       answer: answer ?? this.answer,
       note: note ?? this.note,
+      status: status ?? this.status,
     );
   }
 
@@ -271,6 +307,11 @@ class CardsCompanion extends UpdateCompanion<Card> {
     if (note.present) {
       map['note'] = Variable<String>(note.value);
     }
+    if (status.present) {
+      final converter = $CardsTable.$converterstatus;
+
+      map['status'] = Variable<int>(converter.toSql(status.value));
+    }
     return map;
   }
 
@@ -281,7 +322,8 @@ class CardsCompanion extends UpdateCompanion<Card> {
           ..write('deckId: $deckId, ')
           ..write('question: $question, ')
           ..write('answer: $answer, ')
-          ..write('note: $note')
+          ..write('note: $note, ')
+          ..write('status: $status')
           ..write(')'))
         .toString();
   }

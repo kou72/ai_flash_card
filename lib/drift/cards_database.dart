@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
+import '../type/types.dart';
 
 // 以下コマンドでbuildして自動生成
 // flutter pub run build_runner build --delete-conflicting-outputs
@@ -12,6 +13,7 @@ class Cards extends Table {
   TextColumn get question => text()();
   TextColumn get answer => text()();
   TextColumn get note => text()();
+  IntColumn get status => intEnum<CardStatus>()();
 }
 
 @DriftDatabase(tables: [Cards])
@@ -30,6 +32,7 @@ class CardsDatabase extends _$CardsDatabase {
       question: question,
       answer: answer,
       note: note,
+      status: CardStatus.none,
     ));
   }
 
@@ -48,6 +51,21 @@ class CardsDatabase extends _$CardsDatabase {
     return (update(cards)..where((t) => t.id.equals(id))).write(CardsCompanion(
         question: Value(question), answer: Value(answer), note: Value(note)));
   }
+
+  Future<int> getCardStatusSummary(int deckId, CardStatus status) async {
+    final count = await (select(cards)
+          ..where((t) => t.deckId.equals(deckId))
+          ..where((t) => t.status.equals(status.index)))
+        .get()
+        .then((value) => value.length);
+    return count;
+  }
+
+  // Future getCardStatus(int id) async {
+  //   final card =
+  //       await (select(cards)..where((t) => t.id.equals(id))).getSingle();
+  //   return card.status;
+  // }
 }
 
 DatabaseConnection connectOnWeb() {
