@@ -23,7 +23,7 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
             children: [
               _correctCount(),
               const SizedBox(width: 16),
-              _almostCount(),
+              _pendingCount(),
               const SizedBox(width: 16),
               _incorrectCount(),
             ],
@@ -60,7 +60,7 @@ Widget _correctCount() {
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Icon(
-        Icons.check,
+        Icons.circle_outlined,
         color: Colors.green,
       ),
       Text("10", style: TextStyle(fontSize: 16)),
@@ -68,7 +68,7 @@ Widget _correctCount() {
   );
 }
 
-Widget _almostCount() {
+Widget _pendingCount() {
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [

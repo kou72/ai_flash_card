@@ -36,7 +36,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _correctButton(),
-                _almostButton(),
+                _pendingButton(),
                 _incorrectButton(),
               ],
             )
@@ -96,7 +96,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     );
   }
 
-  Widget _almostButton() {
+  Widget _pendingButton() {
     return Container(
       margin: const EdgeInsets.only(left: 4, right: 4),
       width: 100,
