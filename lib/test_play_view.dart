@@ -13,6 +13,8 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   final _cardWidth = 400.0;
   final _cardHeight = 200.0;
   final _cardFontSize = 16.0;
+  final _buttonWidth = 100.0;
+  final _buttonHeight = 40.0;
   final _questionColor = Colors.blueGrey;
   final _answerColor = Colors.blueAccent;
   bool _isFlipped = true;
@@ -56,8 +58,8 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
 
     return Container(
       padding: const EdgeInsets.only(left: 4, right: 4),
-      width: 400,
-      height: 40,
+      width: _cardWidth,
+      height: _buttonHeight,
       child: ElevatedButton(
         onPressed: () => setState(() => _onNote = !_onNote),
         style: buttonStyle,
@@ -69,8 +71,8 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   Widget _correctButton() {
     return Container(
       margin: const EdgeInsets.only(left: 4, right: 4),
-      width: 100,
-      height: 40,
+      width: _buttonWidth,
+      height: _buttonHeight,
       child: ElevatedButton(
         onPressed: () => {},
         style: ButtonStyle(
@@ -85,8 +87,8 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   Widget _pendingButton() {
     return Container(
       margin: const EdgeInsets.only(left: 4, right: 4),
-      width: 100,
-      height: 40,
+      width: _buttonWidth,
+      height: _buttonHeight,
       child: ElevatedButton(
         onPressed: () => {},
         style: ButtonStyle(
@@ -101,8 +103,8 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   Widget _incorrectButton() {
     return Container(
       margin: const EdgeInsets.only(left: 4, right: 4),
-      width: 100,
-      height: 40,
+      width: _buttonWidth,
+      height: _buttonHeight,
       child: ElevatedButton(
         onPressed: () => {},
         style: ButtonStyle(

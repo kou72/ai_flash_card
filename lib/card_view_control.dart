@@ -54,7 +54,6 @@ class CardViewControlState extends ConsumerState<CardViewControl> {
   Widget _asyncViewList(AsyncValue cardsStream) {
     return cardsStream.when(
       data: (cards) {
-        print(cards);
         _cards = cards;
         return _viewList[_pageListIndex];
       },
