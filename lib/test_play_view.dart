@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'riverpod/decks_state.dart';
 
 class TestPlayView extends ConsumerStatefulWidget {
-  final int deckId;
-  const TestPlayView({super.key, required this.deckId});
+  final String deckName;
+  final dynamic cards;
+  const TestPlayView({super.key, required this.deckName, required this.cards});
   @override
   TestPlayViewState createState() => TestPlayViewState();
 }
@@ -22,7 +22,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _asyncDeckName(),
+        title: Text(widget.deckName),
       ),
       body: Center(
         child: Column(
@@ -43,20 +43,6 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _asyncDeckName() {
-    final decksDatabase = ref.watch(decksDatabaseProvider);
-    return FutureBuilder(
-      future: decksDatabase.getDeckName(widget.deckId),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          return Text(snapshot.data);
-        } else {
-          return const Text("");
-        }
-      },
     );
   }
 
@@ -154,12 +140,12 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   Widget _flashCardText() {
     if (_isFlipped) {
       return Text(
-        "widget.question",
+        widget.cards[0].question,
         style: TextStyle(color: _questionColor, fontSize: _cardFontSize),
       );
     } else {
       return Text(
-        "widget.answer",
+        widget.cards[0].answer,
         style: TextStyle(color: _answerColor, fontSize: _cardFontSize),
       );
     }

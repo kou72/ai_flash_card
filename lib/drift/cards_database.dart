@@ -61,11 +61,11 @@ class CardsDatabase extends _$CardsDatabase {
     return count;
   }
 
-  // Future getCardStatus(int id) async {
-  //   final card =
-  //       await (select(cards)..where((t) => t.id.equals(id))).getSingle();
-  //   return card.status;
-  // }
+  Future getCardStatus(int id) async {
+    final card =
+        await (select(cards)..where((t) => t.id.equals(id))).getSingle();
+    return card.status;
+  }
 }
 
 DatabaseConnection connectOnWeb() {

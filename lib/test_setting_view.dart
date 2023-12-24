@@ -1,12 +1,12 @@
-import 'package:flash_pdf_card/type/types.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'riverpod/cards_state.dart';
 import 'test_play_view.dart';
 
 class TestSettingView extends ConsumerStatefulWidget {
-  final int deckId;
-  const TestSettingView({super.key, required this.deckId});
+  final String deckName;
+  final dynamic cards;
+  const TestSettingView(
+      {super.key, required this.deckName, required this.cards});
   @override
   TestSettingViewState createState() => TestSettingViewState();
 }
@@ -14,58 +14,27 @@ class TestSettingView extends ConsumerStatefulWidget {
 class TestSettingViewState extends ConsumerState<TestSettingView> {
   @override
   Widget build(BuildContext context) {
+    widget.cards[0].id;
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const Text("テスト", style: TextStyle(fontSize: 24)),
           const SizedBox(height: 48),
-          _cardStatusSummary(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _correctCount(10),
+              const SizedBox(width: 16),
+              _pendingCount(10),
+              const SizedBox(width: 16),
+              _incorrectCount(10),
+            ],
+          ),
           const SizedBox(height: 48),
           _startButton(),
         ],
       ),
-    );
-  }
-
-  Future _asyncCardStatusSummary() async {
-    final cardsDatabase = ref.watch(cardsDatabaseProvider);
-    final correctStatusCount = await cardsDatabase.getCardStatusSummary(
-        widget.deckId, CardStatus.correct);
-    final pendingStatusCount = await cardsDatabase.getCardStatusSummary(
-        widget.deckId, CardStatus.pending);
-    final incorrectStatusCount = await cardsDatabase.getCardStatusSummary(
-        widget.deckId, CardStatus.incorrect);
-    return {
-      "correct": correctStatusCount,
-      "pending": pendingStatusCount,
-      "incorrect": incorrectStatusCount,
-    };
-  }
-
-  Widget _cardStatusSummary() {
-    int correctStatusCount = 0;
-    int pendingStatusCount = 0;
-    int incorrectStatusCount = 0;
-    return FutureBuilder(
-      future: _asyncCardStatusSummary(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          correctStatusCount = snapshot.data["correct"];
-          pendingStatusCount = snapshot.data["pending"];
-          incorrectStatusCount = snapshot.data["incorrect"];
-        }
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _correctCount(correctStatusCount),
-            const SizedBox(width: 16),
-            _pendingCount(pendingStatusCount),
-            const SizedBox(width: 16),
-            _incorrectCount(incorrectStatusCount),
-          ],
-        );
-      },
     );
   }
 
@@ -79,7 +48,8 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => TestPlayView(deckId: widget.deckId),
+              builder: (context) =>
+                  TestPlayView(deckName: widget.deckName, cards: widget.cards),
             ),
           ),
         },
