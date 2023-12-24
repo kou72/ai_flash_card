@@ -32,7 +32,6 @@ class CardViewControlState extends ConsumerState<CardViewControl> {
       appBar: AppBar(
         title: Text(widget.deckName),
       ),
-      // body: _viewList[_pageListIndex],
       body: _asyncViewList(cardsStream),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _pageListIndex,
