@@ -22,16 +22,6 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
           const Text("テスト", style: TextStyle(fontSize: 24)),
           const SizedBox(height: 48),
           _cardStatusSummary(),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     _correctCount(),
-          //     const SizedBox(width: 16),
-          //     _pendingCount(),
-          //     const SizedBox(width: 16),
-          //     _incorrectCount(),
-          //   ],
-          // ),
           const SizedBox(height: 48),
           _startButton(),
         ],
@@ -55,32 +45,27 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
   }
 
   Widget _cardStatusSummary() {
+    int correctStatusCount = 0;
+    int pendingStatusCount = 0;
+    int incorrectStatusCount = 0;
     return FutureBuilder(
       future: _asyncCardStatusSummary(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _correctCount(snapshot.data["correct"]),
-              const SizedBox(width: 16),
-              _pendingCount(snapshot.data["pending"]),
-              const SizedBox(width: 16),
-              _incorrectCount(snapshot.data["incorrect"]),
-            ],
-          );
-        } else {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _correctCount(0),
-              const SizedBox(width: 16),
-              _pendingCount(0),
-              const SizedBox(width: 16),
-              _incorrectCount(0),
-            ],
-          );
+          correctStatusCount = snapshot.data["correct"];
+          pendingStatusCount = snapshot.data["pending"];
+          incorrectStatusCount = snapshot.data["incorrect"];
         }
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _correctCount(correctStatusCount),
+            const SizedBox(width: 16),
+            _pendingCount(pendingStatusCount),
+            const SizedBox(width: 16),
+            _incorrectCount(incorrectStatusCount),
+          ],
+        );
       },
     );
   }
