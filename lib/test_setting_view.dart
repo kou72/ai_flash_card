@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import "riverpod/cards_state.dart";
 import 'test_play_view.dart';
+import 'type/types.dart';
 
 class TestSettingView extends ConsumerStatefulWidget {
   final String deckName;
-  final dynamic cards;
+  final int deckId;
   const TestSettingView(
-      {super.key, required this.deckName, required this.cards});
+      {super.key, required this.deckName, required this.deckId});
   @override
   TestSettingViewState createState() => TestSettingViewState();
 }
@@ -14,27 +16,41 @@ class TestSettingView extends ConsumerStatefulWidget {
 class TestSettingViewState extends ConsumerState<TestSettingView> {
   @override
   Widget build(BuildContext context) {
-    widget.cards[0].id;
     return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text("テスト", style: TextStyle(fontSize: 24)),
-          const SizedBox(height: 48),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _correctCount(10),
-              const SizedBox(width: 16),
-              _pendingCount(10),
-              const SizedBox(width: 16),
-              _incorrectCount(10),
-            ],
-          ),
-          const SizedBox(height: 48),
-          _startButton(),
-        ],
-      ),
+      child: _asyncTestPlayMonitor(),
+    );
+  }
+
+  Widget _asyncTestPlayMonitor() {
+    final cardsDatabase = ref.watch(cardsDatabaseProvider);
+    return FutureBuilder(
+      future: Future.wait([
+        cardsDatabase.getCardStatusSummary(widget.deckId, CardStatus.correct),
+        cardsDatabase.getCardStatusSummary(widget.deckId, CardStatus.pending),
+        cardsDatabase.getCardStatusSummary(widget.deckId, CardStatus.incorrect),
+      ]),
+      builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
+        if (!snapshot.hasData) const CircularProgressIndicator();
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("テスト", style: TextStyle(fontSize: 24)),
+            const SizedBox(height: 48),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _correctCount(snapshot.data![0]),
+                const SizedBox(width: 16),
+                _pendingCount(snapshot.data![1]),
+                const SizedBox(width: 16),
+                _incorrectCount(snapshot.data![2]),
+              ],
+            ),
+            const SizedBox(height: 48),
+            _startButton(),
+          ],
+        );
+      },
     );
   }
 
@@ -48,8 +64,8 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  TestPlayView(deckName: widget.deckName, cards: widget.cards),
+              builder: (context) => TestPlayView(
+                  deckName: widget.deckName, deckId: widget.deckId),
             ),
           ),
         },

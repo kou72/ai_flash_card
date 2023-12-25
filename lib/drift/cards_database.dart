@@ -52,6 +52,10 @@ class CardsDatabase extends _$CardsDatabase {
         question: Value(question), answer: Value(answer), note: Value(note)));
   }
 
+  Future<List<Card>> getCards(int deckId) {
+    return (select(cards)..where((t) => t.deckId.equals(deckId))).get();
+  }
+
   Future<int> getCardStatusSummary(int deckId, CardStatus status) async {
     final count = await (select(cards)
           ..where((t) => t.deckId.equals(deckId))

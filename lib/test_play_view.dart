@@ -5,8 +5,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class TestPlayView extends ConsumerStatefulWidget {
   final String deckName;
-  final dynamic cards;
-  const TestPlayView({super.key, required this.deckName, required this.cards});
+  final int deckId;
+  const TestPlayView({super.key, required this.deckName, required this.deckId});
   @override
   TestPlayViewState createState() => TestPlayViewState();
 }
@@ -29,24 +29,35 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
         title: Text(widget.deckName),
       ),
       body: Center(
-        child: Column(
+        child: _asyncTestPlayMonitor(),
+      ),
+    );
+  }
+
+  Widget _asyncTestPlayMonitor() {
+    final cardsDatabase = ref.watch(cardsDatabaseProvider);
+    return FutureBuilder(
+      future: cardsDatabase.getCards(widget.deckId),
+      builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+        if (!snapshot.hasData) const CircularProgressIndicator();
+        return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _flashCard(),
+            _flashCard(snapshot.data![0]),
             const SizedBox(height: 8),
             _noteButton(),
             const SizedBox(height: 48),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _correctButton(),
-                _pendingButton(),
-                _incorrectButton(),
+                _correctButton(snapshot.data![0]),
+                _pendingButton(snapshot.data![0]),
+                _incorrectButton(snapshot.data![0]),
               ],
             )
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -70,7 +81,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     );
   }
 
-  Widget _correctButton() {
+  Widget _correctButton(card) {
     final cardsDatabase = ref.watch(cardsDatabaseProvider);
     return Container(
       margin: const EdgeInsets.only(left: 4, right: 4),
@@ -79,10 +90,10 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
       child: ElevatedButton(
         onPressed: () => {
           cardsDatabase.updateCardStatus(
-            widget.cards[0].id,
+            card.id,
             CardStatus.correct,
           ),
-          print(widget.cards[0])
+          print(card)
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.white),
@@ -93,7 +104,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     );
   }
 
-  Widget _pendingButton() {
+  Widget _pendingButton(card) {
     final cardsDatabase = ref.watch(cardsDatabaseProvider);
     return Container(
       margin: const EdgeInsets.only(left: 4, right: 4),
@@ -102,10 +113,10 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
       child: ElevatedButton(
         onPressed: () => {
           cardsDatabase.updateCardStatus(
-            widget.cards[0].id,
+            card.id,
             CardStatus.pending,
           ),
-          print(widget.cards[0])
+          print(card)
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.white),
@@ -116,7 +127,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     );
   }
 
-  Widget _incorrectButton() {
+  Widget _incorrectButton(card) {
     final cardsDatabase = ref.watch(cardsDatabaseProvider);
     return Container(
       margin: const EdgeInsets.only(left: 4, right: 4),
@@ -125,10 +136,10 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
       child: ElevatedButton(
         onPressed: () => {
           cardsDatabase.updateCardStatus(
-            widget.cards[0].id,
+            card.id,
             CardStatus.incorrect,
           ),
-          print(widget.cards[0])
+          print(card)
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.white),
@@ -139,7 +150,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     );
   }
 
-  Widget _flashCard() {
+  Widget _flashCard(card) {
     return SizedBox(
       width: _cardWidth,
       child: Card(
@@ -154,7 +165,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
                 minHeight: _cardHeight,
                 maxHeight: _cardHeight,
               ),
-              child: _flashCardText(),
+              child: _flashCardText(card),
             ),
           ),
         ),
@@ -162,15 +173,15 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     );
   }
 
-  Widget _flashCardText() {
+  Widget _flashCardText(card) {
     if (_isFlipped) {
       return Text(
-        widget.cards[0].question,
+        card.question,
         style: TextStyle(color: _questionColor, fontSize: _cardFontSize),
       );
     } else {
       return Text(
-        widget.cards[0].answer,
+        card.answer,
         style: TextStyle(color: _answerColor, fontSize: _cardFontSize),
       );
     }
