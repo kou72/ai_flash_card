@@ -1,3 +1,5 @@
+import 'package:flash_pdf_card/riverpod/cards_state.dart';
+import 'package:flash_pdf_card/type/types.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -69,12 +71,19 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   }
 
   Widget _correctButton() {
+    final cardsDatabase = ref.watch(cardsDatabaseProvider);
     return Container(
       margin: const EdgeInsets.only(left: 4, right: 4),
       width: _buttonWidth,
       height: _buttonHeight,
       child: ElevatedButton(
-        onPressed: () => {},
+        onPressed: () => {
+          cardsDatabase.updateCardStatus(
+            widget.cards[0].id,
+            CardStatus.correct,
+          ),
+          print(widget.cards[0])
+        },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.white),
           foregroundColor: MaterialStateProperty.all(Colors.green),
@@ -85,12 +94,19 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   }
 
   Widget _pendingButton() {
+    final cardsDatabase = ref.watch(cardsDatabaseProvider);
     return Container(
       margin: const EdgeInsets.only(left: 4, right: 4),
       width: _buttonWidth,
       height: _buttonHeight,
       child: ElevatedButton(
-        onPressed: () => {},
+        onPressed: () => {
+          cardsDatabase.updateCardStatus(
+            widget.cards[0].id,
+            CardStatus.pending,
+          ),
+          print(widget.cards[0])
+        },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.white),
           foregroundColor: MaterialStateProperty.all(Colors.amber),
@@ -101,12 +117,19 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   }
 
   Widget _incorrectButton() {
+    final cardsDatabase = ref.watch(cardsDatabaseProvider);
     return Container(
       margin: const EdgeInsets.only(left: 4, right: 4),
       width: _buttonWidth,
       height: _buttonHeight,
       child: ElevatedButton(
-        onPressed: () => {},
+        onPressed: () => {
+          cardsDatabase.updateCardStatus(
+            widget.cards[0].id,
+            CardStatus.incorrect,
+          ),
+          print(widget.cards[0])
+        },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.white),
           foregroundColor: MaterialStateProperty.all(Colors.red),

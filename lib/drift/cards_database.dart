@@ -61,6 +61,11 @@ class CardsDatabase extends _$CardsDatabase {
     return count;
   }
 
+  Future updateCardStatus(int id, CardStatus status) {
+    return (update(cards)..where((t) => t.id.equals(id)))
+        .write(CardsCompanion(status: Value(status)));
+  }
+
   Future getCardStatus(int id) async {
     final card =
         await (select(cards)..where((t) => t.id.equals(id))).getSingle();
