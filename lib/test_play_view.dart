@@ -39,7 +39,15 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     return FutureBuilder(
       future: cardsDatabase.getCards(widget.deckId),
       builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-        if (!snapshot.hasData) const CircularProgressIndicator();
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Text('No data available');
+        }
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [

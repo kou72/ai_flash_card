@@ -30,7 +30,15 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
         cardsDatabase.getCardStatusSummary(widget.deckId, CardStatus.incorrect),
       ]),
       builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
-        if (!snapshot.hasData) const CircularProgressIndicator();
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Text('No data available');
+        }
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
