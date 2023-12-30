@@ -16,7 +16,6 @@ class TestSettingView extends ConsumerStatefulWidget {
 
 class TestSettingViewState extends ConsumerState<TestSettingView> {
   List<FlashCard> _cards = [];
-  final double _fixedWidth = 128.0;
   bool _playCorrect = false;
   bool _playPending = true;
   bool _playIncorrect = true;
@@ -47,22 +46,19 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
         children: [
           _questionCount(),
           const SizedBox(height: 24),
-          _itemAndSwitch(_correctCount(), _correctSwitch()),
-          _itemAndSwitch(_pendingCount(), _pendingSwitch()),
-          _itemAndSwitch(_incorrectCount(), _incorrectSwitch()),
-          _itemAndSwitch(_noneCount(), _noneSwitch()),
-          _itemAndSwitch(_shuffleText(), _shuffleSwitch()),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _noneButton(),
+              _incorrectButton(),
+              _pendingButton(),
+              _correctButton(),
+            ],
+          ),
           const SizedBox(height: 32),
           _startButton(),
         ],
       ),
-    );
-  }
-
-  Widget _itemAndSwitch(Widget item, Widget sw) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [item, const SizedBox(width: 8), sw],
     );
   }
 
@@ -71,84 +67,79 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
     return Text("$count 問", style: const TextStyle(fontSize: 24));
   }
 
-  Widget _correctCount() {
-    return _statusCount(
-        CardStatus.correct, "OK", Icons.circle_outlined, Colors.green);
+  Widget _noneButton() {
+    return _selectButton(
+      status: CardStatus.none,
+      icon: Icons.remove,
+      color: Colors.grey,
+      isPlay: _playNone,
+      onPressed: () => setState(() => _playNone = !_playNone),
+    );
   }
 
-  Widget _pendingCount() {
-    return _statusCount(
-        CardStatus.pending, "あとで", Icons.change_history, Colors.amber);
+  Widget _incorrectButton() {
+    return _selectButton(
+      status: CardStatus.incorrect,
+      icon: Icons.close,
+      color: Colors.red,
+      isPlay: _playIncorrect,
+      onPressed: () => setState(() => _playIncorrect = !_playIncorrect),
+    );
   }
 
-  Widget _incorrectCount() {
-    return _statusCount(CardStatus.incorrect, "NG", Icons.close, Colors.red);
+  Widget _pendingButton() {
+    return _selectButton(
+      status: CardStatus.pending,
+      icon: Icons.change_history,
+      color: Colors.amber,
+      isPlay: _playPending,
+      onPressed: () => setState(() => _playPending = !_playPending),
+    );
   }
 
-  Widget _noneCount() {
-    return _statusCount(CardStatus.none, "まだ", Icons.remove, Colors.grey);
+  Widget _correctButton() {
+    return _selectButton(
+      status: CardStatus.correct,
+      icon: Icons.circle_outlined,
+      color: Colors.green,
+      isPlay: _playCorrect,
+      onPressed: () => setState(() => _playCorrect = !_playCorrect),
+    );
   }
 
-  Widget _statusCount(
-      CardStatus status, String text, IconData icon, Color color) {
+  Widget _selectButton({
+    required CardStatus status,
+    required IconData icon,
+    required Color color,
+    required bool isPlay,
+    required Function() onPressed,
+  }) {
     final count = _cards.where((card) => card.status == status).length;
-    return SizedBox(
-      width: _fixedWidth,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            alignment: Alignment.center,
-            width: 64,
-            child: Text(text, style: TextStyle(color: color)),
-          ),
-          Icon(icon, color: color),
-          const SizedBox(width: 16),
-          Text(count.toString(), style: const TextStyle(fontSize: 16)),
-        ],
+    TextStyle? textStyle = isPlay ? const TextStyle(color: Colors.black) : null;
+    ButtonStyle? buttonStyle = isPlay
+        ? ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.white),
+            foregroundColor: MaterialStateProperty.all(color),
+            side: MaterialStateProperty.all(BorderSide(color: color, width: 2)),
+          )
+        : null;
+
+    return Container(
+      margin: const EdgeInsets.only(left: 2, right: 2),
+      width: 80,
+      height: 80,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: buttonStyle,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon),
+            const SizedBox(height: 4),
+            Text("$count 問", style: textStyle),
+          ],
+        ),
       ),
-    );
-  }
-
-  Widget _correctSwitch() {
-    return Switch(
-      value: _playCorrect,
-      onChanged: (value) => setState(() => _playCorrect = value),
-    );
-  }
-
-  Widget _pendingSwitch() {
-    return Switch(
-      value: _playPending,
-      onChanged: (value) => setState(() => _playPending = value),
-    );
-  }
-
-  Widget _incorrectSwitch() {
-    return Switch(
-      value: _playIncorrect,
-      onChanged: (value) => setState(() => _playIncorrect = value),
-    );
-  }
-
-  Widget _noneSwitch() {
-    return Switch(
-      value: _playNone,
-      onChanged: (value) => setState(() => _playNone = value),
-    );
-  }
-
-  Widget _shuffleSwitch() {
-    return Switch(
-      value: _isShuffle,
-      onChanged: (value) => setState(() => _isShuffle = value),
-    );
-  }
-
-  Widget _shuffleText() {
-    return SizedBox(
-      width: _fixedWidth,
-      child: const Text('シャッフル'),
     );
   }
 
