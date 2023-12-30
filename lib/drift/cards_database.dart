@@ -7,7 +7,7 @@ import '../type/types.dart';
 // flutter pub run build_runner build --delete-conflicting-outputs
 part 'cards_database.g.dart';
 
-class Cards extends Table {
+class FlashCards extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get deckId => integer().nullable()();
   TextColumn get question => text()();
@@ -16,7 +16,7 @@ class Cards extends Table {
   IntColumn get status => intEnum<CardStatus>()();
 }
 
-@DriftDatabase(tables: [Cards])
+@DriftDatabase(tables: [FlashCards])
 class CardsDatabase extends _$CardsDatabase {
   CardsDatabase._(QueryExecutor e) : super(e);
 
@@ -27,7 +27,7 @@ class CardsDatabase extends _$CardsDatabase {
 
   // ローカルデータベースへアクセスするメソッドを設定
   Future insertCard(int deckId, String question, String answer, String note) {
-    return into(cards).insert(CardsCompanion.insert(
+    return into(flashCards).insert(FlashCardsCompanion.insert(
       deckId: Value(deckId),
       question: question,
       answer: answer,
@@ -44,20 +44,23 @@ class CardsDatabase extends _$CardsDatabase {
   }
 
   Future deleteCard(int id) {
-    return (delete(cards)..where((t) => t.id.equals(id))).go();
+    return (delete(flashCards)..where((t) => t.id.equals(id))).go();
   }
 
   Future updateCard(int id, String question, String answer, String note) {
-    return (update(cards)..where((t) => t.id.equals(id))).write(CardsCompanion(
-        question: Value(question), answer: Value(answer), note: Value(note)));
+    return (update(flashCards)..where((t) => t.id.equals(id))).write(
+        FlashCardsCompanion(
+            question: Value(question),
+            answer: Value(answer),
+            note: Value(note)));
   }
 
-  Future<List<Card>> getCards(int deckId) {
-    return (select(cards)..where((t) => t.deckId.equals(deckId))).get();
+  Future<List<FlashCard>> getCards(int deckId) {
+    return (select(flashCards)..where((t) => t.deckId.equals(deckId))).get();
   }
 
   Future<int> getCardStatusSummary(int deckId, CardStatus status) async {
-    final count = await (select(cards)
+    final count = await (select(flashCards)
           ..where((t) => t.deckId.equals(deckId))
           ..where((t) => t.status.equals(status.index)))
         .get()
@@ -66,13 +69,13 @@ class CardsDatabase extends _$CardsDatabase {
   }
 
   Future updateCardStatus(int id, CardStatus status) {
-    return (update(cards)..where((t) => t.id.equals(id)))
-        .write(CardsCompanion(status: Value(status)));
+    return (update(flashCards)..where((t) => t.id.equals(id)))
+        .write(FlashCardsCompanion(status: Value(status)));
   }
 
   Future getCardStatus(int id) async {
     final card =
-        await (select(cards)..where((t) => t.id.equals(id))).getSingle();
+        await (select(flashCards)..where((t) => t.id.equals(id))).getSingle();
     return card.status;
   }
 }

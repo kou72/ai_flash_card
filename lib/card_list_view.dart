@@ -83,7 +83,7 @@ class CardListViewState extends ConsumerState<CardListView> {
         controller: _scrollController,
         itemCount: cards.length,
         itemBuilder: (context, index) {
-          return FlashCard(
+          return FlashCardItem(
             id: cards[index].id,
             deckId: cards[index].deckId,
             question: cards[index].question,

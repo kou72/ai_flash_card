@@ -2,6 +2,7 @@ import 'package:flash_pdf_card/riverpod/cards_state.dart';
 import 'package:flash_pdf_card/type/types.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'drift/cards_database.dart' show FlashCard;
 
 class TestPlayView extends ConsumerStatefulWidget {
   final String deckName;
@@ -22,7 +23,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   bool _isFlipped = true;
   bool _onNote = false;
 
-  List _cards = [];
+  List<FlashCard> _cards = [];
   bool _isLoading = true;
   int _currentCardIndex = 0;
 
@@ -35,7 +36,8 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   Future<void> loadCards() async {
     final cardsDatabase = ref.watch(cardsDatabaseProvider);
     try {
-      var fetchedCards = await cardsDatabase.getCards(widget.deckId);
+      List<FlashCard> fetchedCards =
+          await cardsDatabase.getCards(widget.deckId);
       setState(() {
         _cards = fetchedCards;
         _isLoading = false;

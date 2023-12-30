@@ -9,9 +9,9 @@ final cardsDatabaseProvider = Provider((_) => CardsDatabase());
 // });
 
 final cardsStreamProvider =
-    StreamProvider.family<List<Card>, int>((ref, deckId) {
+    StreamProvider.family<List<FlashCard>, int>((ref, deckId) {
   final db = ref.read(cardsDatabaseProvider);
-  final cardsStream = db.select(db.cards)
+  final cardsStream = db.select(db.flashCards)
     ..where((card) => card.deckId.equals(deckId));
   return cardsStream.watch();
   // return (db.select(db.cards)..where((card) => card.deckId.equals(deckId)))
