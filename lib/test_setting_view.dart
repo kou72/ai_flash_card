@@ -98,17 +98,25 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
       width: 400,
       height: 40,
       child: ElevatedButton(
-        onPressed: () => {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TestPlayView(
-                  deckName: widget.deckName, deckId: widget.deckId),
-            ),
-          ),
-        },
+        onPressed: _cards.isEmpty ? () => _cantTest() : () => _startTest(),
         child: const Text('スタート'),
       ),
+    );
+  }
+
+  void _startTest() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            TestPlayView(deckName: widget.deckName, cards: _cards),
+      ),
+    );
+  }
+
+  void _cantTest() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('問題がありません！')),
     );
   }
 }

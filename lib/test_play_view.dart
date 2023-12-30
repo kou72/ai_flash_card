@@ -6,8 +6,8 @@ import 'drift/cards_database.dart' show FlashCard;
 
 class TestPlayView extends ConsumerStatefulWidget {
   final String deckName;
-  final int deckId;
-  const TestPlayView({super.key, required this.deckName, required this.deckId});
+  final List<FlashCard> cards;
+  const TestPlayView({super.key, required this.deckName, required this.cards});
   @override
   TestPlayViewState createState() => TestPlayViewState();
 }
@@ -24,29 +24,12 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   bool _onNote = false;
 
   List<FlashCard> _cards = [];
-  bool _isLoading = true;
   int _currentCardIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => loadCards());
-  }
-
-  Future<void> loadCards() async {
-    final cardsDB = ref.watch(cardsDatabaseProvider);
-    try {
-      List<FlashCard> fetchedCards = await cardsDB.getCards(widget.deckId);
-      setState(() {
-        _cards = fetchedCards;
-        _isLoading = false;
-      });
-    } catch (e) {
-      print(e);
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    setState(() => _cards = widget.cards);
   }
 
   @override
@@ -55,9 +38,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
       appBar: AppBar(
         title: Text(widget.deckName),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Center(child: _testPlayContent()),
+      body: Center(child: _testPlayContent()),
     );
   }
 
