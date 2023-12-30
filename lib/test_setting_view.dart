@@ -16,6 +16,11 @@ class TestSettingView extends ConsumerStatefulWidget {
 
 class TestSettingViewState extends ConsumerState<TestSettingView> {
   List<FlashCard> _cards = [];
+  final double _fixedWidth = 100.0;
+  bool _playCorrect = false;
+  bool _playPending = true;
+  bool _playIncorrect = true;
+  bool _isShuffle = true;
 
   @override
   void initState() {
@@ -40,18 +45,40 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _questionCount(),
-          const SizedBox(height: 48),
+          const SizedBox(height: 24),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               _correctCount(),
-              const SizedBox(width: 16),
-              _pendingCount(),
-              const SizedBox(width: 16),
-              _incorrectCount(),
+              const SizedBox(width: 8),
+              _correctSwitch()
             ],
           ),
-          const SizedBox(height: 48),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _pendingCount(),
+              const SizedBox(width: 8),
+              _pendingSwitch()
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _incorrectCount(),
+              const SizedBox(width: 8),
+              _incorrectSwitch()
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _shuffleText(),
+              const SizedBox(width: 8),
+              _shuffleSwitch()
+            ],
+          ),
+          const SizedBox(height: 32),
           _startButton(),
         ],
       ),
@@ -64,27 +91,65 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
   }
 
   Widget _correctCount() {
-    return _statusCountWidget(
+    return _statusCount(
         CardStatus.correct, Icons.circle_outlined, Colors.green);
   }
 
   Widget _pendingCount() {
-    return _statusCountWidget(
-        CardStatus.pending, Icons.change_history, Colors.amber);
+    return _statusCount(CardStatus.pending, Icons.change_history, Colors.amber);
   }
 
   Widget _incorrectCount() {
-    return _statusCountWidget(CardStatus.incorrect, Icons.close, Colors.red);
+    return _statusCount(CardStatus.incorrect, Icons.close, Colors.red);
   }
 
-  Widget _statusCountWidget(CardStatus status, IconData icon, Color color) {
+  Widget _statusCount(CardStatus status, IconData icon, Color color) {
     final count = _cards.where((card) => card.status == status).length;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, color: color),
-        Text(count.toString(), style: const TextStyle(fontSize: 16)),
-      ],
+    return SizedBox(
+      width: _fixedWidth,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color),
+          const SizedBox(width: 16),
+          Text(count.toString(), style: const TextStyle(fontSize: 16)),
+        ],
+      ),
+    );
+  }
+
+  Widget _correctSwitch() {
+    return Switch(
+      value: _playCorrect,
+      onChanged: (value) => setState(() => _playCorrect = value),
+    );
+  }
+
+  Widget _pendingSwitch() {
+    return Switch(
+      value: _playPending,
+      onChanged: (value) => setState(() => _playPending = value),
+    );
+  }
+
+  Widget _incorrectSwitch() {
+    return Switch(
+      value: _playIncorrect,
+      onChanged: (value) => setState(() => _playIncorrect = value),
+    );
+  }
+
+  Widget _shuffleSwitch() {
+    return Switch(
+      value: _isShuffle,
+      onChanged: (value) => setState(() => _isShuffle = value),
+    );
+  }
+
+  Widget _shuffleText() {
+    return SizedBox(
+      width: _fixedWidth,
+      child: const Text('シャッフル'),
     );
   }
 
