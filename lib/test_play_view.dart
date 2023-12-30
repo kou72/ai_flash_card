@@ -102,7 +102,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     );
   }
 
-  Widget _correctButton(dynamic card) {
+  Widget _correctButton(FlashCard card) {
     return _statusButton(
         card: card,
         status: CardStatus.correct,
@@ -110,7 +110,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
         icon: Icons.check);
   }
 
-  Widget _pendingButton(dynamic card) {
+  Widget _pendingButton(FlashCard card) {
     return _statusButton(
         card: card,
         status: CardStatus.pending,
@@ -118,7 +118,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
         icon: Icons.change_history);
   }
 
-  Widget _incorrectButton(dynamic card) {
+  Widget _incorrectButton(FlashCard card) {
     return _statusButton(
         card: card,
         status: CardStatus.incorrect,
@@ -127,7 +127,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   }
 
   Widget _statusButton(
-      {required dynamic card,
+      {required FlashCard card,
       required CardStatus status,
       required Color color,
       required IconData icon}) {
