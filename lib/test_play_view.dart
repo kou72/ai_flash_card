@@ -66,16 +66,16 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _flashCard(_cards[_currentCardIndex]),
+        _flashCard(),
         const SizedBox(height: 8),
         _noteButton(),
         const SizedBox(height: 48),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _correctButton(_cards[_currentCardIndex]),
-            _pendingButton(_cards[_currentCardIndex]),
-            _incorrectButton(_cards[_currentCardIndex]),
+            _correctButton(),
+            _pendingButton(),
+            _incorrectButton(),
           ],
         )
       ],
@@ -102,33 +102,25 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     );
   }
 
-  Widget _correctButton(FlashCard card) {
+  Widget _correctButton() {
     return _statusButton(
-        card: card,
-        status: CardStatus.correct,
-        color: Colors.green,
-        icon: Icons.check);
+        status: CardStatus.correct, color: Colors.green, icon: Icons.check);
   }
 
-  Widget _pendingButton(FlashCard card) {
+  Widget _pendingButton() {
     return _statusButton(
-        card: card,
         status: CardStatus.pending,
         color: Colors.amber,
         icon: Icons.change_history);
   }
 
-  Widget _incorrectButton(FlashCard card) {
+  Widget _incorrectButton() {
     return _statusButton(
-        card: card,
-        status: CardStatus.incorrect,
-        color: Colors.red,
-        icon: Icons.close);
+        status: CardStatus.incorrect, color: Colors.red, icon: Icons.close);
   }
 
   Widget _statusButton(
-      {required FlashCard card,
-      required CardStatus status,
+      {required CardStatus status,
       required Color color,
       required IconData icon}) {
     final cardsDatabase = ref.watch(cardsDatabaseProvider);
@@ -139,9 +131,9 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
       height: _buttonHeight,
       child: ElevatedButton(
         onPressed: () => {
-          cardsDatabase.updateCardStatus(card.id, status),
+          cardsDatabase.updateCardStatus(_cards[_currentCardIndex].id, status),
           nextCard(),
-          print(card)
+          print(_cards[_currentCardIndex])
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.white),
@@ -160,7 +152,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     }
   }
 
-  Widget _flashCard(card) {
+  Widget _flashCard() {
     return SizedBox(
       width: _cardWidth,
       child: Card(
@@ -175,7 +167,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
                 minHeight: _cardHeight,
                 maxHeight: _cardHeight,
               ),
-              child: _flashCardText(card),
+              child: _flashCardText(_cards[_currentCardIndex]),
             ),
           ),
         ),
