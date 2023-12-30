@@ -24,6 +24,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
 
   List _cards = [];
   bool _isLoading = true;
+  int _currentCardIndex = 0;
 
   @override
   void initState() {
@@ -63,16 +64,16 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _flashCard(_cards[0]),
+        _flashCard(_cards[_currentCardIndex]),
         const SizedBox(height: 8),
         _noteButton(),
         const SizedBox(height: 48),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _correctButton(_cards[0]),
-            _pendingButton(_cards[0]),
-            _incorrectButton(_cards[0]),
+            _correctButton(_cards[_currentCardIndex]),
+            _pendingButton(_cards[_currentCardIndex]),
+            _incorrectButton(_cards[_currentCardIndex]),
           ],
         )
       ],
@@ -111,6 +112,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
             card.id,
             CardStatus.correct,
           ),
+          nextCard(),
           print(card)
         },
         style: ButtonStyle(
@@ -134,6 +136,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
             card.id,
             CardStatus.pending,
           ),
+          nextCard(),
           print(card)
         },
         style: ButtonStyle(
@@ -157,6 +160,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
             card.id,
             CardStatus.incorrect,
           ),
+          nextCard(),
           print(card)
         },
         style: ButtonStyle(
@@ -166,6 +170,14 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
         child: const Icon(Icons.close),
       ),
     );
+  }
+
+  void nextCard() {
+    if (_currentCardIndex < _cards.length - 1) {
+      setState(() => _currentCardIndex++);
+    } else {
+      // テスト終了処理（任意）
+    }
   }
 
   Widget _flashCard(card) {
