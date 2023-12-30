@@ -14,32 +14,7 @@ class CardListView extends ConsumerStatefulWidget {
 }
 
 class CardListViewState extends ConsumerState<CardListView> {
-  late ScrollController _scrollController;
-  bool _showFab = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  // カードと重なるためスクロールが一番下に来たらFABを非表示にする
-  void _scrollListener() {
-    double positionRate =
-        _scrollController.offset / _scrollController.position.maxScrollExtent;
-    if (positionRate == 1) {
-      setState(() => _showFab = false);
-    } else {
-      setState(() => _showFab = true);
-    }
-  }
+  bool _cardsIsEmpty = true;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +29,10 @@ class CardListViewState extends ConsumerState<CardListView> {
 
   Widget _asyncCardList(AsyncValue cardsStream) {
     return cardsStream.when(
-      data: (cards) => cards.isNotEmpty ? _cardList(cards) : _noCardsText(),
+      data: (cards) {
+        setState(() => _cardsIsEmpty = !cards.isNotEmpty);
+        return cards.isNotEmpty ? _cardList(cards) : _noCardsText();
+      },
       loading: () => const CircularProgressIndicator(),
       error: (error, stackTrace) => Text('error: $error'),
     );
@@ -80,7 +58,6 @@ class CardListViewState extends ConsumerState<CardListView> {
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 4),
       child: ListView.builder(
-        controller: _scrollController,
         itemCount: cards.length,
         itemBuilder: (context, index) {
           return FlashCardItem(
@@ -95,39 +72,56 @@ class CardListViewState extends ConsumerState<CardListView> {
     );
   }
 
-  Widget? _floatingActionButton() {
-    if (!_showFab) return null;
+  Widget _floatingActionButton() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        GradientFloatingActionButton(
-          onPressed: () => _showAiDialog(),
-          iconData: Icons.smart_toy,
-          label: '画像からカード生成',
-          gradientColors: const [Colors.blue, Colors.purple],
-        ),
+        _aiCardButton(),
         const SizedBox(height: 16),
-        FloatingActionButton.extended(
-          heroTag: 'createCard',
-          icon: const Icon(Icons.edit),
-          label: const Text('自分でカードを作成'),
-          onPressed: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CardDetailView(
-                  isnew: true,
-                  id: 0,
-                  deckId: widget.deckId,
-                  question: "",
-                  answer: "",
-                  note: "",
-                ),
-              ),
-            );
-          },
-        ),
+        _createCardButton(),
       ],
+    );
+  }
+
+  Widget _aiCardButton() {
+    return GradientFloatingActionButton(
+      onPressed: () => _showAiDialog(),
+      iconData: Icons.smart_toy,
+      label: _cardsIsEmpty ? '画像からカード生成' : null,
+      gradientColors: const [Colors.blue, Colors.purple],
+    );
+  }
+
+  Widget _createCardButton() {
+    if (_cardsIsEmpty) {
+      return FloatingActionButton.extended(
+        heroTag: 'createCard',
+        icon: const Icon(Icons.edit),
+        label: const Text('自分でカードを作成'),
+        onPressed: _createEmptyCard,
+      );
+    } else {
+      return FloatingActionButton(
+        heroTag: 'createCard',
+        child: const Icon(Icons.edit),
+        onPressed: () => _showAiDialog(),
+      );
+    }
+  }
+
+  void _createEmptyCard() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CardDetailView(
+          isnew: true,
+          id: 0,
+          deckId: widget.deckId,
+          question: "",
+          answer: "",
+          note: "",
+        ),
+      ),
     );
   }
 
