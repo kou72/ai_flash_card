@@ -139,8 +139,12 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
           });
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('新規作成しました！')),
+            const SnackBar(
+              content: Text('新規作成しました！'),
+              duration: Duration(seconds: 1),
+            ),
           );
+          Navigator.of(context).pop();
         },
       ),
     );
@@ -162,7 +166,10 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
           );
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('保存しました！')),
+            const SnackBar(
+              content: Text('保存しました！'),
+              duration: Duration(seconds: 1),
+            ),
           );
         },
       ),
@@ -186,7 +193,10 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
           if (!context.mounted) return;
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('カードを削除しました')),
+            const SnackBar(
+              content: Text('カードを削除しました'),
+              duration: Duration(seconds: 1),
+            ),
           );
         },
       ),

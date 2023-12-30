@@ -104,7 +104,7 @@ class CardListViewState extends ConsumerState<CardListView> {
       return FloatingActionButton(
         heroTag: 'createCard',
         child: const Icon(Icons.edit),
-        onPressed: () => _showAiDialog(),
+        onPressed: () => _createEmptyCard(),
       );
     }
   }
