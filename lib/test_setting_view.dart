@@ -16,10 +16,11 @@ class TestSettingView extends ConsumerStatefulWidget {
 
 class TestSettingViewState extends ConsumerState<TestSettingView> {
   List<FlashCard> _cards = [];
-  final double _fixedWidth = 100.0;
+  final double _fixedWidth = 128.0;
   bool _playCorrect = false;
   bool _playPending = true;
   bool _playIncorrect = true;
+  bool _playNone = true;
   bool _isShuffle = true;
 
   @override
@@ -46,38 +47,11 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
         children: [
           _questionCount(),
           const SizedBox(height: 24),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _correctCount(),
-              const SizedBox(width: 8),
-              _correctSwitch()
-            ],
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _pendingCount(),
-              const SizedBox(width: 8),
-              _pendingSwitch()
-            ],
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _incorrectCount(),
-              const SizedBox(width: 8),
-              _incorrectSwitch()
-            ],
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _shuffleText(),
-              const SizedBox(width: 8),
-              _shuffleSwitch()
-            ],
-          ),
+          _itemAndSwitch(_correctCount(), _correctSwitch()),
+          _itemAndSwitch(_pendingCount(), _pendingSwitch()),
+          _itemAndSwitch(_incorrectCount(), _incorrectSwitch()),
+          _itemAndSwitch(_noneCount(), _noneSwitch()),
+          _itemAndSwitch(_shuffleText(), _shuffleSwitch()),
           const SizedBox(height: 32),
           _startButton(),
         ],
@@ -85,31 +59,49 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
     );
   }
 
+  Widget _itemAndSwitch(Widget item, Widget sw) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [item, const SizedBox(width: 8), sw],
+    );
+  }
+
   Widget _questionCount() {
     final count = _cards.length;
-    return Text("問題数: $count 問", style: const TextStyle(fontSize: 24));
+    return Text("$count 問", style: const TextStyle(fontSize: 24));
   }
 
   Widget _correctCount() {
     return _statusCount(
-        CardStatus.correct, Icons.circle_outlined, Colors.green);
+        CardStatus.correct, "OK", Icons.circle_outlined, Colors.green);
   }
 
   Widget _pendingCount() {
-    return _statusCount(CardStatus.pending, Icons.change_history, Colors.amber);
+    return _statusCount(
+        CardStatus.pending, "あとで", Icons.change_history, Colors.amber);
   }
 
   Widget _incorrectCount() {
-    return _statusCount(CardStatus.incorrect, Icons.close, Colors.red);
+    return _statusCount(CardStatus.incorrect, "NG", Icons.close, Colors.red);
   }
 
-  Widget _statusCount(CardStatus status, IconData icon, Color color) {
+  Widget _noneCount() {
+    return _statusCount(CardStatus.none, "まだ", Icons.remove, Colors.grey);
+  }
+
+  Widget _statusCount(
+      CardStatus status, String text, IconData icon, Color color) {
     final count = _cards.where((card) => card.status == status).length;
     return SizedBox(
       width: _fixedWidth,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Container(
+            alignment: Alignment.center,
+            width: 64,
+            child: Text(text, style: TextStyle(color: color)),
+          ),
           Icon(icon, color: color),
           const SizedBox(width: 16),
           Text(count.toString(), style: const TextStyle(fontSize: 16)),
@@ -139,6 +131,13 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
     );
   }
 
+  Widget _noneSwitch() {
+    return Switch(
+      value: _playNone,
+      onChanged: (value) => setState(() => _playNone = value),
+    );
+  }
+
   Widget _shuffleSwitch() {
     return Switch(
       value: _isShuffle,
@@ -159,26 +158,54 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
       width: 400,
       height: 40,
       child: ElevatedButton(
-        onPressed: _cards.isEmpty ? () => _cantTest() : () => _startTest(),
+        onPressed: () => _startTest(),
         child: const Text('スタート'),
       ),
     );
   }
 
   void _startTest() async {
+    List<FlashCard> playCards = _selectCards();
+    if (playCards.isEmpty) {
+      _cantTest();
+      return;
+    }
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
-            TestPlayView(deckName: widget.deckName, cards: _cards),
+            TestPlayView(deckName: widget.deckName, cards: playCards),
       ),
     );
     loadCards();
   }
 
+  List<FlashCard> _selectCards() {
+    List<FlashCard> cards = [];
+    if (_playCorrect) {
+      cards.addAll(_cards.where((card) => card.status == CardStatus.correct));
+    }
+    if (_playPending) {
+      cards.addAll(_cards.where((card) => card.status == CardStatus.pending));
+    }
+    if (_playIncorrect) {
+      cards.addAll(_cards.where((card) => card.status == CardStatus.incorrect));
+    }
+    if (_playNone) {
+      cards.addAll(_cards.where((card) => card.status == CardStatus.none));
+    }
+    if (_isShuffle) {
+      cards.shuffle();
+    } else {
+      cards.sort((a, b) => a.id.compareTo(b.id));
+    }
+    return cards;
+  }
+
   void _cantTest() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('問題がありません！')),
+      const SnackBar(
+          content: Text('問題がありません！'), duration: Duration(seconds: 1)),
     );
   }
 }
