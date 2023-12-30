@@ -100,74 +100,52 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     );
   }
 
-  Widget _correctButton(card) {
-    final cardsDatabase = ref.watch(cardsDatabaseProvider);
-    return Container(
-      margin: const EdgeInsets.only(left: 4, right: 4),
-      width: _buttonWidth,
-      height: _buttonHeight,
-      child: ElevatedButton(
-        onPressed: () => {
-          cardsDatabase.updateCardStatus(
-            card.id,
-            CardStatus.correct,
-          ),
-          nextCard(),
-          print(card)
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.white),
-          foregroundColor: MaterialStateProperty.all(Colors.green),
-        ),
-        child: const Icon(Icons.check),
-      ),
-    );
+  Widget _correctButton(dynamic card) {
+    return _statusButton(
+        card: card,
+        status: CardStatus.correct,
+        color: Colors.green,
+        icon: Icons.check);
   }
 
-  Widget _pendingButton(card) {
-    final cardsDatabase = ref.watch(cardsDatabaseProvider);
-    return Container(
-      margin: const EdgeInsets.only(left: 4, right: 4),
-      width: _buttonWidth,
-      height: _buttonHeight,
-      child: ElevatedButton(
-        onPressed: () => {
-          cardsDatabase.updateCardStatus(
-            card.id,
-            CardStatus.pending,
-          ),
-          nextCard(),
-          print(card)
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.white),
-          foregroundColor: MaterialStateProperty.all(Colors.amber),
-        ),
-        child: const Icon(Icons.change_history),
-      ),
-    );
+  Widget _pendingButton(dynamic card) {
+    return _statusButton(
+        card: card,
+        status: CardStatus.pending,
+        color: Colors.amber,
+        icon: Icons.change_history);
   }
 
-  Widget _incorrectButton(card) {
+  Widget _incorrectButton(dynamic card) {
+    return _statusButton(
+        card: card,
+        status: CardStatus.incorrect,
+        color: Colors.red,
+        icon: Icons.close);
+  }
+
+  Widget _statusButton(
+      {required dynamic card,
+      required CardStatus status,
+      required Color color,
+      required IconData icon}) {
     final cardsDatabase = ref.watch(cardsDatabaseProvider);
+
     return Container(
       margin: const EdgeInsets.only(left: 4, right: 4),
       width: _buttonWidth,
       height: _buttonHeight,
       child: ElevatedButton(
         onPressed: () => {
-          cardsDatabase.updateCardStatus(
-            card.id,
-            CardStatus.incorrect,
-          ),
+          cardsDatabase.updateCardStatus(card.id, status),
           nextCard(),
           print(card)
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.white),
-          foregroundColor: MaterialStateProperty.all(Colors.red),
+          foregroundColor: MaterialStateProperty.all(color),
         ),
-        child: const Icon(Icons.close),
+        child: Icon(icon),
       ),
     );
   }
