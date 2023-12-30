@@ -15,14 +15,10 @@ class TestPlayView extends ConsumerStatefulWidget {
 class TestPlayViewState extends ConsumerState<TestPlayView> {
   final _cardWidth = 400.0;
   final _cardHeight = 200.0;
-  final _cardFontSize = 16.0;
   final _buttonWidth = 100.0;
   final _buttonHeight = 40.0;
-  final _questionColor = Colors.blueGrey;
-  final _answerColor = Colors.blueAccent;
   bool _isFlipped = true;
-  bool _onNote = false;
-
+  bool _showNote = false;
   List<FlashCard> _cards = [];
   int _currentCardIndex = 0;
 
@@ -63,7 +59,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   }
 
   Widget _noteButton() {
-    var buttonStyle = _onNote
+    var buttonStyle = _showNote
         ? ButtonStyle(
             backgroundColor: MaterialStateProperty.all(Colors.grey[700]),
             foregroundColor: MaterialStateProperty.all(Colors.grey),
@@ -75,7 +71,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
       width: _cardWidth,
       height: _buttonHeight,
       child: ElevatedButton(
-        onPressed: () => setState(() => _onNote = !_onNote),
+        onPressed: () => setState(() => _showNote = !_showNote),
         style: buttonStyle,
         child: const Text('ノート'),
       ),
@@ -156,15 +152,18 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   }
 
   Widget _flashCardText(card) {
+    const cardFontSize = 16.0;
+    const questionColor = Colors.blueGrey;
+    const answerColor = Colors.blueAccent;
     if (_isFlipped) {
       return Text(
         card.question,
-        style: TextStyle(color: _questionColor, fontSize: _cardFontSize),
+        style: const TextStyle(color: questionColor, fontSize: cardFontSize),
       );
     } else {
       return Text(
         card.answer,
-        style: TextStyle(color: _answerColor, fontSize: _cardFontSize),
+        style: const TextStyle(color: answerColor, fontSize: cardFontSize),
       );
     }
   }
