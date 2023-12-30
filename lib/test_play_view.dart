@@ -22,50 +22,60 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   bool _isFlipped = true;
   bool _onNote = false;
 
+  List _cards = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => loadCards());
+  }
+
+  Future<void> loadCards() async {
+    final cardsDatabase = ref.watch(cardsDatabaseProvider);
+    try {
+      var fetchedCards = await cardsDatabase.getCards(widget.deckId);
+      setState(() {
+        _cards = fetchedCards;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print(e);
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.deckName),
       ),
-      body: Center(
-        child: _asyncTestPlayMonitor(),
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Center(child: _testPlayMonitor()),
     );
   }
 
-  Widget _asyncTestPlayMonitor() {
-    final cardsDatabase = ref.watch(cardsDatabaseProvider);
-    return FutureBuilder(
-      future: cardsDatabase.getCards(widget.deckId),
-      builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        }
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Text('No data available');
-        }
-        return Column(
-          mainAxisSize: MainAxisSize.min,
+  Widget _testPlayMonitor() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _flashCard(_cards[0]),
+        const SizedBox(height: 8),
+        _noteButton(),
+        const SizedBox(height: 48),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _flashCard(snapshot.data![0]),
-            const SizedBox(height: 8),
-            _noteButton(),
-            const SizedBox(height: 48),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _correctButton(snapshot.data![0]),
-                _pendingButton(snapshot.data![0]),
-                _incorrectButton(snapshot.data![0]),
-              ],
-            )
+            _correctButton(_cards[0]),
+            _pendingButton(_cards[0]),
+            _incorrectButton(_cards[0]),
           ],
-        );
-      },
+        )
+      ],
     );
   }
 
