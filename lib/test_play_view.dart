@@ -34,10 +34,9 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   }
 
   Future<void> loadCards() async {
-    final cardsDatabase = ref.watch(cardsDatabaseProvider);
+    final cardsDB = ref.watch(cardsDatabaseProvider);
     try {
-      List<FlashCard> fetchedCards =
-          await cardsDatabase.getCards(widget.deckId);
+      List<FlashCard> fetchedCards = await cardsDB.getCards(widget.deckId);
       setState(() {
         _cards = fetchedCards;
         _isLoading = false;
