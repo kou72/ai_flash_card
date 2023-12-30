@@ -36,29 +36,25 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: _testSettingContent(),
-    );
-  }
-
-  Widget _testSettingContent() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _questionCount(),
-        const SizedBox(height: 48),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _correctCount(),
-            const SizedBox(width: 16),
-            _pendingCount(),
-            const SizedBox(width: 16),
-            _incorrectCount(),
-          ],
-        ),
-        const SizedBox(height: 48),
-        _startButton(),
-      ],
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _questionCount(),
+          const SizedBox(height: 48),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _correctCount(),
+              const SizedBox(width: 16),
+              _pendingCount(),
+              const SizedBox(width: 16),
+              _incorrectCount(),
+            ],
+          ),
+          const SizedBox(height: 48),
+          _startButton(),
+        ],
+      ),
     );
   }
 
