@@ -55,11 +55,11 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Center(child: _testPlayMonitor()),
+          : Center(child: _testPlayContent()),
     );
   }
 
-  Widget _testPlayMonitor() {
+  Widget _testPlayContent() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
