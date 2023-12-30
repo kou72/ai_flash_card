@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import "riverpod/cards_state.dart";
 import 'test_play_view.dart';
 import 'type/types.dart';
+import 'drift/cards_database.dart' show FlashCard;
 
 class TestSettingView extends ConsumerStatefulWidget {
   final String deckName;
@@ -14,52 +15,57 @@ class TestSettingView extends ConsumerStatefulWidget {
 }
 
 class TestSettingViewState extends ConsumerState<TestSettingView> {
+  List<FlashCard> _cards = [];
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => loadCards());
+  }
+
+  Future<void> loadCards() async {
+    final cardsDB = ref.watch(cardsDatabaseProvider);
+    try {
+      List<FlashCard> fetchedCards = await cardsDB.getCards(widget.deckId);
+      setState(() => _cards = fetchedCards);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: _asyncTestPlayMonitor(),
+      // child: _asyncTestPlayMonitor(),
+      child: _testSettingContent(),
     );
   }
 
-  Widget _asyncTestPlayMonitor() {
-    final cardsDatabase = ref.watch(cardsDatabaseProvider);
-    return FutureBuilder(
-      future: Future.wait([
-        cardsDatabase.getCardStatusSummary(widget.deckId, CardStatus.correct),
-        cardsDatabase.getCardStatusSummary(widget.deckId, CardStatus.pending),
-        cardsDatabase.getCardStatusSummary(widget.deckId, CardStatus.incorrect),
-      ]),
-      builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        }
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Text('No data available');
-        }
-        return Column(
-          mainAxisSize: MainAxisSize.min,
+  Widget _testSettingContent() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _questionCount(),
+        const SizedBox(height: 48),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("テスト", style: TextStyle(fontSize: 24)),
-            const SizedBox(height: 48),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _correctCount(snapshot.data![0]),
-                const SizedBox(width: 16),
-                _pendingCount(snapshot.data![1]),
-                const SizedBox(width: 16),
-                _incorrectCount(snapshot.data![2]),
-              ],
-            ),
-            const SizedBox(height: 48),
-            _startButton(),
+            _correctCount(),
+            const SizedBox(width: 16),
+            _pendingCount(),
+            const SizedBox(width: 16),
+            _incorrectCount(),
           ],
-        );
-      },
+        ),
+        const SizedBox(height: 48),
+        _startButton(),
+      ],
     );
+  }
+
+  Widget _questionCount() {
+    final count = _cards.length;
+    return Text("問題数: $count 問", style: const TextStyle(fontSize: 24));
   }
 
   Widget _startButton() {
@@ -82,7 +88,9 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
     );
   }
 
-  Widget _correctCount(int count) {
+  Widget _correctCount() {
+    final count =
+        _cards.where((card) => card.status == CardStatus.correct).length;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -95,7 +103,9 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
     );
   }
 
-  Widget _pendingCount(int count) {
+  Widget _pendingCount() {
+    final count =
+        _cards.where((card) => card.status == CardStatus.pending).length;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -108,7 +118,9 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
     );
   }
 
-  Widget _incorrectCount(int count) {
+  Widget _incorrectCount() {
+    final count =
+        _cards.where((card) => card.status == CardStatus.incorrect).length;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
