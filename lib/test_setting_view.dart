@@ -36,7 +36,6 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      // child: _asyncTestPlayMonitor(),
       child: _testSettingContent(),
     );
   }
@@ -68,6 +67,31 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
     return Text("問題数: $count 問", style: const TextStyle(fontSize: 24));
   }
 
+  Widget _correctCount() {
+    return _statusCountWidget(
+        CardStatus.correct, Icons.circle_outlined, Colors.green);
+  }
+
+  Widget _pendingCount() {
+    return _statusCountWidget(
+        CardStatus.pending, Icons.change_history, Colors.amber);
+  }
+
+  Widget _incorrectCount() {
+    return _statusCountWidget(CardStatus.incorrect, Icons.close, Colors.red);
+  }
+
+  Widget _statusCountWidget(CardStatus status, IconData icon, Color color) {
+    final count = _cards.where((card) => card.status == status).length;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, color: color),
+        Text(count.toString(), style: const TextStyle(fontSize: 16)),
+      ],
+    );
+  }
+
   Widget _startButton() {
     return Container(
       padding: const EdgeInsets.only(left: 4, right: 4),
@@ -85,51 +109,6 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
         },
         child: const Text('スタート'),
       ),
-    );
-  }
-
-  Widget _correctCount() {
-    final count =
-        _cards.where((card) => card.status == CardStatus.correct).length;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(
-          Icons.circle_outlined,
-          color: Colors.green,
-        ),
-        Text(count.toString(), style: const TextStyle(fontSize: 16)),
-      ],
-    );
-  }
-
-  Widget _pendingCount() {
-    final count =
-        _cards.where((card) => card.status == CardStatus.pending).length;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(
-          Icons.change_history,
-          color: Colors.amber,
-        ),
-        Text(count.toString(), style: const TextStyle(fontSize: 16)),
-      ],
-    );
-  }
-
-  Widget _incorrectCount() {
-    final count =
-        _cards.where((card) => card.status == CardStatus.incorrect).length;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(
-          Icons.close,
-          color: Colors.red,
-        ),
-        Text(count.toString(), style: const TextStyle(fontSize: 16)),
-      ],
     );
   }
 }
