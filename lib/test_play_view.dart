@@ -12,6 +12,12 @@ class TestPlayView extends ConsumerStatefulWidget {
   TestPlayViewState createState() => TestPlayViewState();
 }
 
+class UpdateStatus {
+  late int id;
+  late CardStatus status;
+  UpdateStatus({required this.id, required this.status});
+}
+
 class TestPlayViewState extends ConsumerState<TestPlayView> {
   final _cardWidth = 400.0;
   final _cardHeight = 200.0;
@@ -20,7 +26,9 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   bool _isFlipped = true;
   bool _showNote = false;
   List<FlashCard> _cards = [];
-  int _currentCardIndex = 0;
+  // ignore: prefer_final_fields
+  List<UpdateStatus> _updateList = []; // 更新対象のステータスをaddしていく
+  int _index = 0;
 
   @override
   void initState() {
@@ -56,6 +64,46 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
         )
       ],
     );
+  }
+
+  Widget _flashCard() {
+    return SizedBox(
+      width: _cardWidth,
+      child: Card(
+        child: InkWell(
+          onTap: () {
+            setState(() => _isFlipped = !_isFlipped);
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: _cardHeight,
+                maxHeight: _cardHeight,
+              ),
+              child: _flashCardText(_cards[_index]),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _flashCardText(card) {
+    const cardFontSize = 16.0;
+    const questionColor = Colors.blueGrey;
+    const answerColor = Colors.blueAccent;
+    if (_isFlipped) {
+      return Text(
+        card.question,
+        style: const TextStyle(color: questionColor, fontSize: cardFontSize),
+      );
+    } else {
+      return Text(
+        card.answer,
+        style: const TextStyle(color: answerColor, fontSize: cardFontSize),
+      );
+    }
   }
 
   Widget _noteButton() {
@@ -99,17 +147,19 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
       {required CardStatus status,
       required Color color,
       required IconData icon}) {
-    final cardsDatabase = ref.watch(cardsDatabaseProvider);
-
     return Container(
       margin: const EdgeInsets.only(left: 4, right: 4),
       width: _buttonWidth,
       height: _buttonHeight,
       child: ElevatedButton(
         onPressed: () => {
-          cardsDatabase.updateCardStatus(_cards[_currentCardIndex].id, status),
+          setState(() {
+            _updateList.add(
+              UpdateStatus(id: _cards[_index].id, status: status),
+            );
+          }),
           nextCard(),
-          print(_cards[_currentCardIndex])
+          print(_cards[_index])
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.white),
@@ -121,50 +171,40 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   }
 
   void nextCard() {
-    if (_currentCardIndex < _cards.length - 1) {
-      setState(() => _currentCardIndex++);
+    if (_index < _cards.length - 1) {
+      setState(() => _index++);
     } else {
-      // テスト終了処理（任意）
+      _showCompletionDialog();
     }
   }
 
-  Widget _flashCard() {
-    return SizedBox(
-      width: _cardWidth,
-      child: Card(
-        child: InkWell(
-          onTap: () {
-            setState(() => _isFlipped = !_isFlipped);
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: _cardHeight,
-                maxHeight: _cardHeight,
-              ),
-              child: _flashCardText(_cards[_currentCardIndex]),
+  void _showCompletionDialog() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("テスト完了"),
+          content: const Text("全てのカードの確認が完了しました。"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("閉じる"),
+              onPressed: () async {
+                await _updateAllCards();
+                if (!mounted) return;
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
             ),
-          ),
-        ),
-      ),
+          ],
+        );
+      },
     );
   }
 
-  Widget _flashCardText(card) {
-    const cardFontSize = 16.0;
-    const questionColor = Colors.blueGrey;
-    const answerColor = Colors.blueAccent;
-    if (_isFlipped) {
-      return Text(
-        card.question,
-        style: const TextStyle(color: questionColor, fontSize: cardFontSize),
-      );
-    } else {
-      return Text(
-        card.answer,
-        style: const TextStyle(color: answerColor, fontSize: cardFontSize),
-      );
+  Future<void> _updateAllCards() async {
+    final cardsDB = ref.watch(cardsDatabaseProvider);
+    for (var update in _updateList) {
+      await cardsDB.updateCardStatus(update.id, update.status);
     }
   }
 }

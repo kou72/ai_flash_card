@@ -100,14 +100,15 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
     );
   }
 
-  void _startTest() {
-    Navigator.push(
+  void _startTest() async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
             TestPlayView(deckName: widget.deckName, cards: _cards),
       ),
     );
+    loadCards();
   }
 
   void _cantTest() {
