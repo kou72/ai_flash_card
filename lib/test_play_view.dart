@@ -137,6 +137,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
       status: CardStatus.incorrect,
       color: Colors.red,
       icon: Icons.close,
+      text: "不正解",
     );
   }
 
@@ -145,6 +146,7 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
       status: CardStatus.pending,
       color: Colors.amber,
       icon: Icons.change_history,
+      text: "保留",
     );
   }
 
@@ -153,13 +155,15 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
       status: CardStatus.correct,
       color: Colors.green,
       icon: Icons.circle_outlined,
+      text: "正解!",
     );
   }
 
   Widget _statusButton(
       {required CardStatus status,
       required Color color,
-      required IconData icon}) {
+      required IconData icon,
+      required String text}) {
     return Container(
       margin: const EdgeInsets.only(left: 4, right: 4),
       width: _buttonWidth,
@@ -169,6 +173,12 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
           setState(() {
             _updateList.add(
               UpdateStatus(id: _cards[_index].id, status: status),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(text),
+                duration: const Duration(seconds: 1),
+              ),
             );
           }),
           nextCard(),
