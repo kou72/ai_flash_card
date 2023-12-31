@@ -57,9 +57,9 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _correctButton(),
-            _pendingButton(),
             _incorrectButton(),
+            _pendingButton(),
+            _correctButton(),
           ],
         )
       ],
@@ -126,21 +126,28 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     );
   }
 
-  Widget _correctButton() {
+  Widget _incorrectButton() {
     return _statusButton(
-        status: CardStatus.correct, color: Colors.green, icon: Icons.check);
+      status: CardStatus.incorrect,
+      color: Colors.red,
+      icon: Icons.close,
+    );
   }
 
   Widget _pendingButton() {
     return _statusButton(
-        status: CardStatus.pending,
-        color: Colors.amber,
-        icon: Icons.change_history);
+      status: CardStatus.pending,
+      color: Colors.amber,
+      icon: Icons.change_history,
+    );
   }
 
-  Widget _incorrectButton() {
+  Widget _correctButton() {
     return _statusButton(
-        status: CardStatus.incorrect, color: Colors.red, icon: Icons.close);
+      status: CardStatus.correct,
+      color: Colors.green,
+      icon: Icons.circle_outlined,
+    );
   }
 
   Widget _statusButton(
