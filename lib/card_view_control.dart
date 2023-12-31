@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+// import "riverpod/cards_state.dart";
 import "card_list_view.dart";
-import "card_test_view.dart";
+import 'test_setting_view.dart';
 
-class CardViewControl extends StatefulWidget {
+class CardViewControl extends ConsumerStatefulWidget {
   final int deckId;
   final String deckName;
   const CardViewControl({
@@ -14,16 +16,18 @@ class CardViewControl extends StatefulWidget {
   CardViewControlState createState() => CardViewControlState();
 }
 
-class CardViewControlState extends State<CardViewControl> {
+class CardViewControlState extends ConsumerState<CardViewControl> {
   int _pageListIndex = 0;
-// bottomNavigationBarでページを出し分ける用のリスト
+  // dynamic _cards = [];
+  // bottomNavigationBarでページを出し分ける用のリスト
   late final _viewList = [
     CardListView(deckId: widget.deckId),
-    const CardTestView(),
+    TestSettingView(deckName: widget.deckName, deckId: widget.deckId),
   ];
 
   @override
   Widget build(BuildContext context) {
+    // final cardsStream = ref.watch(cardsStreamProvider(widget.deckId));
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.deckName),
@@ -45,4 +49,15 @@ class CardViewControlState extends State<CardViewControl> {
       ),
     );
   }
+
+  // Widget _asyncViewList(AsyncValue cardsStream) {
+  //   return cardsStream.when(
+  //     data: (cards) {
+  //       _cards = cards;
+  //       return _viewList[_pageListIndex];
+  //     },
+  //     loading: () => const CircularProgressIndicator(),
+  //     error: (error, stackTrace) => Text('error: $error'),
+  //   );
+  // }
 }

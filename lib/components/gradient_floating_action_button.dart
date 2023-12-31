@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class GradientFloatingActionButton extends StatelessWidget {
   final VoidCallback onPressed;
   final IconData iconData;
-  final String label;
+  final String? label;
   final List<Color> gradientColors;
 
   const GradientFloatingActionButton({
@@ -28,13 +28,20 @@ class GradientFloatingActionButton extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(30),
         ),
-        child: FloatingActionButton.extended(
-          backgroundColor: Colors.transparent,
-          elevation: 4,
-          icon: Icon(iconData),
-          label: Text(label),
-          onPressed: onPressed,
-        ),
+        child: label != null
+            ? FloatingActionButton.extended(
+                backgroundColor: Colors.transparent,
+                elevation: 4,
+                icon: Icon(iconData),
+                label: Text(label!),
+                onPressed: onPressed,
+              )
+            : FloatingActionButton(
+                backgroundColor: Colors.transparent,
+                elevation: 4,
+                onPressed: onPressed,
+                child: Icon(iconData),
+              ),
       ),
     );
   }

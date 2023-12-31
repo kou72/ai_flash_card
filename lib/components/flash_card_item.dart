@@ -2,13 +2,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../card_detail_view.dart';
 
-class FlashCard extends StatefulWidget {
+class FlashCardItem extends StatefulWidget {
   final int id;
   final int deckId;
   final String question;
   final String answer;
   final String note;
-  const FlashCard({
+  const FlashCardItem({
     super.key,
     required this.id,
     required this.deckId,
@@ -17,10 +17,10 @@ class FlashCard extends StatefulWidget {
     required this.note,
   });
   @override
-  FlashCardState createState() => FlashCardState();
+  FlashCardItemState createState() => FlashCardItemState();
 }
 
-class FlashCardState extends State<FlashCard> {
+class FlashCardItemState extends State<FlashCardItem> {
   final _cardWidth = 400.0;
   final _cardFontSize = 16.0;
   final _cardIconSize = 20.0;

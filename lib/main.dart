@@ -26,8 +26,8 @@ class MyApp extends StatelessWidget {
       title: 'Flash PDF Card (Demo)',
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
+        scaffoldBackgroundColor: Colors.grey[200],
       ),
-      // home: const StartScreen(),
       home: const DeckListView(),
       debugShowCheckedModeBanner: false,
     );

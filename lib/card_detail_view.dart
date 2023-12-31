@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'riverpod/cards_state.dart';
-import 'card_delete_dialog.dart';
+import 'card_dialog/card_delete_dialog.dart';
 
 class CardDetailView extends ConsumerStatefulWidget {
   final int id;
@@ -139,8 +139,12 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
           });
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('新規作成しました！')),
+            const SnackBar(
+              content: Text('新規作成しました！'),
+              duration: Duration(seconds: 1),
+            ),
           );
+          Navigator.of(context).pop();
         },
       ),
     );
@@ -162,7 +166,10 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
           );
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('保存しました！')),
+            const SnackBar(
+              content: Text('保存しました！'),
+              duration: Duration(seconds: 1),
+            ),
           );
         },
       ),
@@ -186,7 +193,10 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
           if (!context.mounted) return;
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('カードを削除しました')),
+            const SnackBar(
+              content: Text('カードを削除しました'),
+              duration: Duration(seconds: 1),
+            ),
           );
         },
       ),

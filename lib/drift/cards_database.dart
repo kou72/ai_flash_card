@@ -1,20 +1,22 @@
 import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
+import '../type/types.dart';
 
 // 以下コマンドでbuildして自動生成
 // flutter pub run build_runner build --delete-conflicting-outputs
 part 'cards_database.g.dart';
 
-class Cards extends Table {
+class FlashCards extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get deckId => integer().nullable()();
   TextColumn get question => text()();
   TextColumn get answer => text()();
   TextColumn get note => text()();
+  IntColumn get status => intEnum<CardStatus>()();
 }
 
-@DriftDatabase(tables: [Cards])
+@DriftDatabase(tables: [FlashCards])
 class CardsDatabase extends _$CardsDatabase {
   CardsDatabase._(QueryExecutor e) : super(e);
 
@@ -25,11 +27,12 @@ class CardsDatabase extends _$CardsDatabase {
 
   // ローカルデータベースへアクセスするメソッドを設定
   Future insertCard(int deckId, String question, String answer, String note) {
-    return into(cards).insert(CardsCompanion.insert(
+    return into(flashCards).insert(FlashCardsCompanion.insert(
       deckId: Value(deckId),
       question: question,
       answer: answer,
       note: note,
+      status: CardStatus.none,
     ));
   }
 
@@ -41,12 +44,24 @@ class CardsDatabase extends _$CardsDatabase {
   }
 
   Future deleteCard(int id) {
-    return (delete(cards)..where((t) => t.id.equals(id))).go();
+    return (delete(flashCards)..where((t) => t.id.equals(id))).go();
   }
 
   Future updateCard(int id, String question, String answer, String note) {
-    return (update(cards)..where((t) => t.id.equals(id))).write(CardsCompanion(
-        question: Value(question), answer: Value(answer), note: Value(note)));
+    return (update(flashCards)..where((t) => t.id.equals(id))).write(
+        FlashCardsCompanion(
+            question: Value(question),
+            answer: Value(answer),
+            note: Value(note)));
+  }
+
+  Future<List<FlashCard>> getCards(int deckId) {
+    return (select(flashCards)..where((t) => t.deckId.equals(deckId))).get();
+  }
+
+  Future updateCardStatus(int id, CardStatus status) {
+    return (update(flashCards)..where((t) => t.id.equals(id)))
+        .write(FlashCardsCompanion(status: Value(status)));
   }
 }
 

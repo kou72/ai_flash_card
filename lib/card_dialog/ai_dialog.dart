@@ -5,10 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'components/gradient_container.dart';
-import 'components/gradient_circular_spinning_indicator.dart';
-import 'components/gradient_circular_progress_indicator.dart';
-import 'riverpod/cards_state.dart';
+import '../components/gradient_container.dart';
+import '../components/gradient_circular_spinning_indicator.dart';
+import '../components/gradient_circular_progress_indicator.dart';
+import '../riverpod/cards_state.dart';
 
 class AiDialog extends ConsumerStatefulWidget {
   final int deckId;
