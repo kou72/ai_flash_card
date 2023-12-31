@@ -32,6 +32,7 @@ export const generateImageToQa = onRequest(
     // generateQaFromChatGPT：テキストをOpenAIのAPIに投げて質問を生成
     // convertTextToQaJson：テキストから質問と回答を抽出してJSON形式に変換
     // saveQa：デバッグ用の中間ファイルとしてqa.jsonを保存
+    let qaStore = firestore.collection("aicard").doc("error");
     try {
       const date = getDate();
       const sourcePath = await fileUpload(req, date);
@@ -40,7 +41,7 @@ export const generateImageToQa = onRequest(
       const destFolder = "dest/" + destFile;
       const text = await convertImageToText(sourcePath);
       await saveText(destFolder, text, "text.txt");
-      const qaStore = firestore.collection("aicard").doc(destFile);
+      qaStore = firestore.collection("aicard").doc(destFile);
       const startTime = Date.now(); // 時間計測開始
       await qaStore.set({done: false, data: {}}); // Firestoreへ初期値保存
       res.status(200).send(destFile);
@@ -52,6 +53,7 @@ export const generateImageToQa = onRequest(
       await saveQa(destFolder, qaJson);
     } catch (error: any) {
       logger.error(error.message, {structuredData: true});
+      await qaStore.set({done: true, data: {}});
       res.status(500).send(error.message);
     }
   }

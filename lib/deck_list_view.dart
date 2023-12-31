@@ -51,14 +51,14 @@ class DeckListViewState extends ConsumerState<DeckListView> {
         Icon(
           Icons.style,
           color: Colors.grey,
-          size: 72.0,
+          size: 64.0,
         ),
         SizedBox(height: 16.0),
         Text(
           '最初のデッキを作成しましょう！',
           style: TextStyle(
             color: Colors.grey,
-            fontSize: 24.0,
+            fontSize: 18.0,
           ),
         ),
       ],

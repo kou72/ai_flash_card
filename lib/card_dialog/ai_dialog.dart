@@ -58,11 +58,10 @@ class AiDialogState extends ConsumerState<AiDialog> {
     setState(() => _isLoading = true);
 
     try {
-      // final url =
-      //     Uri.https('generateimagetoqa-vhoidcprtq-uc.a.run.app', '');
-      // デバック用
-      final url = Uri.http(
-          '127.0.0.1:5001', 'flash-pdf-card/us-central1/generateImageToQa');
+      final url = Uri.https('generateimagetoqa-vhoidcprtq-uc.a.run.app', '');
+      // // デバック用
+      // final url = Uri.http(
+      //     '127.0.0.1:5001', 'flash-pdf-card/us-central1/generateImageToQa');
       final req = http.MultipartRequest('POST', url);
       final encodeFileName = base64Encode(utf8.encode(_pickedFileName!));
       req.files.add(
@@ -84,9 +83,9 @@ class AiDialogState extends ConsumerState<AiDialog> {
         if (done == true) setState(() => _progress = 1);
       });
 
+      const max = 100;
       while (_progress < 1) {
-        const max = 90;
-        if (_progress < max - 1 / max) setState(() => _progress += 1 / max);
+        if (_progress < 0.95) setState(() => _progress += (1 / max));
         await Future.delayed(const Duration(seconds: 1));
       }
 
