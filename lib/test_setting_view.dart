@@ -156,7 +156,7 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
   }
 
   void _startTest() async {
-    List<FlashCard> playCards = _selectCards();
+    List<FlashCard> playCards = _selectPlayCards();
     if (playCards.isEmpty) {
       _cantTest();
       return;
@@ -171,32 +171,27 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
     loadCards();
   }
 
-  List<FlashCard> _selectCards() {
+  List<FlashCard> _selectPlayCards() {
     List<FlashCard> cards = [];
-    if (_playCorrect) {
-      cards.addAll(_cards.where((card) => card.status == CardStatus.correct));
-    }
-    if (_playPending) {
-      cards.addAll(_cards.where((card) => card.status == CardStatus.pending));
-    }
-    if (_playIncorrect) {
-      cards.addAll(_cards.where((card) => card.status == CardStatus.incorrect));
-    }
-    if (_playNone) {
-      cards.addAll(_cards.where((card) => card.status == CardStatus.none));
-    }
-    if (_isShuffle) {
-      cards.shuffle();
-    } else {
-      cards.sort((a, b) => a.id.compareTo(b.id));
-    }
+    if (_playCorrect) cards.addAll(_pickCards(CardStatus.correct));
+    if (_playPending) cards.addAll(_pickCards(CardStatus.pending));
+    if (_playIncorrect) cards.addAll(_pickCards(CardStatus.incorrect));
+    if (_playNone) cards.addAll(_pickCards(CardStatus.none));
+    if (_isShuffle) cards.shuffle();
+    if (!_isShuffle) cards.sort((a, b) => a.id.compareTo(b.id));
     return cards;
+  }
+
+  List<FlashCard> _pickCards(CardStatus status) {
+    return _cards.where((card) => card.status == status).toList();
   }
 
   void _cantTest() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-          content: Text('問題がありません！'), duration: Duration(seconds: 1)),
+        content: Text('問題がありません！'),
+        duration: Duration(seconds: 1),
+      ),
     );
   }
 }
