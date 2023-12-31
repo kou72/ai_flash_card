@@ -16,6 +16,7 @@ class TestSettingView extends ConsumerStatefulWidget {
 
 class TestSettingViewState extends ConsumerState<TestSettingView> {
   List<FlashCard> _cards = [];
+  List<FlashCard> _playCards = [];
   bool _playCorrect = false;
   bool _playPending = true;
   bool _playIncorrect = true;
@@ -32,6 +33,7 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
     try {
       List<FlashCard> fetchedCards = await cardsDB.getCards(widget.deckId);
       setState(() => _cards = fetchedCards);
+      _selectPlayCards();
     } catch (e) {
       print(e);
     }
@@ -43,7 +45,7 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _questionCount(),
+          _playCardsCount(),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -61,8 +63,8 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
     );
   }
 
-  Widget _questionCount() {
-    final count = _cards.length;
+  Widget _playCardsCount() {
+    final count = _playCards.length;
     return Text("$count 問", style: const TextStyle(fontSize: 24));
   }
 
@@ -111,7 +113,7 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
     required IconData icon,
     required Color color,
     required bool isPlay,
-    required Function() onPressed,
+    required Function onPressed,
   }) {
     final count = _cards.where((card) => card.status == status).length;
     TextStyle? textStyle = isPlay ? const TextStyle(color: Colors.black) : null;
@@ -128,7 +130,10 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
       width: 80,
       height: 80,
       child: OutlinedButton(
-        onPressed: onPressed,
+        onPressed: () => {
+          onPressed(),
+          _selectPlayCards(),
+        },
         style: buttonStyle,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -155,8 +160,7 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
   }
 
   void _startTest() async {
-    List<FlashCard> playCards = _selectPlayCards();
-    if (playCards.isEmpty) {
+    if (_playCards.isEmpty) {
       _cantTest();
       return;
     }
@@ -164,20 +168,22 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            TestPlayView(deckName: widget.deckName, cards: playCards),
+            TestPlayView(deckName: widget.deckName, cards: _playCards),
       ),
     );
     loadCards();
   }
 
-  List<FlashCard> _selectPlayCards() {
+  void _selectPlayCards() {
     List<FlashCard> cards = [];
     if (_playCorrect) cards.addAll(_pickCards(CardStatus.correct));
     if (_playPending) cards.addAll(_pickCards(CardStatus.pending));
     if (_playIncorrect) cards.addAll(_pickCards(CardStatus.incorrect));
     if (_playNone) cards.addAll(_pickCards(CardStatus.none));
     cards.shuffle();
-    return cards;
+
+    _playCards.clear();
+    _playCards = cards;
   }
 
   List<FlashCard> _pickCards(CardStatus status) {
