@@ -93,7 +93,13 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     const cardFontSize = 16.0;
     const questionColor = Colors.blueGrey;
     const answerColor = Colors.blueAccent;
-    if (_isFlipped) {
+    const noteColor = Colors.blueAccent;
+    if (_showNote) {
+      return Text(
+        card.note,
+        style: const TextStyle(color: noteColor, fontSize: cardFontSize),
+      );
+    } else if (_isFlipped) {
       return Text(
         card.question,
         style: const TextStyle(color: questionColor, fontSize: cardFontSize),
