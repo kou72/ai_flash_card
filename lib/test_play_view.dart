@@ -2,7 +2,6 @@ import 'package:flash_pdf_card/riverpod/cards_state.dart';
 import 'package:flash_pdf_card/type/types.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-// import 'drift/cards_database.dart' show FlashCard;
 
 class TestPlayView extends ConsumerStatefulWidget {
   final String deckName;
@@ -50,6 +49,8 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        _playCardsCount(),
+        const SizedBox(height: 24),
         _flashCard(),
         const SizedBox(height: 8),
         _noteButton(),
@@ -62,6 +63,20 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
             _correctButton(),
           ],
         )
+      ],
+    );
+  }
+
+  Widget _playCardsCount() {
+    final sum = _cards.length;
+    final current = _index + 1;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text("$current 問 ", style: const TextStyle(fontSize: 24)),
+        const SizedBox(width: 4),
+        Text("/ $sum 問", style: const TextStyle(fontSize: 16)),
       ],
     );
   }
