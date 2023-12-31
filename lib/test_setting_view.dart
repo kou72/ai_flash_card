@@ -20,7 +20,6 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
   bool _playPending = true;
   bool _playIncorrect = true;
   bool _playNone = true;
-  bool _isShuffle = true;
 
   @override
   void initState() {
@@ -177,8 +176,7 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
     if (_playPending) cards.addAll(_pickCards(CardStatus.pending));
     if (_playIncorrect) cards.addAll(_pickCards(CardStatus.incorrect));
     if (_playNone) cards.addAll(_pickCards(CardStatus.none));
-    if (_isShuffle) cards.shuffle();
-    if (!_isShuffle) cards.sort((a, b) => a.id.compareTo(b.id));
+    cards.shuffle();
     return cards;
   }
 
