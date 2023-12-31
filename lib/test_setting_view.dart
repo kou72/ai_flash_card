@@ -3,7 +3,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import "riverpod/cards_state.dart";
 import 'test_play_view.dart';
 import 'type/types.dart';
-import 'drift/cards_database.dart' show FlashCard;
 
 class TestSettingView extends ConsumerStatefulWidget {
   final String deckName;
