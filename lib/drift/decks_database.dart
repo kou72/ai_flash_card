@@ -32,12 +32,6 @@ class DecksDatabase extends _$DecksDatabase {
     return (update(decks)..where((deck) => deck.id.equals(id)))
         .write(DecksCompanion(title: Value(title)));
   }
-
-  Future<String> getDeckName(int id) {
-    return (select(decks)..where((deck) => deck.id.equals(id)))
-        .getSingle()
-        .then((value) => value.title);
-  }
 }
 
 DatabaseConnection connectOnWeb() {

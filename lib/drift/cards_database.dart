@@ -59,24 +59,9 @@ class CardsDatabase extends _$CardsDatabase {
     return (select(flashCards)..where((t) => t.deckId.equals(deckId))).get();
   }
 
-  Future<int> getCardStatusSummary(int deckId, CardStatus status) async {
-    final count = await (select(flashCards)
-          ..where((t) => t.deckId.equals(deckId))
-          ..where((t) => t.status.equals(status.index)))
-        .get()
-        .then((value) => value.length);
-    return count;
-  }
-
   Future updateCardStatus(int id, CardStatus status) {
     return (update(flashCards)..where((t) => t.id.equals(id)))
         .write(FlashCardsCompanion(status: Value(status)));
-  }
-
-  Future getCardStatus(int id) async {
-    final card =
-        await (select(flashCards)..where((t) => t.id.equals(id))).getSingle();
-    return card.status;
   }
 }
 

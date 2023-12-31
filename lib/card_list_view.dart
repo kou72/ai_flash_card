@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'card_dialog/ai_dialog.dart';
 import 'components/gradient_floating_action_button.dart';
-import "components/flash_card.dart";
+import 'components/flash_card_item.dart';
 import "riverpod/cards_state.dart";
 import "card_detail_view.dart";
 
