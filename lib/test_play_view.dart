@@ -209,7 +209,11 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
 
   void nextCard() {
     if (_index < _cards.length - 1) {
-      setState(() => _index++);
+      setState(() {
+        _isFlipped = true;
+        _showNote = false;
+        _index++;
+      });
     } else {
       _showCompletionDialog();
     }
