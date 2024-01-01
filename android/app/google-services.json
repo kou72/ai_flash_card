@@ -1,15 +1,15 @@
 {
   "project_info": {
     "project_number": "108517378329",
-    "project_id": "flash-pdf-card",
-    "storage_bucket": "flash-pdf-card.appspot.com"
+    "project_id": "ai-flash-card",
+    "storage_bucket": "ai-flash-card.appspot.com"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:108517378329:android:87c38bd6e4ad578e94dd88",
         "android_client_info": {
-          "package_name": "com.example.flash_pdf_card"
+          "package_name": "com.example.ai_flash_card"
         }
       },
       "oauth_client": [

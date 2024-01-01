@@ -2,6 +2,6 @@
   "file_generated_by": "FlutterFire CLI",
   "purpose": "FirebaseAppID & ProjectID for this Firebase app in this directory",
   "GOOGLE_APP_ID": "1:108517378329:ios:ab3b5fa883079cc594dd88",
-  "FIREBASE_PROJECT_ID": "flash-pdf-card",
+  "FIREBASE_PROJECT_ID": "ai-flash-card",
   "GCM_SENDER_ID": "108517378329"
 }

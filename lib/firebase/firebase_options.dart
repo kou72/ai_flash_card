@@ -47,9 +47,9 @@ class DefaultFirebaseOptions {
     apiKey: 'AIzaSyBzQV5VR1icHpifQbB5qiAeAy27IqDY_IY',
     appId: '1:108517378329:web:4b9391ce932ab2d794dd88',
     messagingSenderId: '108517378329',
-    projectId: 'flash-pdf-card',
-    authDomain: 'flash-pdf-card.firebaseapp.com',
-    storageBucket: 'flash-pdf-card.appspot.com',
+    projectId: 'ai-flash-card',
+    authDomain: 'ai-flash-card.firebaseapp.com',
+    storageBucket: 'ai-flash-card.appspot.com',
     measurementId: 'G-37L98CX7HH',
   );
 
@@ -57,17 +57,18 @@ class DefaultFirebaseOptions {
     apiKey: 'AIzaSyDbF3FZ5kUeBoeaZykVv0UFeJBj2V0qqnM',
     appId: '1:108517378329:android:87c38bd6e4ad578e94dd88',
     messagingSenderId: '108517378329',
-    projectId: 'flash-pdf-card',
-    storageBucket: 'flash-pdf-card.appspot.com',
+    projectId: 'ai-flash-card',
+    storageBucket: 'ai-flash-card.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyA0jWDWJybhRN5HMZNywYueE8Y1GeYBV2U',
     appId: '1:108517378329:ios:a4a58849d6a1582294dd88',
     messagingSenderId: '108517378329',
-    projectId: 'flash-pdf-card',
-    storageBucket: 'flash-pdf-card.appspot.com',
-    iosClientId: '108517378329-bentvou74e7nqa7gik45dfofapmg7som.apps.googleusercontent.com',
+    projectId: 'ai-flash-card',
+    storageBucket: 'ai-flash-card.appspot.com',
+    iosClientId:
+        '108517378329-bentvou74e7nqa7gik45dfofapmg7som.apps.googleusercontent.com',
     iosBundleId: 'com.example.flashPdfCard',
   );
 
@@ -75,8 +76,8 @@ class DefaultFirebaseOptions {
     apiKey: 'AIzaSyA0jWDWJybhRN5HMZNywYueE8Y1GeYBV2U',
     appId: '1:108517378329:ios:ab3b5fa883079cc594dd88',
     messagingSenderId: '108517378329',
-    projectId: 'flash-pdf-card',
-    storageBucket: 'flash-pdf-card.appspot.com',
+    projectId: 'ai-flash-card',
+    storageBucket: 'ai-flash-card.appspot.com',
     iosBundleId: 'com.example.flashPdfCard.RunnerTests',
   );
 }
