@@ -11,7 +11,7 @@ admin.initializeApp();
 
 const storage = admin.storage();
 const bucket = storage.bucket();
-const bucketName = "ai-flash-card.appspot.com";
+const bucketName = "flash-pdf-card.appspot.com";
 const firestore = admin.firestore();
 
 export const generateImageToQa = onRequest(
