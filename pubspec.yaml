@@ -15,7 +15,6 @@ dependencies:
   file_picker: ^5.3.3
   http: ^1.1.0
   url_launcher: ^6.1.12
-  pdfx: ^2.4.0
   shared_preferences: ^2.2.0
   # firebase用パッケージ
   firebase_core: ^2.15.1
