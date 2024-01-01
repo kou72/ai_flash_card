@@ -1,5 +1,5 @@
-import 'package:flash_pdf_card/riverpod/cards_state.dart';
-import 'package:flash_pdf_card/type/types.dart';
+import 'package:ai_flash_card/riverpod/cards_state.dart';
+import 'package:ai_flash_card/type/types.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

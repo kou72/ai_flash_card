@@ -1,4 +1,4 @@
-# flash_pdf_card
+# ai_flash_card
 
 A new Flutter project.
 
