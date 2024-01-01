@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:flash_pdf_card/startscreen.dart';
 import 'deck_list_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase/firebase_options.dart';
