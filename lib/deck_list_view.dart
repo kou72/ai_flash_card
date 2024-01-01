@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'card_view_control.dart';
 import 'deck_dialog/deck_insert_dialog.dart';
 import 'deck_dialog/deck_update_dialog.dart';
@@ -19,7 +20,7 @@ class DeckListViewState extends ConsumerState<DeckListView> {
     final decksDatabase = ref.watch(decksDatabaseProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI暗記カード (Demo版)'),
+        title: _logoTitle(),
       ),
       body: Center(
         child: _asyncDeckList(decksStream),
@@ -33,6 +34,20 @@ class DeckListViewState extends ConsumerState<DeckListView> {
           await decksDatabase.insertDeck(result);
         },
       ),
+    );
+  }
+
+  Widget _logoTitle() {
+    return Row(
+      children: [
+        SvgPicture.asset(
+          'assets/icon.svg',
+          width: 40,
+          height: 40,
+        ),
+        const SizedBox(width: 10),
+        const Text('AI暗記カード'),
+      ],
     );
   }
 

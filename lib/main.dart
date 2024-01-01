@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flash PDF Card (Demo)',
+      title: 'AI暗記カード',
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
         scaffoldBackgroundColor: Colors.grey[200],
