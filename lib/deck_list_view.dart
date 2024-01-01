@@ -42,8 +42,8 @@ class DeckListViewState extends ConsumerState<DeckListView> {
       children: [
         SvgPicture.asset(
           'assets/icon.svg',
-          width: 40,
-          height: 40,
+          width: 36,
+          height: 36,
         ),
         const SizedBox(width: 10),
         const Text('AI暗記カード'),
