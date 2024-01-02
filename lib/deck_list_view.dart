@@ -20,7 +20,11 @@ class DeckListViewState extends ConsumerState<DeckListView> {
     final decksDatabase = ref.watch(decksDatabaseProvider);
     return Scaffold(
       appBar: AppBar(
-        title: _logoTitle(),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: SvgPicture.asset('assets/icon.svg'),
+        ),
+        title: const Text('AI暗記カード'),
       ),
       body: Center(
         child: _asyncDeckList(decksStream),
@@ -34,20 +38,6 @@ class DeckListViewState extends ConsumerState<DeckListView> {
           await decksDatabase.insertDeck(result);
         },
       ),
-    );
-  }
-
-  Widget _logoTitle() {
-    return Row(
-      children: [
-        SvgPicture.asset(
-          'assets/icon.svg',
-          width: 36,
-          height: 36,
-        ),
-        const SizedBox(width: 10),
-        const Text('AI暗記カード'),
-      ],
     );
   }
 
