@@ -8,6 +8,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'riverpod/decks_state.dart';
 import 'riverpod/cards_state.dart';
+import 'package:flutter/foundation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,20 +72,27 @@ class HomeState extends ConsumerState<Home> {
     final cardsDb = ref.watch(cardsDatabaseProvider);
     return ListView(
       children: <Widget>[
-        ListTile(
-          title: const Text('Decks DriftDbViewer'),
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DriftDbViewer(decksDb)));
-          },
-        ),
-        ListTile(
-          title: const Text('Cards DriftDbViewer'),
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DriftDbViewer(cardsDb)));
-          },
-        ),
+        // デバッグ中のみ表示
+        kDebugMode
+            ? ListTile(
+                title: const Text('Decks DriftDbViewer'),
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => DriftDbViewer(decksDb)));
+                },
+              )
+            : const SizedBox(),
+
+        // デバッグ中のみ表示
+        kDebugMode
+            ? ListTile(
+                title: const Text('Cards DriftDbViewer'),
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => DriftDbViewer(cardsDb)));
+                },
+              )
+            : const SizedBox(),
       ],
     );
   }
