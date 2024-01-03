@@ -10,3 +10,8 @@ final cardsStreamProvider =
     ..where((card) => card.deckId.equals(deckId));
   return cardsStream.watch();
 });
+
+final decksStreamProvider = StreamProvider<List<Deck>>((ref) {
+  final db = ref.read(cardsDatabaseProvider);
+  return db.select(db.decks).watch();
+});

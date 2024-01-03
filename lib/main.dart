@@ -68,20 +68,20 @@ class HomeState extends ConsumerState<Home> {
   }
 
   Widget _drawList() {
-    final decksDb = ref.watch(decksDatabaseProvider);
+    // final decksDb = ref.watch(decksDatabaseProvider);
     final cardsDb = ref.watch(cardsDatabaseProvider);
     return ListView(
       children: <Widget>[
         // デバッグ中のみ表示
-        kDebugMode
-            ? ListTile(
-                title: const Text('Decks DriftDbViewer'),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => DriftDbViewer(decksDb)));
-                },
-              )
-            : const SizedBox(),
+        // kDebugMode
+        //     ? ListTile(
+        //         title: const Text('Decks DriftDbViewer'),
+        //         onTap: () {
+        //           Navigator.of(context).push(MaterialPageRoute(
+        //               builder: (context) => DriftDbViewer(decksDb)));
+        //         },
+        //       )
+        //     : const SizedBox(),
 
         // デバッグ中のみ表示
         kDebugMode

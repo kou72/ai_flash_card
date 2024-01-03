@@ -9,14 +9,20 @@ part 'cards_database.g.dart';
 
 class FlashCards extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get deckId => integer().nullable()();
+  IntColumn get deckId => integer().nullable().references(Decks, #id)();
   TextColumn get question => text()();
   TextColumn get answer => text()();
   TextColumn get note => text()();
   IntColumn get status => intEnum<CardStatus>()();
 }
 
-@DriftDatabase(tables: [FlashCards])
+@DataClassName("Deck")
+class Decks extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get title => text()();
+}
+
+@DriftDatabase(tables: [FlashCards, Decks])
 class CardsDatabase extends _$CardsDatabase {
   CardsDatabase._(QueryExecutor e) : super(e);
 
@@ -26,6 +32,19 @@ class CardsDatabase extends _$CardsDatabase {
   int get schemaVersion => 1;
 
   // ローカルデータベースへアクセスするメソッドを設定
+  Future insertDeck(String title) {
+    return into(decks).insert(DecksCompanion.insert(title: title));
+  }
+
+  Future deleteDeck(int id) {
+    return (delete(decks)..where((deck) => deck.id.equals(id))).go();
+  }
+
+  Future updateDeck(int id, String title) {
+    return (update(decks)..where((deck) => deck.id.equals(id)))
+        .write(DecksCompanion(title: Value(title)));
+  }
+
   Future insertCard(int deckId, String question, String answer, String note) {
     return into(flashCards).insert(FlashCardsCompanion.insert(
       deckId: Value(deckId),

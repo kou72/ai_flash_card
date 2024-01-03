@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'decks_database.dart';
+part of 'decks_database.dart.delete';
 
 // ignore_for_file: type=lint
 class $DecksTable extends Decks with TableInfo<$DecksTable, Deck> {

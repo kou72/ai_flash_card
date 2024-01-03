@@ -4,7 +4,8 @@ import 'deck_dialog/deck_insert_dialog.dart';
 import 'deck_dialog/deck_update_dialog.dart';
 import 'deck_dialog/deck_delete_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'riverpod/decks_state.dart';
+// import 'riverpod/decks_state.dart';
+import 'riverpod/cards_state.dart';
 
 class DeckListView extends ConsumerStatefulWidget {
   const DeckListView({super.key});
@@ -16,7 +17,8 @@ class DeckListViewState extends ConsumerState<DeckListView> {
   @override
   Widget build(BuildContext context) {
     final decksStream = ref.watch(decksStreamProvider);
-    final decksDatabase = ref.watch(decksDatabaseProvider);
+    // final decksDatabase = ref.watch(decksDatabaseProvider);
+    final decksDatabase = ref.watch(cardsDatabaseProvider);
     return Scaffold(
       body: Center(
         child: _asyncDeckList(decksStream),
@@ -94,7 +96,8 @@ class DeckListViewState extends ConsumerState<DeckListView> {
   }
 
   Widget _updateDeckButton(int id, String title) {
-    final decksDatabase = ref.watch(decksDatabaseProvider);
+    // final decksDatabase = ref.watch(decksDatabaseProvider);
+    final decksDatabase = ref.watch(cardsDatabaseProvider);
     return IconButton(
       icon: const Icon(Icons.edit),
       onPressed: () async {
@@ -106,7 +109,8 @@ class DeckListViewState extends ConsumerState<DeckListView> {
   }
 
   Widget _deleteDeckButton(int id, String title) {
-    final decksDatabase = ref.watch(decksDatabaseProvider);
+    // final decksDatabase = ref.watch(decksDatabaseProvider);
+    final decksDatabase = ref.watch(cardsDatabaseProvider);
     return IconButton(
       icon: const Icon(Icons.delete),
       onPressed: () async {

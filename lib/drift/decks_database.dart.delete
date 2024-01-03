@@ -3,7 +3,7 @@ import 'package:drift/wasm.dart';
 
 // 以下コマンドでbuildして自動生成
 // flutter pub run build_runner build --delete-conflicting-outputs
-part 'decks_database.g.dart';
+part 'decks_database.g.dart.delete';
 
 class Decks extends Table {
   IntColumn get id => integer().autoIncrement()();
