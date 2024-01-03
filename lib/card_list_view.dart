@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'card_dialog/ai_dialog.dart';
 import 'components/gradient_floating_action_button.dart';
 import 'components/flash_card_item.dart';
-import "riverpod/cards_state.dart";
+import 'riverpod/database_provider.dart';
 import "card_detail_view.dart";
 
 class CardListView extends ConsumerStatefulWidget {
