@@ -9,8 +9,8 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 
 // import file
 import '/firebase/firebase_options.dart' show DefaultFirebaseOptions;
-import '/deck_list_view.dart' show DeckListView;
 import '/riverpod/database_provider.dart' show databaseProvider;
+import '/deck_list_view.dart' show DeckListView;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
