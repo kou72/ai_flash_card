@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:drift/drift.dart';
-import 'package:drift/wasm.dart';
 import '../type/types.dart';
+import 'connection/connection.dart';
 
 // 以下コマンドでbuildして自動生成
 // flutter pub run build_runner build --delete-conflicting-outputs
@@ -24,9 +24,8 @@ class Decks extends Table {
 
 @DriftDatabase(tables: [FlashCards, Decks])
 class Database extends _$Database {
-  Database._(QueryExecutor e) : super(e);
-
-  factory Database() => Database._(connectOnWeb());
+  Database() : super(connect());
+  Database.forTesting(DatabaseConnection connection) : super(connection);
 
   @override
   int get schemaVersion => 1;
@@ -82,21 +81,4 @@ class Database extends _$Database {
     return (update(flashCards)..where((t) => t.id.equals(id)))
         .write(FlashCardsCompanion(status: Value(status)));
   }
-}
-
-DatabaseConnection connectOnWeb() {
-  return DatabaseConnection.delayed(Future(() async {
-    final result = await WasmDatabase.open(
-      databaseName: 'cards_db',
-      sqlite3Uri: Uri.parse('sqlite3.wasm'),
-      driftWorkerUri: Uri.parse('drift_worker.js'),
-    );
-
-    if (result.missingFeatures.isNotEmpty) {
-      print('Using ${result.chosenImplementation} due to missing browser '
-          'features: ${result.missingFeatures}');
-    }
-
-    return result.resolvedExecutor;
-  }));
 }
