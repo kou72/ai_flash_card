@@ -23,6 +23,12 @@ dependencies:
   cloud_firestore: ^4.11.0
   # drift用パッケージ
   drift: ^2.11.1
+  # drift mobile用パッケージ
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.0.0
+  path: ^1.8.3
+  # drift debug用パッケージ
+  drift_db_viewer: ^2.0.0
   # riverpod用パッケージ
   flutter_hooks: ^0.18.0
   hooks_riverpod: ^2.1.1
