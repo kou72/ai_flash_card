@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart'
+    show ConsumerState, ConsumerStatefulWidget;
 
 class DeckInsertDialog extends ConsumerStatefulWidget {
   const DeckInsertDialog({super.key});

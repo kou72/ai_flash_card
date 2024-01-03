@@ -1,7 +1,10 @@
-import 'package:ai_flash_card/riverpod/database_provider.dart';
-import 'package:ai_flash_card/type/types.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart'
+    show ConsumerState, ConsumerStatefulWidget;
+
+// import file
+import '/riverpod/database_provider.dart' show databaseProvider;
+import '/type/types.dart' show CardStatus, FlashCard;
 
 class TestPlayView extends ConsumerStatefulWidget {
   final String deckName;

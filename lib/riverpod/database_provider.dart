@@ -1,5 +1,6 @@
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../drift/database.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart'
+    show Provider, StreamProvider;
+import '/drift/database.dart' show Database, Deck, FlashCard;
 
 final databaseProvider = Provider((_) => Database());
 

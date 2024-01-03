@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'card_view_control.dart';
-import 'deck_dialog/deck_insert_dialog.dart';
-import 'deck_dialog/deck_update_dialog.dart';
-import 'deck_dialog/deck_delete_dialog.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'riverpod/database_provider.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart'
+    show ConsumerState, ConsumerStatefulWidget, AsyncValue, AsyncValueX;
+
+// import file
+import '/riverpod/database_provider.dart'
+    show databaseProvider, decksStreamProvider;
+import '/card_view_control.dart' show CardViewControl;
+import '/deck_dialog/deck_insert_dialog.dart' show DeckInsertDialog;
+import '/deck_dialog/deck_update_dialog.dart' show DeckUpdateDialog;
+import '/deck_dialog/deck_delete_dialog.dart' show DeckDeleteDialog;
 
 class DeckListView extends ConsumerStatefulWidget {
   const DeckListView({super.key});

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'riverpod/database_provider.dart';
-import 'test_play_view.dart';
-import 'type/types.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart'
+    show ConsumerState, ConsumerStatefulWidget;
+
+// import file
+import '/riverpod/database_provider.dart' show databaseProvider;
+import '/type/types.dart' show CardStatus, FlashCard;
+import '/test_play_view.dart' show TestPlayView;
 
 class TestSettingView extends ConsumerStatefulWidget {
   final String deckName;

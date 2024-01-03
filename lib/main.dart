@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart'
+    show ProviderScope, ConsumerStatefulWidget, ConsumerState;
 import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:firebase_analytics/firebase_analytics.dart'
     show FirebaseAnalytics;

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'riverpod/database_provider.dart';
-import 'card_dialog/card_delete_dialog.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart'
+    show ConsumerState, ConsumerStatefulWidget;
+
+// import file
+import '/riverpod/database_provider.dart' show databaseProvider;
+import '/card_dialog/card_delete_dialog.dart' show CardDeleteDialog;
 
 class CardDetailView extends ConsumerStatefulWidget {
   final int id;

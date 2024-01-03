@@ -1,5 +1,5 @@
+import 'dart:math' show pi;
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 class GradientCircularSpinningIndicator extends StatefulWidget {
   final double width;
