@@ -5,7 +5,7 @@ import '../type/types.dart';
 
 // 以下コマンドでbuildして自動生成
 // flutter pub run build_runner build --delete-conflicting-outputs
-part 'cards_database.g.dart';
+part 'database.g.dart';
 
 class FlashCards extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -23,10 +23,10 @@ class Decks extends Table {
 }
 
 @DriftDatabase(tables: [FlashCards, Decks])
-class CardsDatabase extends _$CardsDatabase {
-  CardsDatabase._(QueryExecutor e) : super(e);
+class Database extends _$Database {
+  Database._(QueryExecutor e) : super(e);
 
-  factory CardsDatabase() => CardsDatabase._(connectOnWeb());
+  factory Database() => Database._(connectOnWeb());
 
   @override
   int get schemaVersion => 1;

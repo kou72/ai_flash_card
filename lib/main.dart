@@ -6,8 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase/firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'riverpod/decks_state.dart';
-import 'riverpod/cards_state.dart';
+import 'riverpod/database_provider.dart';
 import 'package:flutter/foundation.dart';
 
 void main() async {
@@ -68,28 +67,16 @@ class HomeState extends ConsumerState<Home> {
   }
 
   Widget _drawList() {
-    // final decksDb = ref.watch(decksDatabaseProvider);
-    final cardsDb = ref.watch(cardsDatabaseProvider);
+    final db = ref.watch(databaseProvider);
     return ListView(
       children: <Widget>[
-        // デバッグ中のみ表示
-        // kDebugMode
-        //     ? ListTile(
-        //         title: const Text('Decks DriftDbViewer'),
-        //         onTap: () {
-        //           Navigator.of(context).push(MaterialPageRoute(
-        //               builder: (context) => DriftDbViewer(decksDb)));
-        //         },
-        //       )
-        //     : const SizedBox(),
-
         // デバッグ中のみ表示
         kDebugMode
             ? ListTile(
                 title: const Text('Cards DriftDbViewer'),
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => DriftDbViewer(cardsDb)));
+                      builder: (context) => DriftDbViewer(db)));
                 },
               )
             : const SizedBox(),

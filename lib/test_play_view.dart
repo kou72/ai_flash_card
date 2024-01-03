@@ -1,4 +1,4 @@
-import 'package:ai_flash_card/riverpod/cards_state.dart';
+import 'package:ai_flash_card/riverpod/database_provider.dart';
 import 'package:ai_flash_card/type/types.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -243,9 +243,9 @@ class TestPlayViewState extends ConsumerState<TestPlayView> {
   }
 
   Future<void> _updateAllCards() async {
-    final cardsDB = ref.watch(cardsDatabaseProvider);
+    final db = ref.watch(databaseProvider);
     for (var update in _updateList) {
-      await cardsDB.updateCardStatus(update.id, update.status);
+      await db.updateCardStatus(update.id, update.status);
     }
   }
 }

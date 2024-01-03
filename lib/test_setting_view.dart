@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import "riverpod/cards_state.dart";
+import 'riverpod/database_provider.dart';
 import 'test_play_view.dart';
 import 'type/types.dart';
 
@@ -28,9 +28,9 @@ class TestSettingViewState extends ConsumerState<TestSettingView> {
   }
 
   Future<void> loadCards() async {
-    final cardsDB = ref.watch(cardsDatabaseProvider);
+    final db = ref.watch(databaseProvider);
     try {
-      List<FlashCard> fetchedCards = await cardsDB.getCards(widget.deckId);
+      List<FlashCard> fetchedCards = await db.getCards(widget.deckId);
       setState(() => _cards = fetchedCards);
       _selectPlayCards();
     } catch (e) {

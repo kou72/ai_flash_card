@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'cards_database.dart';
+part of 'database.dart';
 
 // ignore_for_file: type=lint
 class $DecksTable extends Decks with TableInfo<$DecksTable, Deck> {
@@ -503,8 +503,8 @@ class FlashCardsCompanion extends UpdateCompanion<FlashCard> {
   }
 }
 
-abstract class _$CardsDatabase extends GeneratedDatabase {
-  _$CardsDatabase(QueryExecutor e) : super(e);
+abstract class _$Database extends GeneratedDatabase {
+  _$Database(QueryExecutor e) : super(e);
   late final $DecksTable decks = $DecksTable(this);
   late final $FlashCardsTable flashCards = $FlashCardsTable(this);
   @override

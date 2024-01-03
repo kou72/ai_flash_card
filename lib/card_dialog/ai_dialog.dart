@@ -8,7 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../components/gradient_container.dart';
 import '../components/gradient_circular_spinning_indicator.dart';
 import '../components/gradient_circular_progress_indicator.dart';
-import '../riverpod/cards_state.dart';
+import '../riverpod/database_provider.dart';
 
 class AiDialog extends ConsumerStatefulWidget {
   final int deckId;
@@ -75,8 +75,8 @@ class AiDialogState extends ConsumerState<AiDialog> {
       final streamedResponse = await req.send();
       final response = await http.Response.fromStream(streamedResponse);
       final docid = response.body;
-      final db = FirebaseFirestore.instance;
-      final docRef = db.collection("aicard").doc(docid);
+      final store = FirebaseFirestore.instance;
+      final docRef = store.collection("aicard").doc(docid);
 
       final listener = docRef.snapshots().listen((doc) {
         final done = (doc.data() as Map<String, dynamic>)['done'];
@@ -94,8 +94,8 @@ class AiDialogState extends ConsumerState<AiDialog> {
       final cardData = (doneDoc.data() as Map<String, dynamic>)['data'];
       final cardJson = jsonEncode(cardData);
 
-      final cardsDatabase = ref.watch(cardsDatabaseProvider);
-      await cardsDatabase.insertCardsFromJson(widget.deckId, cardJson);
+      final db = ref.watch(databaseProvider);
+      await db.insertCardsFromJson(widget.deckId, cardJson);
 
       setState(() => _isLoading = false);
       if (!mounted) return;
