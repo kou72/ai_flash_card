@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:drift_db_viewer/drift_db_viewer.dart';
-import 'deck_list_view.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase/firebase_options.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'riverpod/database_provider.dart';
-import 'package:flutter/foundation.dart';
+import 'package:firebase_core/firebase_core.dart' show Firebase;
+import 'package:firebase_analytics/firebase_analytics.dart'
+    show FirebaseAnalytics;
+import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
+import 'package:drift_db_viewer/drift_db_viewer.dart' show DriftDbViewer;
+import 'package:flutter/foundation.dart' show kDebugMode;
+
+// import file
+import '/firebase/firebase_options.dart' show DefaultFirebaseOptions;
+import '/deck_list_view.dart' show DeckListView;
+import '/riverpod/database_provider.dart' show databaseProvider;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,20 +70,25 @@ class HomeState extends ConsumerState<Home> {
   }
 
   Widget _drawList() {
-    final db = ref.watch(databaseProvider);
     return ListView(
       children: <Widget>[
         // デバッグ中のみ表示
-        kDebugMode
-            ? ListTile(
-                title: const Text('Cards DriftDbViewer'),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => DriftDbViewer(db)));
-                },
-              )
-            : const SizedBox(),
+        kDebugMode ? _driftDbViewer() : const SizedBox(),
       ],
+    );
+  }
+
+  Widget _driftDbViewer() {
+    final db = ref.watch(databaseProvider);
+    return ListTile(
+      title: const Text('DriftDbViewer'),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => DriftDbViewer(db),
+          ),
+        );
+      },
     );
   }
 }
