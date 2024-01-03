@@ -15,7 +15,7 @@ import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 Future<File> get databaseFile async {
   // We use `path_provider` to find a suitable path to store our data in.
   final appDir = await getApplicationDocumentsDirectory();
-  final dbPath = p.join(appDir.path, 'todos.db');
+  final dbPath = p.join(appDir.path, 'db');
   return File(dbPath);
 }
 

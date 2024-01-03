@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:drift/drift.dart';
-import '../type/types.dart';
-import 'connection/connection.dart';
+
+// import file
+import '/drift/connection/sqlite.dart' as sqlite;
+import '/type/types.dart';
 
 // 以下コマンドでbuildして自動生成
 // flutter pub run build_runner build --delete-conflicting-outputs
@@ -24,7 +26,7 @@ class Decks extends Table {
 
 @DriftDatabase(tables: [FlashCards, Decks])
 class Database extends _$Database {
-  Database() : super(connect());
+  Database() : super(sqlite.connect());
   Database.forTesting(DatabaseConnection connection) : super(connection);
 
   @override
