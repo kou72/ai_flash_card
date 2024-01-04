@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AI暗記カード',
+      title: 'Ai暗記カード',
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
         scaffoldBackgroundColor: Colors.grey[200],
@@ -54,7 +54,7 @@ class HomeState extends ConsumerState<Home> {
       appBar: AppBar(
         leadingWidth: 48.0,
         leading: _icon(),
-        title: const Text('AI暗記カード'),
+        title: const Text('Ai暗記カード'),
       ),
       endDrawer: Drawer(
         child: _drawList(),
