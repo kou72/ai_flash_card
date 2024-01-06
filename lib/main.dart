@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart'
 import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:firebase_analytics/firebase_analytics.dart'
     show FirebaseAnalytics;
-import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
 import 'package:drift_db_viewer/drift_db_viewer.dart' show DriftDbViewer;
 import 'package:flutter/foundation.dart' show kDebugMode;
 
@@ -66,7 +65,8 @@ class HomeState extends ConsumerState<Home> {
   Widget _icon() {
     return Padding(
       padding: const EdgeInsets.only(left: 12.0),
-      child: SvgPicture.asset('assets/icon.svg'),
+      child: Image.asset('assets/icon.png'),
+      // child: SvgPicture.asset('assets/icon.svg'),
     );
   }
 
