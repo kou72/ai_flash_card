@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'riverpod/cards_state.dart';
-import 'card_dialog/card_delete_dialog.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart'
+    show ConsumerState, ConsumerStatefulWidget;
+
+// import file
+import '/riverpod/database_provider.dart' show databaseProvider;
+import '/card_dialog/card_delete_dialog.dart' show CardDeleteDialog;
 
 class CardDetailView extends ConsumerStatefulWidget {
   final int id;
@@ -120,14 +123,14 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
   }
 
   Widget _insertButton() {
-    final cardsDatabase = ref.watch(cardsDatabaseProvider);
+    final db = ref.watch(databaseProvider);
     return SizedBox(
       width: 200,
       height: 40,
       child: ElevatedButton(
         child: const Text('作成'),
         onPressed: () async {
-          final id = await cardsDatabase.insertCard(
+          final id = await db.insertCard(
             widget.deckId,
             _question,
             _answer,
@@ -151,14 +154,14 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
   }
 
   Widget _updateButton() {
-    final cardsDatabase = ref.watch(cardsDatabaseProvider);
+    final db = ref.watch(databaseProvider);
     return SizedBox(
       width: 200,
       height: 40,
       child: ElevatedButton(
         child: const Text('保存'),
         onPressed: () async {
-          await cardsDatabase.updateCard(
+          await db.updateCard(
             _id,
             _question,
             _answer,
@@ -177,7 +180,7 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
   }
 
   Widget _deleteButton() {
-    final cardsDatabase = ref.watch(cardsDatabaseProvider);
+    final db = ref.watch(databaseProvider);
     return SizedBox(
       width: 200,
       height: 40,
@@ -189,7 +192,7 @@ class CardDetailViewState extends ConsumerState<CardDetailView> {
         onPressed: () async {
           final result = await _showDeleteCardDialog(context, _id);
           if (!result) return;
-          await cardsDatabase.deleteCard(_id);
+          await db.deleteCard(_id);
           if (!context.mounted) return;
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'card_dialog/ai_dialog.dart';
-import 'components/gradient_floating_action_button.dart';
-import 'components/flash_card_item.dart';
-import "riverpod/cards_state.dart";
-import "card_detail_view.dart";
+import 'package:hooks_riverpod/hooks_riverpod.dart'
+    show ConsumerState, ConsumerStatefulWidget, AsyncValue, AsyncValueX;
+
+// import file
+import 'riverpod/database_provider.dart' show cardsStreamProvider;
+import 'components/gradient_floating_action_button.dart'
+    show GradientFloatingActionButton;
+import 'components/flash_card_item.dart' show FlashCardItem;
+import 'card_dialog/ai_dialog.dart' show AiDialog;
+import "card_detail_view.dart" show CardDetailView;
 
 class CardListView extends ConsumerStatefulWidget {
   final int deckId;

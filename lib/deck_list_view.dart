@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'card_view_control.dart';
-import 'deck_dialog/deck_insert_dialog.dart';
-import 'deck_dialog/deck_update_dialog.dart';
-import 'deck_dialog/deck_delete_dialog.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'riverpod/decks_state.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart'
+    show ConsumerState, ConsumerStatefulWidget, AsyncValue, AsyncValueX;
+
+// import file
+import '/riverpod/database_provider.dart'
+    show databaseProvider, decksStreamProvider;
+import '/card_view_control.dart' show CardViewControl;
+import '/deck_dialog/deck_insert_dialog.dart' show DeckInsertDialog;
+import '/deck_dialog/deck_update_dialog.dart' show DeckUpdateDialog;
+import '/deck_dialog/deck_delete_dialog.dart' show DeckDeleteDialog;
 
 class DeckListView extends ConsumerStatefulWidget {
   const DeckListView({super.key});
@@ -16,12 +19,9 @@ class DeckListView extends ConsumerStatefulWidget {
 class DeckListViewState extends ConsumerState<DeckListView> {
   @override
   Widget build(BuildContext context) {
+    final db = ref.watch(databaseProvider);
     final decksStream = ref.watch(decksStreamProvider);
-    final decksDatabase = ref.watch(decksDatabaseProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: _logoTitle(),
-      ),
       body: Center(
         child: _asyncDeckList(decksStream),
       ),
@@ -31,23 +31,9 @@ class DeckListViewState extends ConsumerState<DeckListView> {
         onPressed: () async {
           final result = await _showInsertDeckDialog();
           if (result == null) return;
-          await decksDatabase.insertDeck(result);
+          await db.insertDeck(result);
         },
       ),
-    );
-  }
-
-  Widget _logoTitle() {
-    return Row(
-      children: [
-        SvgPicture.asset(
-          'assets/icon.svg',
-          width: 36,
-          height: 36,
-        ),
-        const SizedBox(width: 10),
-        const Text('AI暗記カード'),
-      ],
     );
   }
 
@@ -112,25 +98,25 @@ class DeckListViewState extends ConsumerState<DeckListView> {
   }
 
   Widget _updateDeckButton(int id, String title) {
-    final decksDatabase = ref.watch(decksDatabaseProvider);
+    final db = ref.watch(databaseProvider);
     return IconButton(
       icon: const Icon(Icons.edit),
       onPressed: () async {
         final result = await _showUpdateDeckDialog(title);
         if (result == null) return;
-        await decksDatabase.updateDeck(id, result);
+        await db.updateDeck(id, result);
       },
     );
   }
 
   Widget _deleteDeckButton(int id, String title) {
-    final decksDatabase = ref.watch(decksDatabaseProvider);
+    final db = ref.watch(databaseProvider);
     return IconButton(
       icon: const Icon(Icons.delete),
       onPressed: () async {
         final result = await _showDeleteDeckDialog(title);
         if (!result) return;
-        await decksDatabase.deleteDeck(id);
+        await db.deleteDeck(id);
       },
     );
   }

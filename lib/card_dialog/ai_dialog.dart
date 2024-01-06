@@ -1,14 +1,20 @@
-import 'dart:typed_data';
-import 'dart:convert';
+import 'dart:typed_data' show Uint8List;
+import 'dart:convert' show base64Encode, utf8, jsonEncode;
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:file_picker/file_picker.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../components/gradient_container.dart';
-import '../components/gradient_circular_spinning_indicator.dart';
-import '../components/gradient_circular_progress_indicator.dart';
-import '../riverpod/cards_state.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart'
+    show ConsumerState, ConsumerStatefulWidget;
+import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
+import 'package:http/http.dart' show MultipartRequest, MultipartFile, Response;
+import 'package:file_picker/file_picker.dart'
+    show FilePicker, FileType, PlatformFile, FilePickerResult;
+
+// import file
+import '/riverpod/database_provider.dart' show databaseProvider;
+import '/components/gradient_container.dart' show GradientContainer;
+import '/components/gradient_circular_spinning_indicator.dart'
+    show GradientCircularSpinningIndicator;
+import '/components/gradient_circular_progress_indicator.dart'
+    show GradientCircularProgressIndicator;
 
 class AiDialog extends ConsumerStatefulWidget {
   final int deckId;
@@ -62,10 +68,10 @@ class AiDialogState extends ConsumerState<AiDialog> {
       // // デバック用
       // final url = Uri.http(
       //     '127.0.0.1:5001', 'flash-pdf-card/us-central1/generateImageToQa');
-      final req = http.MultipartRequest('POST', url);
+      final req = MultipartRequest('POST', url);
       final encodeFileName = base64Encode(utf8.encode(_pickedFileName!));
       req.files.add(
-        http.MultipartFile.fromBytes(
+        MultipartFile.fromBytes(
           'file',
           _pickedFileBytes!,
           filename: encodeFileName,
@@ -73,10 +79,10 @@ class AiDialogState extends ConsumerState<AiDialog> {
       );
 
       final streamedResponse = await req.send();
-      final response = await http.Response.fromStream(streamedResponse);
+      final response = await Response.fromStream(streamedResponse);
       final docid = response.body;
-      final db = FirebaseFirestore.instance;
-      final docRef = db.collection("aicard").doc(docid);
+      final store = FirebaseFirestore.instance;
+      final docRef = store.collection("aicard").doc(docid);
 
       final listener = docRef.snapshots().listen((doc) {
         final done = (doc.data() as Map<String, dynamic>)['done'];
@@ -94,8 +100,8 @@ class AiDialogState extends ConsumerState<AiDialog> {
       final cardData = (doneDoc.data() as Map<String, dynamic>)['data'];
       final cardJson = jsonEncode(cardData);
 
-      final cardsDatabase = ref.watch(cardsDatabaseProvider);
-      await cardsDatabase.insertCardsFromJson(widget.deckId, cardJson);
+      final db = ref.watch(databaseProvider);
+      await db.insertCardsFromJson(widget.deckId, cardJson);
 
       setState(() => _isLoading = false);
       if (!mounted) return;

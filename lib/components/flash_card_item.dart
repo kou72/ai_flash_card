@@ -1,6 +1,6 @@
-import 'dart:math';
+import 'dart:math' show max;
 import 'package:flutter/material.dart';
-import '../card_detail_view.dart';
+import '/card_detail_view.dart' show CardDetailView;
 
 class FlashCardItem extends StatefulWidget {
   final int id;
