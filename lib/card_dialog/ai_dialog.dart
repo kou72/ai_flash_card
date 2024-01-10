@@ -7,6 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
 import 'package:http/http.dart' show MultipartRequest, MultipartFile, Response;
 import 'package:file_picker/file_picker.dart'
     show FilePicker, FileType, PlatformFile, FilePickerResult;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/link.dart';
 
 // import file
 import '/riverpod/database_provider.dart' show databaseProvider;
@@ -169,7 +171,9 @@ class AiDialogState extends ConsumerState<AiDialog> {
         colors: const [Colors.blue, Colors.purple],
         onTap: () => _createFlashcards(),
       ),
-      const SizedBox(height: 8),
+      const SizedBox(height: 16),
+      _privacyLink(),
+      const SizedBox(height: 16),
       Text(_errorText, style: const TextStyle(color: Colors.redAccent)),
     ];
   }
@@ -196,5 +200,25 @@ class AiDialogState extends ConsumerState<AiDialog> {
         ),
       ];
     }
+  }
+
+  Widget _privacyLink() {
+    const double fontsize = 12;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Link(
+          uri: Uri.parse('https://flutter.dev'),
+          builder: (BuildContext context, FollowLink? followLink) => InkWell(
+            onTap: followLink,
+            child: const Text(
+              'プライバシーポリシー',
+              style: TextStyle(color: Colors.blue, fontSize: fontsize),
+            ),
+          ),
+        ),
+        const Text("をご確認ください", style: TextStyle(fontSize: fontsize)),
+      ],
+    );
   }
 }
