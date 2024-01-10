@@ -65,7 +65,7 @@ class CardListViewState extends ConsumerState<CardListView> {
         itemCount: cards.length + 1,
         itemBuilder: (context, index) {
           if (index != cards.length) {
-            FlashCardItem(
+            return FlashCardItem(
               id: cards[index].id,
               deckId: cards[index].deckId,
               question: cards[index].question,
