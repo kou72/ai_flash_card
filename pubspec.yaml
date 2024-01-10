@@ -14,7 +14,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   file_picker: ^5.3.3
   http: ^1.1.0
-  url_launcher: ^6.1.12
+  url_launcher: ^6.2.3
   shared_preferences: ^2.2.0
   # firebase用パッケージ
   firebase_core: ^2.15.1
