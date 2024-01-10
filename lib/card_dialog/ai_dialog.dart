@@ -7,8 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
 import 'package:http/http.dart' show MultipartRequest, MultipartFile, Response;
 import 'package:file_picker/file_picker.dart'
     show FilePicker, FileType, PlatformFile, FilePickerResult;
-import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/link.dart';
+import 'package:url_launcher/link.dart' show Link, FollowLink;
 
 // import file
 import '/riverpod/database_provider.dart' show databaseProvider;
