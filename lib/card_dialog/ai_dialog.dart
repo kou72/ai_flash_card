@@ -41,8 +41,6 @@ class AiDialogState extends ConsumerState<AiDialog> {
       withData: true,
     );
 
-    print("file: $result");
-
     if (result == null || result.files.isEmpty) return;
     PlatformFile file = result.files.first;
 
