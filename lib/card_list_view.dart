@@ -62,15 +62,20 @@ class CardListViewState extends ConsumerState<CardListView> {
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 4),
       child: ListView.builder(
-        itemCount: cards.length,
+        itemCount: cards.length + 1,
         itemBuilder: (context, index) {
-          return FlashCardItem(
-            id: cards[index].id,
-            deckId: cards[index].deckId,
-            question: cards[index].question,
-            answer: cards[index].answer,
-            note: cards[index].note,
-          );
+          if (index != cards.length) {
+            FlashCardItem(
+              id: cards[index].id,
+              deckId: cards[index].deckId,
+              question: cards[index].question,
+              answer: cards[index].answer,
+              note: cards[index].note,
+            );
+          } else {
+            // 一番下にアクションボタンを避ける余白を足す
+            return const SizedBox(height: 150.0);
+          }
         },
       ),
     );
