@@ -38,7 +38,10 @@ class AiDialogState extends ConsumerState<AiDialog> {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'jpeg', 'png'],
+      withData: true,
     );
+
+    print("file: $result");
 
     if (result == null || result.files.isEmpty) return;
     PlatformFile file = result.files.first;
