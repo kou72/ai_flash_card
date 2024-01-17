@@ -59,6 +59,51 @@ export const generateImageToQa = onRequest(
   }
 );
 
+export const generateImageToQaWeb = onRequest(
+  {timeoutSeconds: 300, cors: true},
+  async (req, res) => {
+    // POST以外のリクエストは405を返す
+    if (req.method !== "POST") {
+      res.status(405).end();
+      return;
+    }
+
+    // メインの処理
+    // fileUpload：画像をCloud Storageにアップロードし、保存先のpathを取得
+    // convertImageToText：SourceBucktの画像をテキストに変換
+    // saveText：デバッグ用の中間ファイルとしてtext.txtを保存
+    // qaStore.set：Firestoreに生成した質問を保存
+    // generateQaFromChatGPT：テキストをOpenAIのAPIに投げて質問を生成
+    // convertTextToQaJson：テキストから質問と回答を抽出してJSON形式に変換
+    // saveQa：デバッグ用の中間ファイルとしてqa.jsonを保存
+    // res.status(200).send(qaJson)：生成したjsonを返す
+    let qaStore = firestore.collection("aicard").doc("error");
+    try {
+      const date = getDate();
+      const sourcePath = await fileUpload(req, date);
+      // dest用pathをsourcePathから生成（upload/0000-text.pdf → destination/0000-text）
+      const destFile = sourcePath.split("/")[1].replace(/\.[^/.]+$/, "") + "/";
+      const destFolder = "dest/" + destFile;
+      const text = await convertImageToText(sourcePath);
+      await saveText(destFolder, text, "text.txt");
+      qaStore = firestore.collection("aicard").doc(destFile);
+      const startTime = Date.now(); // 時間計測開始
+      await qaStore.set({done: false, data: {}}); // Firestoreへ初期値保存
+      const qaText = await generateQaFromChatGPT({input: text, gpt4: true});
+      await saveText(destFolder, qaText, "qa.txt");
+      const qaJson = convertTextToQaJson(qaText);
+      const elapsedTime = Math.floor(Date.now() - startTime) / 1000; // 時間計測終了
+      await qaStore.set({done: true, data: qaJson, elapsedTime: elapsedTime});
+      await saveQa(destFolder, qaJson);
+      res.status(200).send(qaJson);
+    } catch (error: any) {
+      logger.error(error.message, {structuredData: true});
+      await qaStore.set({done: true, data: {}});
+      res.status(500).send(error.message);
+    }
+  }
+);
+
 const fileUpload = (req: Request, date: string): Promise<string> =>
   new Promise((resolve, reject) => {
     const bb = busboy({headers: req.headers});
@@ -106,6 +151,7 @@ const convertTextToQaJson = (text: string) => {
       note: "",
     });
   }
+  return result;
   return JSON.parse(JSON.stringify(result));
 };
 
