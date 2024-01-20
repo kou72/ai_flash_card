@@ -208,7 +208,7 @@ class AiDialogState extends ConsumerState<AiDialog> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Link(
-          uri: Uri.parse('https://kou72.github.io/ai_flash_card_doc/privacy'),
+          uri: Uri.parse('https://ankidoc.site/privacy'),
           builder: (BuildContext context, FollowLink? followLink) => InkWell(
             onTap: followLink,
             child: const Text(

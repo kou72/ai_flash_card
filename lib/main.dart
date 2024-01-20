@@ -6,6 +6,7 @@ import 'package:firebase_analytics/firebase_analytics.dart'
     show FirebaseAnalytics;
 import 'package:drift_db_viewer/drift_db_viewer.dart' show DriftDbViewer;
 import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:url_launcher/url_launcher_string.dart' show launchUrlString;
 
 // import file
 import '/firebase/firebase_options.dart' show DefaultFirebaseOptions;
@@ -66,7 +67,6 @@ class HomeState extends ConsumerState<Home> {
     return Padding(
       padding: const EdgeInsets.only(left: 12.0),
       child: Image.asset('assets/icon.png'),
-      // child: SvgPicture.asset('assets/icon.svg'),
     );
   }
 
@@ -75,6 +75,9 @@ class HomeState extends ConsumerState<Home> {
       children: <Widget>[
         // デバッグ中のみ表示
         kDebugMode ? _driftDbViewer() : const SizedBox(),
+        _homepageLink(),
+        _termsLink(),
+        _privacyLink(),
       ],
     );
   }
@@ -90,6 +93,30 @@ class HomeState extends ConsumerState<Home> {
           ),
         );
       },
+    );
+  }
+
+  Widget _homepageLink() {
+    return ListTile(
+      title: const Text('ホームページ'),
+      onTap: () => launchUrlString('https://ankidoc.site/'),
+      leading: const Icon(Icons.open_in_new),
+    );
+  }
+
+  Widget _termsLink() {
+    return ListTile(
+      title: const Text('利用規約'),
+      onTap: () => launchUrlString('https://ankidoc.site/terms'),
+      leading: const Icon(Icons.open_in_new),
+    );
+  }
+
+  Widget _privacyLink() {
+    return ListTile(
+      title: const Text('プライバシーポリシー'),
+      onTap: () => launchUrlString('https://ankidoc.site/privacy'),
+      leading: const Icon(Icons.open_in_new),
     );
   }
 }
