@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:108517378329:android:b197e8ac5195d9c494dd88",
         "android_client_info": {
-          "package_name": "com.example.ai_flash_card"
+          "package_name": "ankiapp.site.ai_flash_card"
         }
       },
       "oauth_client": [
@@ -35,7 +35,7 @@
               "client_id": "108517378329-bentvou74e7nqa7gik45dfofapmg7som.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.flashPdfCard"
+                "bundle_id": "ankiapp.site.flashPdfCard"
               }
             }
           ]
@@ -46,7 +46,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:108517378329:android:87c38bd6e4ad578e94dd88",
         "android_client_info": {
-          "package_name": "com.example.flash_pdf_card"
+          "package_name": "ankiapp.site.flash_pdf_card"
         }
       },
       "oauth_client": [
@@ -71,7 +71,7 @@
               "client_id": "108517378329-bentvou74e7nqa7gik45dfofapmg7som.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.flashPdfCard"
+                "bundle_id": "ankiapp.site.flashPdfCard"
               }
             }
           ]

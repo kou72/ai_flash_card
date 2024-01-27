@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     storageBucket: 'flash-pdf-card.appspot.com',
     iosClientId:
         '108517378329-bentvou74e7nqa7gik45dfofapmg7som.apps.googleusercontent.com',
-    iosBundleId: 'com.example.flashPdfCard',
+    iosBundleId: 'ankiapp.site.flashPdfCard',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -82,6 +82,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '108517378329',
     projectId: 'flash-pdf-card',
     storageBucket: 'flash-pdf-card.appspot.com',
-    iosBundleId: 'com.example.flashPdfCard.RunnerTests',
+    iosBundleId: 'ankiapp.site.flashPdfCard.RunnerTests',
   );
 }

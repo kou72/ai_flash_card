@@ -45,3 +45,6 @@ app.*.map.json
 
 # .lock files
 **/*.lock
+
+# key files
+**/*key.jks
